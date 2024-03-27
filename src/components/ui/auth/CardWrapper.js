@@ -14,7 +14,7 @@ const CardWrapper=({
   showSocial
 })=>{
   return (
-    <Card w='400px' boxShadow='md' borderRadius={10} p='2'>
+    <Card w='400px' borderRadius={10} p='2'>
       <CardHeader>
         <Header label={headerLabel}/>
       </CardHeader>

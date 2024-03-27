@@ -10,7 +10,7 @@ async function RouteHandler() {
 	}else if(env == "production"){
 		base_url = prodbaseurl;
 	}
-    return null;
+    return base_url;
 }
 
 export default RouteHandler;

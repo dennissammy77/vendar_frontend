@@ -15,8 +15,8 @@ import { MdVisibility,MdVisibilityOff } from "react-icons/md";
 import { CiWarning } from "react-icons/ci";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
-import SignUpApi from '@/api/auth/route';
 import { useForm } from 'react-hook-form';
+import SignUpApi from '@/app/api/auth/route';
 
 const SignUpForm=()=>{
   const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -52,15 +52,13 @@ const SignUpForm=()=>{
           set_user_handler(response)
           return ;
       }).catch((err)=>{
-          console.log(err)
-          return toast({ title: 'Error!:Account creation failed', description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
-      }).finally(()=>{
+          return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
       })
-    } catch (error) {
-      console.log(error)
+    } catch (error){
       setError("root", {
         message: error,
       });
+      return;
     }
   }
 

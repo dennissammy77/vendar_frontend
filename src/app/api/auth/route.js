@@ -13,3 +13,14 @@ export default async function SignUpApi (payload){
         return result;
     }
 }
+export async function SignInApi (payload){
+    let base_url = await RouteHandler();
+	const cookies = new Cookies();
+	const result = await axios.post(`${base_url}/api/auth/signin`,payload);
+    if (result?.data?.error){
+        throw new Error(result.data.message)
+    }else{
+        cookies.set('user_token1', result?.data.token, {path: '/'});
+        return result;
+    }
+}
