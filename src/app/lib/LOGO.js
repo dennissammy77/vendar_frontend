@@ -3,10 +3,10 @@ import { Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-function LOGO({color}) {
+function LOGO({color,size}) {
     const router = useRouter();
     return (
-        <Text fontWeight='bold' fontSize='40px' color={color} cursor='pointer' onClick={(()=>{router.push('/')})}>VENDAR</Text>
+        <Text fontWeight='bold' fontSize={size} color={color} cursor='pointer' onClick={(()=>{router.push('/')})}>VENDAR</Text>
     )
 }
 

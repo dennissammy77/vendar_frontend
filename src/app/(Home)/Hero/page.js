@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 function Hero() {
     const router = useRouter();
   return (
-    <Box px={8} py={24} mx="auto">
+    <Box px={8} py={32} mx="auto">
         <Box w={{ base: "full", md: 11 / 12, xl: 9 / 12,}} mx="auto" textAlign={{ base: "center", md: "center", }} >
             <Heading mb={6} fontSize={{ base: "4xl", md: "6xl", }} fontWeight="bold" lineHeight="none" letterSpacing={{ base: "normal", md: "tight", }} color="gray.900" _dark={{ color: "gray.100", }} >
                 Your{" "}
