@@ -47,7 +47,7 @@ const SignUpForm=()=>{
       await SignUpApi(data).then((response)=>{
           toast({ title: 'Success!:Account created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
           setTimeout(()=>{
-            router.push('/');
+            router.push('/onboarding/newstore');
           },2000)
           set_user_handler(response)
           return ;

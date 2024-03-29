@@ -24,3 +24,26 @@ export async function SignInApi (payload){
         return result;
     }
 }
+
+export async function FetchUserDetails (uid){
+    let base_url = await RouteHandler();
+	const cookies = new Cookies();
+    const AuthToken = cookies.get('user_token1');
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `${base_url}/api/user/fetch?uid=${uid}`,
+        headers: { 
+          'Authorization': `Bearer ${AuthToken}`
+        }
+      };
+      
+      await axios.request(config).then((response) => {
+        if(response.erorr){
+            throw new Error(response?.message)
+        }
+        return response.data;
+      }).catch((error) => {
+        throw new Error(error)
+      });
+}
