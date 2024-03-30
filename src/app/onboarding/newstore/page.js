@@ -79,7 +79,7 @@ function Page() {
               <Button isLoading loadingText='creating your store' variant='ghost' borderRadius={'md'} w='full'/>
               :
               <HStack spacing='' align='center'>
-                <Text fontSize={'sm'} color={'gray.400'} textDecoration={'underline 1px solid #e5e5e5'} cursor='pointer' px='2' _hover={{color:'#4E2FD7',fontWeight:'bold'}}>skip for now</Text>
+                <Text fontSize={'sm'} color={'gray.400'} textDecoration={'underline 1px solid #e5e5e5'} cursor='pointer' px='2' _hover={{color:'#4E2FD7',fontWeight:'bold'}} onClick={(()=>{router.push('/dashboard/home')})}>skip for now</Text>
                 <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit} leftIcon={<FaWandMagicSparkles />}>Create your Store</Button>
               </HStack>
             }
