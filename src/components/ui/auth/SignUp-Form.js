@@ -26,7 +26,8 @@ const SignUpForm=()=>{
     email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
     mobile: yup.string().required(),
     password: yup.string().required().min(6).max(16),
-    account_type: yup.string().default('shop_admin').required()
+    account_type: yup.string().default('shop_admin').required(),
+    profile_image_url: yup.string().default('')
   });
   const {
     register,
@@ -36,6 +37,7 @@ const SignUpForm=()=>{
   } = useForm({
     resolver: yupResolver(schema),
   });
+  
   const {set_user_handler} = useContext(UserContext);
   const router = useRouter();
   const toast = useToast();

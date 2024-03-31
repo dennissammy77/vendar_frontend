@@ -42,5 +42,5 @@ describe('Auth Tests', () => {
             expect(axios.post).toHaveBeenCalledTimes(1);
             expect(response.data.message).toEqual(mockResponse.data.message);
         })
-    })
-})
+    });
+});

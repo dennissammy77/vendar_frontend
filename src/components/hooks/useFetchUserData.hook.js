@@ -11,7 +11,7 @@ const useFetchUserData = async() =>{
         const result = await FetchUserDetails(uid);
         return result;
     } catch (error) {
-        return null
+        return null;
     }
 };
 

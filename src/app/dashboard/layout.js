@@ -1,14 +1,26 @@
 'use client'
-import { Box, Text } from '@chakra-ui/react'
-import React from 'react'
+import { Box, Text, useToast } from '@chakra-ui/react'
+import React, { useContext, useEffect } from 'react'
 import NavigationBody from './components/navigation'
 import { IoStorefrontOutline } from "react-icons/io5";
+import { UserContext } from '@/components/providers/user.context';
+import { useRouter } from 'next/navigation';
 
 export default function Layout({children}){
+    const {user} = useContext(UserContext);
+    const toast = useToast();
+    const router = useRouter()
+    useEffect(()=>{
+        if(!user){
+            toast({ title: 'Error!', description: `User is not defined`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            //router.push('/signin');
+            return 
+        }
+    })
     return(
         <Box>
             <NavigationBody navigation={navigation}>
-            {children}
+                {children}
             </NavigationBody>
         </Box>
     )

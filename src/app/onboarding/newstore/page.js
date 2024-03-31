@@ -1,7 +1,7 @@
 'use client'
-import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Text, Textarea, useToast } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
@@ -13,6 +13,7 @@ import { UserContext } from '@/components/providers/user.context';
 
 function Page() {
     const router = useRouter();
+    const toast = useToast();
     const {user} = useContext(UserContext);
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     
@@ -22,7 +23,12 @@ function Page() {
       mobile: yup.string(),
       email: yup.string().default(user?.email).email().matches(EmailRegex, 'Email address must be of correct format'),
       location: yup.string(),
+      shelves: yup.number().min(1)
     });
+
+    useEffect(()=>{
+      router.prefetch(`/dashboard/home?uid=${user?._id}`);
+    },[])
 
     const {
       register, 
@@ -34,17 +40,35 @@ function Page() {
     });
 
     const onSubmit = async(data) => {
+
       try{
-        await CreateNewStore(data)
+        await CreateNewStore(data).then((response)=>{
+          console.log(response?.response?.data)
+          if(response?.response?.status === 403){
+            toast({ title: 'Error!', description: `${response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            router.push('/signin');
+            return
+          }
+          if(response?.data?.error){
+              return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+          }
+          toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+            setTimeout(()=>{
+              router.push(`/dashboard/home?uid=${user?.data?._id}`);
+            },2000)
+            return ;
+        }).catch((err)=>{
+            return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+        })
       }catch(err){
-        console.log(err)
+        return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
       }
     }
 
     return (
-      <Box align='center' borderRadius={'md'} boxShadow={'sm'} p='6'> 
-          <Flex justify={'center'} align={'center'} w='100%' display={{md:'flex',lg:'none'}}>
-            <LOGO color='#4E2FD7'/>
+      <Box align='center' borderRadius={'md'} boxShadow={'sm'} px='6' py='2' w='full'> 
+          <Flex justify={'center'} align={'center'} w='100%' hideFrom='md'>
+            <LOGO color='#4E2FD7' size='32px'/>
           </Flex>
           <Text fontWeight={'bold'} fontSize={'xl'}>New Store</Text>
           <Text fontSize={'sm'} color='gray.400'>Set up your store to start managing clients, <br/>products easily in one place.</Text>
@@ -69,6 +93,11 @@ function Page() {
               <FormLabel>Store Location</FormLabel>
               <Input disabled={isSubmitting} {...register('location')} type='text' placeholder='Moi Avenue, Nairobi' variant='filled'/>
               {errors.location && ( <Text fontSize={'sm'} color='red'>{errors.location.message}</Text>)}
+            </FormControl>
+            <FormControl mt='1' my='2'>
+              <FormLabel>Number of shelves</FormLabel>
+              <Input disabled={isSubmitting} {...register('shelves')} type='number' placeholder='eg: 10' variant='filled'/>
+              {errors.shelves && ( <Text fontSize={'sm'} color='red'>{errors.shelves}</Text>)}
             </FormControl>
             <FormControl mt='1' my='2'>
               <FormLabel>About the store</FormLabel>

@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure } from "@chakra-ui/react";
+import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure } from "@chakra-ui/react";
 import { MdAdminPanelSettings, MdOutlineMenu, MdUpgrade } from "react-icons/md";
 //import { dashboardContext } from "../../providers/dashboard.context";
 import { useContext } from "react";
@@ -43,19 +43,20 @@ export default function NavigationBody({children,navigation}){
 };
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
+  const {user} = useContext(UserContext);
   return (
-    <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' >
+    <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
-      <HStack spacing={{ base: '0', md: '6' }} bg='red'>
+      <HStack spacing={{ base: '0', md: '4' }}>
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size={'sm'} src={ 'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9' }/>
+                <Avatar size={'sm'} src={ 'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'} name={user?.data?.name}/>
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
-                  <Text fontSize="sm">Justina Clark</Text>
-                  <Text fontSize="xs" color="gray.600"> Admin </Text>
+                  <Text fontSize="md">{user?.data?.name || '-'}</Text>
+                  <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7'>{user?.data?.shop_admin_account_ref?.role}</Badge>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
                   {/**
@@ -97,10 +98,9 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
   const router = useRouter();
 
   return(
-    <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'sm'} w={width} display={display}>
+    <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'md'} w={width} display={display}>
       <Flex px='4' py='5' align='center' justify='space-between'>
         <LOGO color='#4E2FD7' size='24px'/>
-        {/**<Icon size="md" aria-label="close menu" as={IoCloseSharp} display={{sm:'flex',md:'none'}} cursor={'pointer'} onClick={(()=>{onClose()})}/>*/}
         <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoCloseSharp />} onClick={(()=>{onClose()})} />
       </Flex>
       {navigation?.map((item)=>{

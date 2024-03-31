@@ -28,7 +28,7 @@ const LoginForm=()=>{
   const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const schema = yup.object().shape({
     email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
-    password: yup.string().required().min(6).max(16),
+    password: yup.string().required().min(6).max(16,'Password must be at most 16 characters'),
   });
   const {
     register,
