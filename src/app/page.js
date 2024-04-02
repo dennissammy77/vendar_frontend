@@ -1,20 +1,21 @@
 'use client'
-import { Avatar, Box, Button, Flex, HStack, Icon, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, HStack, Icon, Text, useToast } from "@chakra-ui/react";
 import Home from "./(Home)/Hero/page";
 import LOGO from "./lib/LOGO";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { FaPowerOff } from "react-icons/fa";
 import useLogOut from "@/components/hooks/useLogOut.hook";
+import Link from "next/link";
 
 export default function Index() {
   const router = useRouter();
+  const toast = useToast()
   const {user} = useContext(UserContext);
   const HandleLogout =()=>{
     useLogOut();
-    router.reload()
-    console.log('tetst')
+    window.location.href('/')
   }
 
   return (
@@ -39,13 +40,13 @@ export default function Index() {
             </HStack>
             :
             <Flex align='center' mr='2' gap='2'>
-              <HStack align='center' spacing='2' fontWeight={'regular'} bg='#e3e3e3' p='2' borderRadius={'md'} cursor='pointer' onClick={(()=>{router.push(`/dashboard/home?uid=${user?.data?._id}`)})}>
+              <Link onClick={(()=>{HandleLogout()})} href='/' cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'}>LogOut</Link>
+              <HStack align='center' spacing='2' fontWeight={'regular'} bg='#e3e3e3' p='2' borderRadius={'md'} cursor='pointer' onClick={(()=>{router.push(`/dashboard/home?uid=${user?.data?.data?._id}`)})}>
                 <Text fontSize={'sm'}>
                   Profile
                 </Text>
-                <Avatar name={user?.data.name || user?.data?.username} src={user?.data?.profile_image_url || ''} size={'sm'}/>
+                <Avatar name={user?.data?.data?.name || user?.data?.data?.username} src={user?.data?.data?.profile_image_url || ''} size={'sm'}/>
               </HStack>
-              <Icon boxSize='4' as={FaPowerOff} m='2' onClick={HandleLogout} cursor={'pointer'} color='#4E2FD7'/>
             </Flex>
           }
       </Flex>

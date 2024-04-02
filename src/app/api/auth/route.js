@@ -39,12 +39,9 @@ export async function FetchUserDetails (uid){
       };
       
     const result = await axios.request(config).then((response) => {
-        if(response.error){
-            throw new Error(response?.message)
-        }
-        return response.data;
+        return response;
       }).catch((error) => {
-        throw new Error(error)
+        return(error)
       });
     return result;
 }
