@@ -12,7 +12,7 @@ export async function CreateNewStore (payload){
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${base_url}/api/shop/create/new/${user_decoded_token?.sub}`,
+        url: `${base_url}/api/store/create/new/${user_decoded_token?.sub}`,
         headers: { 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${AuthToken}`
