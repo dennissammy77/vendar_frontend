@@ -26,3 +26,26 @@ export async function CreateNewStore (payload){
     });
     return response;
 }
+
+export async function FetchStore(store_id){
+    let base_url = await RouteHandler();
+    const cookies = new Cookies();
+    const AuthToken = cookies.get('user_token1');
+
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `${base_url}/api/store/data?store_id=${store_id}`,
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${AuthToken}`
+        },
+    };
+
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+}
