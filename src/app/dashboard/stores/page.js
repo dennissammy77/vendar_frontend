@@ -1,5 +1,5 @@
 'use client'
-import { Badge, Box, Button, Center, Flex, Grid, GridItem, HStack, Icon, Image, Input, InputGroup, InputLeftElement, SimpleGrid, Spinner, Text, Wrap } from '@chakra-ui/react'
+import { Badge, Box, Button, Center, Flex, Grid, GridItem, HStack, Icon, Image, Input, InputGroup, InputLeftElement, SimpleGrid, Spinner, Text, Tooltip, Wrap } from '@chakra-ui/react'
 import React, { useContext, useState } from 'react';
 import { IoMdAdd } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
@@ -9,6 +9,7 @@ import { UserContext } from '@/components/providers/user.context';
 import { FaStore } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { FiSearch } from "react-icons/fi";
+import { GrFormEdit } from "react-icons/gr";
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -90,6 +91,8 @@ const StoreItem = ({store,index,set_active_store}) =>{
 }
 
 const StoreDetails = ({store})=>{
+    const {user} = useContext(UserContext);
+    const router = useRouter();
     return(
         <Box bg='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='4'>
             <Flex justify={'space-between'}>
@@ -100,8 +103,8 @@ const StoreDetails = ({store})=>{
                     <Badge color={'#fff'} bg={'#4E2FD7'}>Active</Badge>
                      */}
                 </HStack>
-                <HStack>
-                    <Icon color='gray.600' boxSize='5' as={IoMdSettings}/>
+                <HStack align='center'>
+                    <Icon color='gray.600' boxSize='6' as={GrFormEdit} cursor='pointer' onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}/>
                 </HStack>
             </Flex>
             <Text my='2'>{store?.description}</Text>
@@ -131,6 +134,10 @@ const StoreDetails = ({store})=>{
             <HStack spacing='2' my='2' fontSize='md'>
                 <Text fontWeight={'bold'}>Products:</Text>
                 <Text>{store?.products?.length}</Text>
+            </HStack>
+            <HStack spacing='2' my='2' fontSize='md'>
+                <Text fontWeight={'bold'}>Shelves:</Text>
+                <Text>{store?.shelves}</Text>
             </HStack>
             {/**
              * 
