@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Button, Flex, HStack, Icon, Input, InputGroup, InputRightElement, Select, Text, useToast } from '@chakra-ui/react'
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import CardWrapper from './CardWrapper';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
@@ -44,6 +44,9 @@ const SignUpForm=()=>{
 
   const [show, setShow] = useState(false); //handle state to toggle password
 	const handleClick = () => setShow(!show); //handle state to toggle view of password
+  useEffect(()=>{
+    router.prefetch('/onboarding/newstore');
+  },[])
   const onSubmit = async(data) => {
     try {
       await SignUpApi(data).then((response)=>{
