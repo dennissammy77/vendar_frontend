@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { CreateNewStore } from '@/app/api/shop/route';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
-export default function NewStoreForm() {
+export default function EditStoreForm({store_data}) {
     const router = useRouter();
     const toast = useToast();
     const {user} = useContext(UserContext);
@@ -27,6 +27,8 @@ export default function NewStoreForm() {
     });
     useEffect(()=>{
         router.prefetch(`/dashboard/home?uid=${user?.data?.data?._id}`);
+        console.log(pathArr)
+        console.log(store_data)
     },[]);
     const {
         register, 
@@ -35,25 +37,34 @@ export default function NewStoreForm() {
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: yupResolver(schema),
+        defaultValues: {
+            name:         store_data?.name,
+            description:  store_data?.description,
+            mobile:       store_data?.mobile,
+            location:     store_data?.location,
+            email:        store_data?.email,
+            shelves:      store_data?.shelves,
+        },
     });
 
     const onSubmit = async(data) => {
+        console.log(data)
         try{
-            await CreateNewStore(data).then((response)=>{
-                if(response?.data?.error){
-                    return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
-                }
-                toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-                setTimeout(()=>{
-                    if(pathArr.some(path => path === 'onboarding')){
-                        router.push(`/dashboard/home?uid=${user?.data?.data?._id}`);
-                    }
-                    router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
-                },2000)
-                return ;
-            }).catch((err)=>{
-                return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
-            })
+            // await CreateNewStore(data).then((response)=>{
+            //     if(response?.data?.error){
+            //         return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            //     }
+            //     toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+            //     setTimeout(()=>{
+            //         if(pathArr.some(path => path === 'onboarding')){
+            //             router.push(`/dashboard/home?uid=${user?.data?.data?._id}`);
+            //         }
+            //         router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
+            //     },2000)
+            //     return ;
+            // }).catch((err)=>{
+            //     return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            // })
         }catch(err){
             return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
         }
@@ -91,9 +102,9 @@ export default function NewStoreForm() {
             {errors.description && ( <Text fontSize={'sm'} color='red'>{errors.description.message}</Text>)}
         </FormControl>
         {isSubmitting?
-            <Button isLoading loadingText='creating your store' variant='ghost' borderRadius={'md'} w='full'/>
+            <Button isLoading loadingText='saving...' variant='ghost' borderRadius={'md'} w='full'/>
             :
-            <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit} leftIcon={<FaWandMagicSparkles />}>Create Store</Button>
+            <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Update Store</Button>
         }
     </form>
   )
