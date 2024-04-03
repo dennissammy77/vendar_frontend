@@ -41,8 +41,8 @@ export default function Index() {
             :
             <Flex align='center' mr='2' gap='2'>
               <Link onClick={(()=>{HandleLogout()})} href='/' cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'}>LogOut</Link>
-              <HStack align='center' spacing='2' fontWeight={'regular'} bg='#e3e3e3' p='2' borderRadius={'md'} cursor='pointer' onClick={(()=>{router.push(`/dashboard/home?uid=${user?.data?.data?._id}`)})}>
-                <Text fontSize={'sm'}>
+              <HStack align='center' spacing='2' fontWeight={'regular'} bgColor='#E4F0FC' py='1' px='2' borderRadius={'full'} cursor='pointer' onClick={(()=>{router.push(`/dashboard/home?uid=${user?.data?.data?._id}`)})}>
+                <Text fontSize={'sm'} fontWeight={'bold'} >
                   Profile
                 </Text>
                 <Avatar name={user?.data?.data?.name || user?.data?.data?.username} src={user?.data?.data?.profile_image_url || ''} size={'sm'}/>
