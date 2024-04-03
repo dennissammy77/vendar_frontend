@@ -22,7 +22,7 @@ export default  function Page() {
         queryKey: ['store_data', {store_id}],
         queryFn: () => FetchStore(store_id)
     })
-    console.log(store_data?.data?.data);
+    const data = store_data?.data?.data;
   return (
     <Box>
         <Text fontWeight='bold' fontSize='32px'>Edit Store</Text>
@@ -39,9 +39,13 @@ export default  function Page() {
                 <BreadcrumbLink >edit</BreadcrumbLink>
             </BreadcrumbItem>
         </Breadcrumb>
-        <EditStoreForm 
-            store_data={store_data?.data?.data}
-        />
+        {isLoading ? 
+            <Text>Fetching data...</Text>
+            :
+            <EditStoreForm 
+                store_data={data}
+            />
+        }
         <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.push(`/dashboard/stores/?uid=${user?.data?.data?._id}`)})} leftIcon={<VscDiscard />}>Discard</Button>
     </Box>
   )
