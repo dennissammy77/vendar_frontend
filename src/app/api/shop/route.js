@@ -49,3 +49,27 @@ export async function FetchStore(store_id){
     });
     return response;
 }
+
+export async function UpdateStore(data,store_id,uid,flag){
+    let base_url = await RouteHandler();
+    const cookies = new Cookies();
+    const AuthToken = cookies.get('user_token1');
+
+    let config = {
+        method: 'put',
+        maxBodyLength: Infinity,
+        url: `${base_url}/api/store/update?store_id=${store_id}&&uid=${uid}&&flag=${flag}`,
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${AuthToken}`
+        },
+        data : data
+      };
+      
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+}
