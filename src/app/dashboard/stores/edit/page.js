@@ -46,7 +46,7 @@ export default  function Page() {
                 store_data={data}
             />
         }
-        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.push(`/dashboard/stores/?uid=${user?.data?.data?._id}`)})} leftIcon={<VscDiscard />}>Discard</Button>
+        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<VscDiscard />}>Discard</Button>
     </Box>
   )
 }
