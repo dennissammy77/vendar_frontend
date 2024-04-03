@@ -18,9 +18,9 @@ export default function StoreDetails({store}){
                     <Text fontSize={'x-large'} fontWeight={'bold'} my='2'>{store?.name}</Text>
                 </HStack>
                 <HStack align='center' gap='2'>
-                    <HStack color='gray.600'  _hover={{color:'#4E2FD7'}} cursor={'pointer'} borderRight={'1px solid'} borderRightColor={'gray.400'} pr='1'>
-                        <Text fontSize={'md'} fontWeight={'bold'} >manage</Text>
-                        <Icon boxSize='5' as={IoMdSettings} cursor='pointer' onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}/>
+                    <HStack color='gray.600'  _hover={{color:'#4E2FD7'}} cursor={'pointer'} borderRight={'1px solid'} borderRightColor={'gray.400'} pr='1' onClick={(()=>{router.push(`/dashboard/stores/view?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
+                        <Text fontSize={'md'} fontWeight={'bold'}>manage</Text>
+                        <Icon boxSize='5' as={IoMdSettings} cursor='pointer'/>
                     </HStack>
                     <Icon color='gray.600' boxSize='6' as={GrFormEdit} _hover={{color:'#4E2FD7'}} cursor='pointer' onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}/>
                 </HStack>
