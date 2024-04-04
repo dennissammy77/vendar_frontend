@@ -50,6 +50,9 @@ const SignUpForm=()=>{
   const onSubmit = async(data) => {
     try {
       await SignUpApi(data).then((response)=>{
+          if(response?.data?.error === true){
+            return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
+          }
           toast({ title: 'Success!:Account created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
           setTimeout(()=>{
             router.push('/onboarding/newstore');

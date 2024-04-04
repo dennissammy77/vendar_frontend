@@ -30,9 +30,6 @@ export default function EditStoreForm(props) {
         tiktok_url:    yup.string(),
         whatsapp_url:  yup.string(),
     });
-    useEffect(()=>{
-        router.prefetch(`/dashboard/home?uid=${user?.data?.data?._id}`);
-    },[]);
     const {
         register, 
         handleSubmit,
@@ -65,7 +62,7 @@ export default function EditStoreForm(props) {
                 }
                 toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
                 setTimeout(()=>{
-                    router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
+                    router.back();
                 },2000)
                 return ;
             }).catch((err)=>{

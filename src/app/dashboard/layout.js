@@ -5,6 +5,7 @@ import NavigationBody from './components/navigation'
 import { IoStorefrontOutline } from "react-icons/io5";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
+import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 
 export default function Layout({children}){
     const {user} = useContext(UserContext);
@@ -44,7 +45,9 @@ const navigation = [
     },
     {
         id: '4',
+        icon: MdOutlineAdminPanelSettings,
         title:  'Staff',
+        route: '/dashboard/staff'
     },
     {
         id: '5',
