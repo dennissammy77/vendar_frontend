@@ -46,7 +46,10 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
   return (
     <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
-      <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
+      <HStack spacing='2' align='center'>
+        <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
+        <LOGO color='#4E2FD7' size='18px'/>
+      </HStack>
       <HStack spacing={{ base: '0', md: '4' }}>
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
         <Flex alignItems={'center'}>

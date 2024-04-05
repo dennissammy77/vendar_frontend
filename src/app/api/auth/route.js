@@ -69,18 +69,19 @@ export async function FetchUserDetails (uid){
     return result;
 }
 
-export async function FetchUsersShop (store_id){
+export async function FetchUsersShop(store_id){
     let base_url = await RouteHandler();
-	const cookies = new Cookies();
+	  const cookies = new Cookies();
     const AuthToken = cookies.get('user_token1');
     let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: `${base_url}/api/user/fetch/store/all?store_id=${store_id}`,
-        headers: { 
-          'Authorization': `Bearer ${AuthToken}`
-        }
-      };
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${base_url}/api/user/fetch/store/all?store_id=${store_id}`,
+      headers: {
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${AuthToken}`
+      }
+    };
       
     const result = await axios.request(config).then((response) => {
         return response;
