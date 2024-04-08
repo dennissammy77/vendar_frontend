@@ -1,14 +1,15 @@
-import { FetchUserDetails } from "@/app/api/auth/route";
+import { FETCH_USER_DATA, FetchUserDetails } from "@/app/api/auth/route";
 import useFetchToken from "./useFetchToken.hook";
 
 const useFetchUserData = async() =>{
-    const retrived_token = useFetchToken();
-    if (retrived_token === null || !retrived_token){
+    const RETREIVED_TOKEN = useFetchToken();
+    
+    if (RETREIVED_TOKEN === null || !RETREIVED_TOKEN){
         return null;
     }
-    const uid = retrived_token?.sub;
+    const USER_ID = RETREIVED_TOKEN?.sub;
     try {
-        const result = await FetchUserDetails(uid);
+        const result = await FETCH_USER_DATA(USER_ID);
         return result;
     } catch (error) {
         return null;

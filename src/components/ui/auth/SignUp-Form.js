@@ -26,7 +26,7 @@ const SignUpForm=()=>{
     email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
     mobile: yup.string().required(),
     password: yup.string().required().min(6).max(16),
-    account_type: yup.string().default('shop_admin').required(),
+    account_type: yup.string().default('store_admin').required(),
     profile_image_url: yup.string().default('')
   });
   const {

@@ -6,7 +6,7 @@ import React, { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
-import { UpdateStore } from '@/app/api/shop/route';
+import { UPDATE_STORE_DATA } from '@/app/api/shop/route';
 import { FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from 'react-icons/fa6';
 
@@ -29,6 +29,7 @@ export default function EditStoreForm(props) {
         twitter_url:   yup.string(),
         tiktok_url:    yup.string(),
         whatsapp_url:  yup.string(),
+        owner_ref_id:  yup.string()
     });
     const {
         register, 
@@ -48,16 +49,17 @@ export default function EditStoreForm(props) {
             twitter_url:   data?.twitter_url,
             tiktok_url:    data?.tiktok_url,
             whatsapp_url:  data?.whatsapp_url,
+            owner_ref_id:  user?.data?.data?._id
         },
     });
 
     const onSubmit = async(data) => {
-        const uid = user?.data?.data?._id;
+        const user_id = user?.data?.data?._id;
         const flag = 'details';
         const store_id = props?.store_data?._id;
         try{
-            await UpdateStore(data,store_id,uid,flag).then((response)=>{
-                if(response?.data?.error){
+            await UPDATE_STORE_DATA(data,store_id,user_id,flag).then((response)=>{
+                if(response?.data?.error || response?.response?.data?.error){
                     return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
                 }
                 toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });

@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
@@ -7,24 +7,29 @@ import { Button, FormControl, FormLabel, HStack, Icon, Input, InputGroup, InputR
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { CiWarning } from 'react-icons/ci';
 import { UserContext } from '@/components/providers/user.context';
-import { CreateShopAdmin } from '@/app/api/auth/route';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { NEW_STORE_STAKEHOLDER_ACCOUNT } from '@/app/api/auth/route';
 
 export default function NewStaffForm() {
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     const {user} = useContext(UserContext);
-    const existing_stores = user?.data?.data?.shop_ref;
+    
+    const EXISTING_STORES = user?.data?.data?.store_ref;
+
+    const searchParams = useSearchParams()
+    const STORE_ID = searchParams.get('store_id');
+    const USER_ID = user?.data?.data?._id;
+
     const schema = yup.object().shape({
         name: yup.string().required(),
+        username: yup.string().default(''),
         email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
         mobile: yup.string().required(),
         password: yup.string().required().min(6).max(16),
-        account_type: yup.string().default('shop_admin').required(),
-        role: yup.string().required('You need to assign a role to this user'),
-        shop_ref: yup.string().required('You need to select a store for this user'),
-        profile_image_url: yup.string().default('')
+        account_type: yup.string().default('store_admin').required(),
+        role: yup.string().required('You need to assign a role to this user')
     });
-
+ 
     const toast = useToast();
     const router = useRouter()
 
@@ -42,7 +47,7 @@ export default function NewStaffForm() {
 
     const onSubmit = async(data) => {
         try {
-          await CreateShopAdmin(data).then((response)=>{
+          await NEW_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID).then((response)=>{
             if(response?.data?.error === true){
                 return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
             }
@@ -91,7 +96,7 @@ export default function NewStaffForm() {
             <FormControl isRequired>
                 <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
                 <Select {...register("shop_ref")} placeholder='Select the store for the user'>
-                    {existing_stores?.map((store)=>{
+                    {EXISTING_STORES?.map((store)=>{
                         return(
                             <option key={store?._id} value={store?._id}>{store?.name}</option>
                         )

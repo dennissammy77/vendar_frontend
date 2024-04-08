@@ -10,6 +10,7 @@ export function UserProvider({children}) {
     useEffect(()=>{
         FetchUser()
     },[user_handler]);
+    
     const FetchUser=async()=>{
         const data = await useFetchUserData();
         set_user(data)
