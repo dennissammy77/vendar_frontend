@@ -1,83 +1,159 @@
 'use client'
-import { FetchUsersShop } from '@/app/api/auth/route';
+import React, { useContext } from 'react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure} from '@chakra-ui/react'
+import { MdChevronRight, MdClose, MdDone, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
-import { Avatar, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, HStack, Icon, Input, InputGroup, InputLeftElement, Spinner, Text } from '@chakra-ui/react'
+import { GrFormEdit } from 'react-icons/gr';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useContext, useEffect } from 'react'
-import { FiSearch } from 'react-icons/fi'
-import { IoMdAdd } from 'react-icons/io'
-import { MdChevronRight } from 'react-icons/md';
+
 import { useQuery } from '@tanstack/react-query';
-import { TbUserEdit } from "react-icons/tb";
-import { TiUserDeleteOutline } from "react-icons/ti";
+import { FETCH_USER_DATA } from '@/app/api/auth/route';
 
+import { TiUserDelete } from "react-icons/ti";
 
-export default function Page() {
+function Page() {
     const {user} = useContext(UserContext);
     const router = useRouter();
 
-    const [search_query, set_search_query] = React.useState('');
-
-    const searchParams = useSearchParams()
-    const store_id = searchParams.get('store_id');
-
-    const {data, isLoading} = useQuery({
-        queryKey: ['staff_data',{store_id,search_query}],
-        queryFn: () => FetchUsersShop(store_id)
-    })
-    const staff_data = data?.data?.data;
+    const searchParams = useSearchParams();
+    const ACCOUNT_ID = searchParams.get('account_id');
     
-    if(isLoading){
-        return (
-            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                <Spinner />
-                <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Fetching staff data...</Text>
-            </Flex>
-        )
-    }
+    const {data, isLoading} = useQuery({
+        queryKey: ['account_id', {ACCOUNT_ID}],
+        queryFn: () => FETCH_USER_DATA(ACCOUNT_ID)
+    });
+
+    const USER_DATA = data?.data?.data;
 
     return (
         <Box>
-            <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}} mb='4'>
-                <Text fontWeight='bold' fontSize='32px'>Staff</Text>
-                <Flex align='center' >
-                    <InputGroup>
-                        <InputLeftElement pointerEvents='none'>
-                            <Icon as={FiSearch} color='gray.500' ml='2'/>
-                        </InputLeftElement>
-                        <Input type='search' placeholder={'Search staff'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
-                    </InputGroup>
-                    <Button variant={'filled'} borderRadius={'md'} bg='#4E2FD7' color='#fff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/staff/new?uid=${user?.data?.data?._id}&&store_id=${store_id}`)})}>New</Button>
+            <Text fontWeight='bold' fontSize='32px'>Staff Data</Text>
+            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+                <BreadcrumbItem>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink href={`/dashboard/staff/?uid=${user?.data?.data?._id}`}>staff</BreadcrumbLink>
+                </BreadcrumbItem>
+
+                <BreadcrumbItem>
+                    <BreadcrumbLink isCurrentPage>{ACCOUNT_ID}</BreadcrumbLink>
+                </BreadcrumbItem>
+            </Breadcrumb>
+            <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
+                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
+                    <HStack>
+                        <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
+                        <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
+                    </HStack>
+                    <HStack>
+                        <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
+                        <Icon boxSize='6' as={TiUserDelete} cursor='pointer'/>
+                    </HStack>
                 </Flex>
-            </Flex>
-            {staff_data?.length === 0 && (
-                <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                    <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>No Data Found</Text>
-                </Flex>
-            )}
-            {staff_data && staff_data?.map((staff)=>{
-                return(
-                    <StaffItem key={staff._id} staff={staff} />
-                )
-            })}
+                <Grid
+                    templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
+                    templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}}
+                    gap={4}
+                    my='2'
+                >
+                    <GridItem>
+                        <Box>
+                            <Text fontWeight={'bold'}>Name</Text>
+                            <Text fontWeight={''}>{USER_DATA?.name}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>UserName</Text>
+                            <Text fontWeight={''}>{USER_DATA?.username}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Email</Text>
+                            <Text fontWeight={''}>{USER_DATA?.email}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Mobile</Text>
+                            <Text fontWeight={''}>{USER_DATA?.mobile}</Text>
+                        </Box>
+                    </GridItem>
+                    <GridItem>
+                        <Box>
+                            <Text fontWeight={'bold'}>Current role</Text>
+                            <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7' >{USER_DATA?.store_admin_account_ref?.role}</Badge>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Store(s)</Text>
+                            {USER_DATA?.store_ref?.map((store)=>{
+                                return (
+                                    <Text fontWeight={''} my='2'>{store?.name}</Text>
+                                )
+                            })}
+                        </Box>
+                    </GridItem>
+                </Grid>
+            </Box>
+            <Box p='4' boxShadow={'md'} borderRadius={'md'}>
+                <Text fontWeight={'bold'} my='2'>Permissions</Text>
+                <TableContainer>
+                    <Table size='md'>
+                        <Thead>
+                            <Tr>
+                                <Th></Th>
+                                <Th>VIEW</Th>
+                                <Th>CREATE</Th>
+                                <Th>EDIT</Th>
+                                <Th>DELETE</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            <Tr>
+                                <Td>Store</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Staff</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Vendor</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Product</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Customer</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Transcations</Td>
+                                <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                            </Tr>
+                        </Tbody>
+                    </Table>
+                </TableContainer>
+            </Box>
         </Box>
-    )
+  )
 }
 
-const StaffItem=({staff})=>{
-    return(
-        <Flex align='center' my='2' justify='space-between' p='2' borderBottom={'1px solid'} borderColor={'gray.200'}>
-            <HStack spacing='2'>
-                <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
-                <Box>
-                <   Text fontSize={'sm'} fontWeight={'bold'}>{staff?.name}</Text>
-                    <Text fontSize={'xs'}>{staff?.shop_admin_account_ref?.role}</Text>
-                </Box>
-            </HStack>
-            <HStack spacing='4' align='center'>
-                <Icon as={TbUserEdit} boxSize='6' cursor='pointer' _hover={{color:'#4E2FD7'}}/>
-                <Icon as={TiUserDeleteOutline} boxSize='6' cursor='pointer' _hover={{color:'red.400'}}/>
-            </HStack>
-        </Flex>
-    )
-  }
+export default Page
