@@ -9,7 +9,7 @@ import { VscDiscard } from 'react-icons/vsc';
 import { useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { FetchStore } from '@/app/api/shop/route';
+import { FETCH_STORE_DATA } from '@/app/api/shop/route';
 
 export default  function Page() {
     const {user} = useContext(UserContext);
@@ -17,10 +17,11 @@ export default  function Page() {
     // Handle seaerch parameters
     const searchParams = useSearchParams()
     const store_id = searchParams.get('store_id');
+    const USER_ID = user?.data?.data?._id;
     
     const {data: store_data, isLoading} = useQuery({
         queryKey: ['store_data', {store_id}],
-        queryFn: () => FetchStore(store_id)
+        queryFn: () => FETCH_STORE_DATA(store_id,USER_ID)
     })
     const data = store_data?.data?.data;
   return (

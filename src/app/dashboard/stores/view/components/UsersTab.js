@@ -2,7 +2,7 @@ import { UserContext } from '@/components/providers/user.context'
 import { Avatar, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import React, { useContext } from 'react'
-import { IoMdAdd } from 'react-icons/io'
+import { IoMdAdd, IoMdSettings } from 'react-icons/io'
 import { MdOutlineAdminPanelSettings } from 'react-icons/md'
 
 export default function UserTabs({store}) {
@@ -57,13 +57,22 @@ const StaffCard=({store})=>{
 }
 
 const StaffItem=({staff})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+
   return(
-    <HStack spacing='2' bg='#E4F0FC' p='2' borderRadius={'5'}>
-      <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
-      <Box>
-        <Text fontSize={'sm'} fontWeight={'bold'}>{staff?.name}</Text>
-        <Text fontSize={'xs'}>{staff?.shop_admin_account_ref?.role}</Text>
-      </Box>
-    </HStack>
+    <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'}>
+      <HStack spacing='2' >
+        <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
+        <Box>
+          <Text fontSize={'sm'} fontWeight={'bold'}>{staff?.name}</Text>
+          <Text fontSize={'xs'}>{staff?.shop_admin_account_ref?.role}</Text>
+        </Box>
+      </HStack>
+      <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&&account_id=${staff?._id}`)})}>
+          <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+          <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+      </HStack>
+    </Flex>
   )
 }

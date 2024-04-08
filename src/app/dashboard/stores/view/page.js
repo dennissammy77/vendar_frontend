@@ -1,29 +1,40 @@
 'use client'
-import { FetchStore } from '@/app/api/shop/route';
+import { FETCH_STORE_DATA } from '@/app/api/shop/route';
 import { UserContext } from '@/components/providers/user.context';
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Spinner, Text} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, useDisclosure, VStack} from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
 import { FaInstagram, FaPhone, FaTiktok, FaWhatsapp } from 'react-icons/fa';
-import { FaLocationDot, FaXTwitter } from 'react-icons/fa6';
+import { FaLocationDot, FaWandMagicSparkles, FaXTwitter } from 'react-icons/fa6';
 import { GrFormEdit } from 'react-icons/gr';
 import { HiChevronDown } from 'react-icons/hi2';
 import { MdChevronRight, MdDeleteOutline, MdEmail } from 'react-icons/md';
 import UserTabs from './components/UsersTab';
+import DELETE_STORE_ALERT from '@/components/ui/store/DELETE_STORE_ALERT.js';
+import Link from "next/link";
+
 
 function Page() {
     const {user} = useContext(UserContext);
+    
+    //const USER_ID = user?.data?.data?._id;
+
+    const DELETE_STORE_ALERT_DISCLOSURE = useDisclosure()
+
     const router = useRouter();
 
     const searchParams = useSearchParams()
     const store_id = searchParams.get('store_id');
+    const USER_ID = searchParams.get('uid');
 
     const {data, isLoading} = useQuery({
         queryKey: ['store_data', {store_id}],
-        queryFn: () => FetchStore(store_id)
+        queryFn: () => FETCH_STORE_DATA(store_id,USER_ID)
     })
+    console.log(store_id,USER_ID)
     const store = data?.data?.data;
+    console.log(data)
     if(isLoading){
         return (
             <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
@@ -32,15 +43,28 @@ function Page() {
             </Flex>
         )
     }
+
+    if (data?.data?.error){
+        return (
+            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+                <Text fontSize={'large'} fontWeight={'bold'} color='gray.300' my='2'>{data?.data?.message}</Text>
+                <VStack spacing='2'>
+                    <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' my='4' w='full' color='#fff' leftIcon={<FaWandMagicSparkles />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${USER_ID}`)})}>Create Store</Button>
+                    <Link cursor={'pointer'} href={`/dashboard/stores?uid=${USER_ID}`} textDecoration={'1px solid underline'}>Back to Stores</Link>
+                </VStack>
+            </Flex>
+        )
+    }
     return (
         <Box>
+            <DELETE_STORE_ALERT isOpen={DELETE_STORE_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STORE_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} STORE_ID={store_id}/>
             <Flex align='center' justifyContent={'space-between'}>
                 <Text fontWeight='bold' fontSize='32px'>Store Details</Text>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<HiChevronDown />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
                     <MenuList>
                         <MenuItem icon={<GrFormEdit style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>Edit</MenuItem>
-                        <MenuItem icon={<MdDeleteOutline style={{fontSize:'16px'}}/>}>Delete</MenuItem>
+                        <MenuItem icon={<MdDeleteOutline style={{fontSize:'16px'}}/>} onClick={DELETE_STORE_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
                     </MenuList>
                 </Menu>
             </Flex>
