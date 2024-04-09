@@ -50,6 +50,28 @@ return result;
 
 }
 
+export async function DELETE_STORE_STAKEHOLDER_ACCOUNT(USER_ID,ACCOUNT_TYPE,FLAG){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'delete',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/delete?user_id=${USER_ID}&account_type=${ACCOUNT_TYPE}&flag=${FLAG}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
+}
+
 export async function CreateShopAdmin(data){
     let base_url = await RouteHandler();
     const cookies = new Cookies();
