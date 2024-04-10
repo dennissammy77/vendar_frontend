@@ -22,7 +22,12 @@ export default function DELETE_STAKEHOLDER_ACCOUNT_ALERT({isOpen, onClose, USER_
             toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
             setTimeout(()=>{
                 onClose();
-                router.push(`/dashboard/staff?uid=${USER_ID}&store_id=`)
+                if(ACCOUNT_TYPE === 'store_admin'){
+                    router.push(`/dashboard/staff?uid=${USER_ID}&store_id=`)
+                }
+                if(ACCOUNT_TYPE === 'vendor'){
+                    router.push(`/dashboard/vendors?uid=${USER_ID}&store_id=`)
+                }
             },5000)
             return ;
         }).catch((err)=>{

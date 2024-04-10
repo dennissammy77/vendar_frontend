@@ -115,7 +115,7 @@ export const UPDATE_STORE_STAKEHOLDER_FORM=(props)=>{
             mobile:             props?.USER_DATA?.mobile,
             account_type:       props?.USER_DATA?.account_type,
             account_id:         props?.USER_DATA?._id,
-            role:               props?.USER_DATA?.store_admin_account_ref?.role
+            role:               props?.USER_DATA?.account_type === 'store_admin'? props?.USER_DATA?.store_admin_account_ref?.role : 'undefined',
         }, 
     });
 
@@ -124,8 +124,8 @@ export const UPDATE_STORE_STAKEHOLDER_FORM=(props)=>{
 
     const onSubmit = async(data) => {
         try{
-            if (data?.role === props?.USER_DATA?.store_admin_account_ref?.role){
-                const FLAG = 'details';
+            if (data?.role !== props?.USER_DATA?.store_admin_account_ref?.role && props?.USER_DATA?.account_type === 'store_admin'){
+                const FLAG = 'staff-role';
                 await UPDATE_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID,FLAG).then((response)=>{
                     if(response?.data?.error || response?.response?.data?.error){
                         return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
@@ -139,7 +139,7 @@ export const UPDATE_STORE_STAKEHOLDER_FORM=(props)=>{
                     return toast({ title: `Error`, description: `Could not update profile:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
                 })
             }
-            const FLAG = 'staff-role';
+            const FLAG = 'details';
             await UPDATE_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID,FLAG).then((response)=>{
                 if(response?.data?.error || response?.response?.data?.error){
                     return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
@@ -152,6 +152,8 @@ export const UPDATE_STORE_STAKEHOLDER_FORM=(props)=>{
             }).catch((err)=>{
                 return toast({ title: `Error`, description: `Could not update profile:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             })
+            
+            
         }catch(err){
             return toast({ title: `Error`, description: `Could not update profile:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
         }
@@ -174,16 +176,20 @@ export const UPDATE_STORE_STAKEHOLDER_FORM=(props)=>{
                 <Input disabled={isSubmitting} {...register('mobile')} type='tel' placeholder='0712345678' variant='filled'/>
                 {errors.mobile && ( <Text fontSize={'sm'} color='red'>{errors.mobile.message}</Text>)}
             </FormControl>
-            <FormControl isRequired>
-                <FormLabel my='2' fontWeight={'bold'}>Role</FormLabel>
-                <Select {...register("role")} placeholder='Select the role'>
-                    <option value='manager'>Manager</option>
-                    <option value='sale'>Supervisor</option>
-                    <option value='sale'>Sale</option>
-                    <option value='finance'>Finance</option>
-                </Select>
-                {errors.role && (<FormErrorMessage>{errors.role.message}</FormErrorMessage>)}
-            </FormControl>
+            {props?.USER_DATA?.account_type === 'store_admin'?
+                <FormControl isRequired>
+                    <FormLabel my='2' fontWeight={'bold'}>Role</FormLabel>
+                    <Select {...register("role")} placeholder='Select the role'>
+                        <option value='manager'>Manager</option>
+                        <option value='supervisor'>Supervisor</option>
+                        <option value='sale'>Sale</option>
+                        <option value='finance'>Finance</option>
+                    </Select>
+                    {errors.role && (<FormErrorMessage>{errors.role.message}</FormErrorMessage>)}
+                </FormControl>
+                :
+                null
+            }
             {isSubmitting?
                 <Button isLoading loadingText='saving...' variant='ghost' borderRadius={'md'} w='full'/>
                 :
