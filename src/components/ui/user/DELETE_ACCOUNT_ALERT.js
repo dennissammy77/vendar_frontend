@@ -12,7 +12,6 @@ export default function DELETE_ACCOUNT_ALERT({isOpen, onClose, USER_ID, USER_DAT
         const FLAG = 'delete'
         const ACCOUNT_TYPE = USER_DATA?.account_type;
         await DELETE_USER_ACCOUNT(USER_ID, ACCOUNT_TYPE, FLAG).then((response)=>{
-            console.log(response);
             if(response?.data?.error || response?.response?.data?.error){
                 return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             }

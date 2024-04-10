@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, useToast, UnorderedList, ListItem, OrderedList, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation';
-import { DELETE_USER_ACCOUNT } from '@/app/api/auth/route';
+import { DELETE_STORE_STAKEHOLDER_ACCOUNT } from '@/app/api/auth/route';
 import useLogOut from '@/components/hooks/useLogOut.hook';
 
 export default function DELETE_STAKEHOLDER_ACCOUNT_ALERT({isOpen, onClose, USER_ID, USER_DATA}) {
@@ -11,17 +11,18 @@ export default function DELETE_STAKEHOLDER_ACCOUNT_ALERT({isOpen, onClose, USER_
     const HANDLE_SUBMIT = async()=>{
         const FLAG = 'delete'
         const ACCOUNT_TYPE = USER_DATA?.account_type;
-        const ACCOUNT_ID = USER_DATA?._ID;
-        await DELETE_USER_ACCOUNT(USER_ID, ACCOUNT_TYPE, FLAG).then((response)=>{
-            console.log(response);
+        const ACCOUNT_ID = USER_DATA?._id;
+        if(USER_ID === ACCOUNT_ID){
+            return toast({ title: 'Error!', description: 'You cannot delete your own account.', status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+        }
+        await DELETE_STORE_STAKEHOLDER_ACCOUNT(USER_ID,ACCOUNT_ID, ACCOUNT_TYPE, FLAG).then((response)=>{
             if(response?.data?.error || response?.response?.data?.error){
                 return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             }
             toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
             setTimeout(()=>{
                 onClose();
-                useLogOut();
-                router.push(`/`)
+                router.push(`/dashboard/staff?uid=${USER_ID}&store_id=`)
             },5000)
             return ;
         }).catch((err)=>{
