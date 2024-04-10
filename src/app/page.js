@@ -15,6 +15,7 @@ export default function Index() {
   const {user} = useContext(UserContext);
   const HandleLogout =()=>{
     useLogOut();
+    window?.location.href('/')
   }
 
   return (
