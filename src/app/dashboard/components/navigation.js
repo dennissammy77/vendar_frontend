@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure } from "@chakra-ui/react";
+import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure, MenuGroup } from "@chakra-ui/react";
 import { MdAdminPanelSettings, MdOutlineMenu, MdUpgrade } from "react-icons/md";
 //import { dashboardContext } from "../../providers/dashboard.context";
 import { useContext } from "react";
@@ -7,10 +7,13 @@ import { usePathname, useRouter  } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
 
 import { IoMenu } from "react-icons/io5";
-import { HiBell } from "react-icons/hi2";
+import { RiAccountCircleLine } from "react-icons/ri";
+import { HiOutlineLogout } from "react-icons/hi";
 import { FaBell } from "react-icons/fa";
 import LOGO from "@/app/lib/LOGO";
 import { IoCloseSharp } from "react-icons/io5";
+import Link from "next/link";
+import useLogOut from "@/components/hooks/useLogOut.hook";
 
 export default function NavigationBody({children,navigation}){
     const sidebar = useDisclosure();
@@ -44,6 +47,10 @@ export default function NavigationBody({children,navigation}){
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
+  const HandleLogout =()=>{
+    useLogOut();
+    window?.location.href('/')
+  }
   return (
     <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <HStack spacing='2' align='center' hideFrom={'md'}>
@@ -56,7 +63,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size={'sm'} src={ 'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'} name={user?.data?.data?.name}/>
+                <Avatar size={'sm'} name={user?.data?.data?.name}/>
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
                   <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
                   <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7'>{user?.data?.data?.store_admin_account_ref?.role}</Badge>
@@ -70,11 +77,18 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
               </HStack>
             </MenuButton>
             <MenuList>
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
+              <MenuGroup title='Profile'>
+                <MenuItem  as='a' href={`/dashboard/settings?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`} icon={<RiAccountCircleLine/>}> My Account </MenuItem>
+              </MenuGroup>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuGroup title='Help'>
+                <MenuItem>FAQs</MenuItem>
+                <MenuItem>Support</MenuItem>
+              </MenuGroup>
+              <MenuDivider />
+              <MenuItem as='a' onClick={(()=>{HandleLogout()})} href='/' cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
+                Log out  
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>

@@ -2,7 +2,7 @@
 import { Box, Text, useToast } from '@chakra-ui/react'
 import React, { useContext, useEffect } from 'react'
 import NavigationBody from './components/navigation'
-import { IoStorefrontOutline } from "react-icons/io5";
+import { IoPeopleOutline, IoStorefrontOutline } from "react-icons/io5";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
 import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts } from 'react-icons/md';
@@ -51,7 +51,9 @@ const navigation = [
     },
     {
         id: '5',
+        icon: IoPeopleOutline,
         title:  'Vendors',
+        route: '/dashboard/vendors'
     },
     {
         id: '6',

@@ -98,7 +98,7 @@ const StaffItem=({staff,STORE_ID})=>{
     const {user} = useContext(UserContext)
   
     return(
-      <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'}>
+      <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'} transition={'.3s ease-in-out'} _hover={{bg:'gray.100'}} cursor={'pointer'}>
         <HStack spacing='2' >
           <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
           <Box>
