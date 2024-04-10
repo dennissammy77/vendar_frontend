@@ -94,7 +94,6 @@ const NavItem = (props) => {
   };
 
 const SidebarContent = ({onClose,navigation,display,width}) => {
-  const {active_page,set_page} = 'useContext(dashboardContext)';
   const {user} = useContext(UserContext)
   const pathname = usePathname();
   const pathArr = pathname?.split('/');
@@ -108,7 +107,17 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
       </Flex>
       {navigation?.map((item)=>{
         return(
-          <NavItem key={item?.id} bg={pathArr[2] === item?.title?.toLowerCase() ? '#E4F0FC' : '#FAFAFA'} color={pathArr[2] === item?.title?.toLowerCase() ? '#4E2FD7' : '#9298AC'} borderRadius={pathArr[2] ==- item?.title?.toLowerCase()? 'md' : '5'} icon={item?.icon} onClick={(()=>{router.push(item?.route+'?uid='+user?.data?.data?._id);onClose()})}>
+          <NavItem 
+            key={item?.id} 
+            bg={pathArr[2] === item?.title?.toLowerCase() ? '#E4F0FC' : '#FAFAFA'} 
+            color={pathArr[2] === item?.title?.toLowerCase() ? '#4E2FD7' : '#9298AC'} 
+            borderRadius={pathArr[2] ==- item?.title?.toLowerCase()? 'md' : '5'} 
+            icon={item?.icon} 
+            onClick={(()=>{
+              router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
+              onClose()
+            })}
+          >
             {item.title}
           </NavItem>
         )
