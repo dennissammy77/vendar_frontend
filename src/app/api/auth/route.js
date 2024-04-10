@@ -25,6 +25,28 @@ export async function SignInApi (payload){
     }
 }
 
+export async function FETCH_STAKEHOLDERS_DATA (STORE_ID,ACCOUNT_TYPE){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholders?store_id=${STORE_ID}&account_type=${ACCOUNT_TYPE}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
+}
+
 export async function NEW_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID){
   let BASE_URL = await RouteHandler();
   const cookies = new Cookies();
@@ -41,16 +63,40 @@ export async function NEW_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID){
     data : data
   };
   
-const result = await axios.request(config).then((response) => {
-    return response;
-}).catch((error) => {
-    return(error)
-});
-return result;
+  const result = await axios.request(config).then((response) => {
+      return response;
+  }).catch((error) => {
+      return(error)
+  });
+  return result;
 
 }
 
-export async function DELETE_STORE_STAKEHOLDER_ACCOUNT(USER_ID,ACCOUNT_TYPE,FLAG){
+export async function UPDATE_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID,FLAG){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'put',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholder/update?user_id=${USER_ID}&store_id=${STORE_ID}&flag=${FLAG}`,
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    },
+    data : data
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+    return response;
+  }).catch((error) => {
+      return(error)
+  });
+  return result;
+}
+
+export async function DELETE_STORE_STAKEHOLDER_ACCOUNT(USER_ID,ACCOUNT_ID,ACCOUNT_TYPE,FLAG){
   let BASE_URL = await RouteHandler();
   const cookies = new Cookies();
   const AUTH_TOKEN = cookies.get('user_token1');
@@ -58,7 +104,7 @@ export async function DELETE_STORE_STAKEHOLDER_ACCOUNT(USER_ID,ACCOUNT_TYPE,FLAG
   let CONFIG = {
     method: 'delete',
     maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/user/delete?user_id=${USER_ID}&account_type=${ACCOUNT_TYPE}&flag=${FLAG}`,
+    url: `${BASE_URL}/api/user/stakeholder/delete?user_id=${USER_ID}&account_id=${ACCOUNT_ID}&account_type=${ACCOUNT_TYPE}&flag=${FLAG}`,
     headers: { 
       'Authorization': `Bearer ${AUTH_TOKEN}`
     }

@@ -97,7 +97,6 @@ export async function UPDATE_STORE_DATA(data,store_id,user_id,flag){
 }
 
 export async function DELETE_STORE_DATA(USER_ID, STORE_ID, flag){
-    console.log('user_id',USER_ID,'store_id',STORE_ID)
 
     let base_url = await RouteHandler();
     const cookies = new Cookies();
