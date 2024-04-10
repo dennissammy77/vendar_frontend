@@ -22,7 +22,7 @@ function Page() {
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/staff/view/?uid=${user?.data?.data?._id}&&store_id=${store_id}`}>Staff</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/staff?uid=${user?.data?.data?._id}&store_id=${store_id}`}>Staff</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>

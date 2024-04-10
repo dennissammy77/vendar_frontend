@@ -10,13 +10,16 @@ import { useQuery } from '@tanstack/react-query';
 import { FETCH_USER_DATA } from '@/app/api/auth/route';
 
 import { TiUserDelete } from "react-icons/ti";
+import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
 
 function Page() {
     const {user} = useContext(UserContext);
+    const USER_ID = user?.data?.data?._id;
     const router = useRouter();
 
     const searchParams = useSearchParams();
     const ACCOUNT_ID = searchParams.get('account_id');
+    const STORE_ID = searchParams.get('store_id');
     
     const {data, isLoading} = useQuery({
         queryKey: ['account_id', {ACCOUNT_ID}],
@@ -25,8 +28,12 @@ function Page() {
 
     const USER_DATA = data?.data?.data;
 
+    const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
+
+
     return (
         <Box>
+            <DELETE_STAKEHOLDER_ACCOUNT_ALERT isOpen={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} USER_DATA={USER_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Staff Data</Text>
             <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
                 <BreadcrumbItem>
@@ -34,7 +41,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/staff/?uid=${user?.data?.data?._id}`}>staff</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/staff?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>staff</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -43,11 +50,11 @@ function Page() {
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                 <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack>
+                    <HStack onClick={(()=>{router.push(`/dashboard/staff/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`)})}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
                         <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
                     </HStack>
-                    <HStack>
+                    <HStack onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
                         <Icon boxSize='6' as={TiUserDelete} cursor='pointer'/>
                     </HStack>
