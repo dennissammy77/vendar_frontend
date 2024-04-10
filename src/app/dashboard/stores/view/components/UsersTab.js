@@ -42,12 +42,12 @@ const StaffCard=({store})=>{
             <Icon as={IoMdAdd} boxSize={'4'}  />
             <Text>New</Text>
           </HStack>
-          <Text ml='2' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
+          <Text ml='2' onClick={(()=>{router.push(`/dashboard/staff?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
         </Flex>
         {store?.staff?.map((staff)=>{
           return(
             <Box key={staff?._id} py='2'>
-              <StaffItem staff={staff}/>
+              <StaffItem staff={staff} STORE_ID={store?._id}/>
               <Divider py='1'/>
             </Box>
           )})
@@ -56,7 +56,7 @@ const StaffCard=({store})=>{
   )
 }
 
-const StaffItem=({staff})=>{
+const StaffItem=({staff,STORE_ID})=>{
   const router = useRouter();
   const {user} = useContext(UserContext)
 
@@ -66,13 +66,17 @@ const StaffItem=({staff})=>{
         <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
         <Box>
           <Text fontSize={'sm'} fontWeight={'bold'}>{staff?.name}</Text>
-          <Text fontSize={'xs'}>{staff?.shop_admin_account_ref?.role}</Text>
+          <Text fontSize={'xs'}>{staff?.store_admin_account_ref?.role}</Text>
         </Box>
       </HStack>
-      <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&&account_id=${staff?._id}`)})}>
-          <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-          <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
-      </HStack>
+      {user?.data?.data?._id === staff?._id ? 
+        null
+        :
+        <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${staff?._id}`)})}>
+            <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+            <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+        </HStack>
+      }
     </Flex>
   )
 }

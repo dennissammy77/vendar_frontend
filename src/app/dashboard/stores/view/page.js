@@ -32,9 +32,7 @@ function Page() {
         queryKey: ['store_data', {store_id}],
         queryFn: () => FETCH_STORE_DATA(store_id,USER_ID)
     })
-    console.log(store_id,USER_ID)
     const store = data?.data?.data;
-    console.log(data)
     if(isLoading){
         return (
             <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
