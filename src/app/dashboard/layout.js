@@ -6,6 +6,7 @@ import { IoPeopleOutline, IoStorefrontOutline } from "react-icons/io5";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
 import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts } from 'react-icons/md';
+import { GiShoppingBag } from "react-icons/gi";
 
 export default function Layout({children}){
     const {user} = useContext(UserContext);
@@ -41,7 +42,9 @@ const navigation = [
     },
     {
         id: '3',
+        icon: GiShoppingBag,
         title:  'Products',
+        route: '/dashboard/products'
     },
     {
         id: '4',

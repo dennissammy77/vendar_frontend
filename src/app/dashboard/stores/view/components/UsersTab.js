@@ -21,10 +21,10 @@ export default function UserTabs({store}) {
               <StaffCard  store={store}/>
             </TabPanel>
             <TabPanel>
-              <p>two!</p>
+              <VendorCard store={store}/>
             </TabPanel>
             <TabPanel>
-              <p>two!</p>
+              <ProductCard store={store}/>
             </TabPanel>
         </TabPanels>
     </Tabs>
@@ -56,6 +56,56 @@ const StaffCard=({store})=>{
   )
 }
 
+const VendorCard=({store})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+  return(
+    <Box>
+        
+        <Flex justify={'end'} w='100%' align={'center'} fontWeight={'bold'} color='#4E2FD7'>
+          <HStack borderRight='1px solid' borderColor='gray.200' px='2' _hover={{textDecoration:'1px solid underline'}} cursor='pointer' onClick={(()=>{router.push(`/dashboard/vendors/new?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
+            <Icon as={IoMdAdd} boxSize={'4'}  />
+            <Text>New</Text>
+          </HStack>
+          <Text ml='2' onClick={(()=>{router.push(`/dashboard/vendors?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
+        </Flex>
+        {store?.vendors?.map((vendor)=>{
+          return(
+            <Box key={vendor?._id} py='2'>
+              <VendorItem vendor={vendor} STORE_ID={store?._id}/>
+              <Divider py='1'/>
+            </Box>
+          )})
+        }
+    </Box>
+  )
+}
+
+const ProductCard=({store})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+  return(
+    <Box>
+        
+        <Flex justify={'end'} w='100%' align={'center'} fontWeight={'bold'} color='#4E2FD7'>
+          <HStack borderRight='1px solid' borderColor='gray.200' px='2' _hover={{textDecoration:'1px solid underline'}} cursor='pointer' onClick={(()=>{router.push(`/dashboard/products/new?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
+            <Icon as={IoMdAdd} boxSize={'4'}  />
+            <Text>New</Text>
+          </HStack>
+          <Text ml='2' onClick={(()=>{router.push(`/dashboard/products?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
+        </Flex>
+        {store?.products?.map((product)=>{
+          return(
+            <Box key={product?._id} py='2'>
+              <ProductItem product={product} STORE_ID={store?._id}/>
+              <Divider py='1'/>
+            </Box>
+          )})
+        }
+    </Box>
+  )
+}
+
 const StaffItem=({staff,STORE_ID})=>{
   const router = useRouter();
   const {user} = useContext(UserContext)
@@ -77,6 +127,53 @@ const StaffItem=({staff,STORE_ID})=>{
             <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
         </HStack>
       }
+    </Flex>
+  )
+}
+
+const VendorItem=({vendor,STORE_ID})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+
+  return(
+    <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'} transition={'.3s ease-in-out'} _hover={{bg:'gray.100'}} cursor={'pointer'}>
+      <HStack spacing='2' >
+        <Avatar name={vendor?.name} size='md' src={vendor?.profile_image_url}/>
+        <Box>
+          <Text fontSize={'sm'} fontWeight={'bold'}>{vendor?.name}</Text>
+          <Text fontSize={'xs'} color='gray.400' my='1'>{vendor?.email}</Text>
+          <Text fontSize={'xs'} color='gray.400'>{vendor?.mobile}</Text>
+        </Box>
+      </HStack>
+      {user?.data?.data?._id === vendor?._id ? 
+        null
+        :
+        <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/vendors/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${vendor?._id}`)})}>
+            <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+            <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+        </HStack>
+      }
+    </Flex>
+  )
+}
+
+const ProductItem=({product,STORE_ID})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+
+  return(
+    <Flex py='2' px='4' borderRadius={'5'} align={'center'} justify={'space-between'} transition={'.3s ease-in-out'} _hover={{bg:'gray.100'}} cursor={'pointer'}>
+      <HStack spacing='2' >
+        <Box>
+          <Text fontSize={'md'} fontWeight={'bold'}>{product?.name}</Text>
+          <Text fontSize={'sm'} color='gray.600' my='1'>{product?.price}</Text>
+          <Text fontSize={'xs'} color='gray.400'>{product?.category}</Text>
+        </Box>
+      </HStack>
+      <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`)})}>
+          <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+          <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+      </HStack>
     </Flex>
   )
 }
