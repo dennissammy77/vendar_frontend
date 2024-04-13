@@ -7,6 +7,7 @@ import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
 import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts } from 'react-icons/md';
 import { GiShoppingBag } from "react-icons/gi";
+import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 
 export default function Layout({children}){
     const {user} = useContext(UserContext);
@@ -60,7 +61,9 @@ const navigation = [
     },
     {
         id: '6',
-        title:  'Customers',
+        icon: LiaMoneyBillWaveSolid,
+        title:  'Transactions',
+        route: '/dashboard/transactions'
     },
     {
         id: '7',
