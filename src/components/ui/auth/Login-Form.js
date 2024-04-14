@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Button, Icon, Input, InputGroup, InputRightElement, Text, useToast } from '@chakra-ui/react'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import CardWrapper from './CardWrapper'
 import {
   FormControl,
@@ -38,12 +38,16 @@ const LoginForm=()=>{
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  useEffect(()=>{
+    router.prefetch('/dashboard/home');
+  },[])
   const onSubmit = async(data) => {
     try {
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
           setTimeout(()=>{
-            router.back();
+            router.push('/dashboard/home');
           },2000)
           set_user_handler(response)
           return ;
@@ -67,20 +71,7 @@ const LoginForm=()=>{
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl mt='1' isRequired>
           <FormLabel>Email</FormLabel>
-          <Input disabled={isSubmitting} {...register('email',{
-            required: "Email is required",
-            validate: (value)=>{
-              if (!value.includes('@')){
-                return "Email must include @";
-              }
-              if (!value.includes('.com')){
-                return "Email must include.com";
-              }
-              if (!value.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-                return "Email must be of a valid address";
-              }
-            }
-          })} type='email' placeholder='johndoe@gmail.com' variant='filled'/>
+          <Input disabled={isSubmitting} {...register('email')} type='email' placeholder='johndoe@gmail.com' variant='filled'/>
           {errors.email && ( <Text fontSize={'sm'} color='red'>{errors.email.message}</Text>)}
         </FormControl>
         <FormControl mt='1' isRequired>
@@ -100,7 +91,7 @@ const LoginForm=()=>{
           <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>SignIn</Button>
         }
       </form>
-      <Text fontSize={'sm'} color='red' my='4' cursor={'pointer'} onClick={(()=>{router.push('/auth/password_reset')})}>Forgot password?</Text>
+      <Text fontSize={'sm'} color='red' my='4' cursor={'pointer'} onClick={(()=>{router.push('/password_reset')})}>Forgot password?</Text>
     </CardWrapper>
   )
 }
