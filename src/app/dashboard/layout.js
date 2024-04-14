@@ -67,7 +67,7 @@ const navigation = [
     },
     {
         id: '7',
-        title:  'Finances',
+        title:  'Analytics',
     },
     {
         id: '8',

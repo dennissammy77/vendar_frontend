@@ -1,157 +1,87 @@
 'use client'
 
-import Password_Reset from '@/api/auth/password/Reset/route';
-import { Generate_Otp, SendEmailOtp, Verify_otp } from '@/components/hooks/useHandleOtp.hook';
-import useLogOut from '@/components/hooks/useLogOut.hook';
-import { UserContext } from '@/components/providers/user.context';
-import { Button, Flex, HStack, Heading, Input, InputGroup, InputRightElement, PinInput, PinInputField, Text, useToast } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation';
 import React, { useContext, useState } from 'react'
-import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Heading, Icon, Input, InputGroup, InputRightElement, PinInput, PinInputField, Text, useToast } from '@chakra-ui/react'
+import LOGO from '@/app/lib/LOGO';
+import { CiWarning } from 'react-icons/ci';
+
+import { useForm } from 'react-hook-form';
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { SEND_OTP_CODE_TO_USER } from '@/app/api/auth/route';
 
 function Page() {
-    const {user,set_user_handler} = useContext(UserContext)
+    const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    const searchParams = useSearchParams()
+    const email_query = searchParams.get('email');
+
+    const schema = yup.object().shape({
+        email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
+    });
+
+    const {
+        register,
+        handleSubmit,
+        setError,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues:{
+            email: email_query
+        }
+    });
     const router = useRouter();
-    const toast = useToast()
-	const query = router?.query?.email;
-
-
-    const [active,set_active]=useState(true);
-    const [code_active,set_code_active]=useState(false);
-
-    const [email,set_email]=useState(query);
-    const [new_password,set_new_password]=useState('');
-    const [confirm_password,set_confirm_password]=useState('');
-
-    const [confirmation_code,set_confirmation_code]=useState();
-
-    const [show, setShow] = useState(false); //handle state to toggle password
-	const handleClick = () => setShow(!show); //handle state to toggle view of password
-
-    const [input_error,set_input_error]=useState(false);
-    const handle_otp=async()=>{
-        if(!email){
-            return toast({ title: 'Error!:No email found', description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
-        }
-        const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        const gmailRegex = /([a-zA-Z0-9]+)([\.{1}])?([a-zA-Z0-9]+)\@gmail([\.])com/g
-        const yahooRegex = /^[^@]+@(yahoo|ymail|rocketmail)\.(com|in|co\.uk)$/i
-        if (!email.match(validRegex || !email.match(gmailRegex) || !email.match(yahooRegex))){
-            return toast({ title:'!Important', position:'top-left', description: 'Use a valid email format e.g example@company.com or johndoe@gmail.com or johndoe@yahoo.com', status: 'warning', variant:'left-accent', isClosable: true, });
-        }
-        const code = await Generate_Otp();
-        if (code){
-            const payload = {
-                code,
-                email
-            };
-            const email_status = await SendEmailOtp(payload);
-            if (email_status?.data == 'success'){
-                set_code_active(!code_active)
-                return 'success'
-            }
-            return null;
-        }
-        return null;
-    }
+    const toast = useToast();
 	
-	const Compare_Codes=()=>{
-        console.log(confirmation_code)
-		const otp_status = Verify_otp(confirmation_code);
-		if(otp_status === 'error'){
-			return toast({ title: 'Code verification error', description: `the code you entered does not match `, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
-		}
-		set_active(!active);
-  	}
-	
-  	const Set_New_Password=async()=>{
-  		const payload = {
-  			email : email,
-  			password : new_password
-  		}
-  		if (new_password == confirm_password){
-  			await Password_Reset(payload).then(()=>{
-				toast({ title: 'Password has been changed successfully', description: 'Sign in again to your account', status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-                if (user !== null){
-                    useLogOut()
-                    set_user_handler(`${user?._id} logged out `)
+      const onSubmit = async(data) => {
+        try {
+          await SEND_OTP_CODE_TO_USER(data?.email).then((response)=>{
+                if(response?.data?.error === true){
+                    return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
                 }
-				setTimeout(()=>{
-					router.push('/')
-				},2000);
+                toast({ title: 'Success!:Code sent successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+                setTimeout(()=>{
+                    router.push(`/password_reset/verify_code?email=${data?.email}`);
+                },2000)
                 return ;
-			}).catch((err)=>{
-				console.log(err);
-                return ;
-			})
-  		}else{
-			toast({ title: 'Passwords do not match', description: '', status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
-            return ;
-  		}
-  	}
+          }).catch((err)=>{
+              return toast({ title: `Error occured!:`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+          })
+        } catch (error){
+            return toast({ title: `Error occured!:`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
+        }
+    }
 
     return (
-    <Flex direction='column' alignItems={'center'} justify={'center'} w='full'>
-        <Heading as='h3' >Forgot password?</Heading>
-        {active?
-            <Flex direction='column' gap='3' mt='3'>
-                {code_active?
-                    <Text>Enter the code to change your password.</Text>
-                    :
-                    <Text>Enter email to receive the code to change your password.</Text>
-                }
-                {code_active?
-                    <Flex direction='column' gap='2'>
-                        <HStack>
-                            <PinInput type='number' onChange={((e)=>{set_confirmation_code(e)})} otp={true}>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                                <PinInputField errorBorderColor={input_error && confirmation_code == '' ? true : false}/>
-                            </PinInput>
-                        </HStack>
-                        <Flex gap='2'>
-                            <Button bg='#000' color='#fff' flex='1' onClick={(()=>{set_code_active(!code_active)})}>Resend Code</Button>
-                            <Button flex='1' color='#fff' bg='#3874ff' onClick={Compare_Codes}>Verify Code</Button>
-                        </Flex>
-                    </Flex>
-                :
-                    <Flex direction='column' gap='2'>
-                        <Input value={email} variant='filled' bg='#eee' required type='email' placeholder='Enter your email' onChange={((e)=>{set_email(e.target.value)})}/>
-                        <Button bg='#000' color='#fff' onClick={handle_otp}>Get Code</Button>
-                    </Flex>
-                }
+        <Flex direction='column' alignItems={'center'} justify={'center'} w='full' boxShadow={'sm'} p='4'>
+            <Flex hideFrom='md' alignItems={'center'} flexDirection={'column'}>
+                <LOGO color='#4E2FD7' size='20px'/>
             </Flex>
-            :
-            <>
-                <Text>Enter your new password for your account.</Text>
-                <Flex direction='column' gap='2' w='80%'>
-                    <Text>New Password</Text>
-                    <InputGroup size='md'>
-                        <Input pr='4.5rem' type={show ? 'text' : 'password'} placeholder='Enter password' variant='filled' required onChange={((e)=>{set_new_password(e.target.value)})} />
-                        <InputRightElement width='4.5rem'>
-                            <Button h='1.75rem' size='sm' onClick={handleClick} bg='#fff'>
-                            {show ? <MdVisibilityOff/> : <MdVisibility/>}
-                            </Button>
-                        </InputRightElement>
-                    </InputGroup>
-                    <Text>Confirm new password</Text>
-                    <InputGroup size='md'>
-                        <Input pr='4.5rem' type={show ? 'text' : 'password'} placeholder='Enter password' variant='filled' required onChange={((e)=>{set_confirm_password(e.target.value)})} />
-                        <InputRightElement width='4.5rem'>
-                            <Button h='1.75rem' size='sm' onClick={handleClick} bg='#fff'>
-                            {show ? <MdVisibilityOff/> : <MdVisibility/>}
-                            </Button>
-                        </InputRightElement>
-                    </InputGroup>
-                    <Button bg='#3874ff' color='#fff' onClick={Set_New_Password}>Set New Password</Button>
-                </Flex>
-            </>
-        }
-    </Flex>
+            <Text fontSize={'xl'} my='4'>Forgot your password?</Text>
+            {/**Email input to send code to */}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormControl my='4' isRequired>
+                    <FormLabel>Email</FormLabel>
+                    <Input disabled={isSubmitting} {...register('email')} type='email' placeholder='johndoe@gmail.com' variant='filled'/>
+                    {errors.email && ( <Text fontSize={'sm'} color='red'>{errors.email.message}</Text>)}
+                </FormControl>
+                {errors.root && 
+                    <HStack color='#fff' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
+                        <Icon as={CiWarning} boxSize='4'/>
+                        <Text>{errors.root.message}</Text>
+                    </HStack>
+                }
+                {isSubmitting?
+                    <Button isLoading loadingText='sending code to this email...' variant='ghost' borderRadius={'md'} w='full'/>
+                    :
+                    <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Receive Code</Button>
+                }
+            </form>
+        </Flex>
     )
 }
 
-export default Page
+export default Page;
