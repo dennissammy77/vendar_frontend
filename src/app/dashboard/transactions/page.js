@@ -34,7 +34,6 @@ export default function Page() {
     });
 
     const TRANSACTION_DATA = data?.data?.data;
-    console.log('store_id',STORE_ID,'data',data?.data?.data)
 
     if (data?.data?.error){
         return (
@@ -131,7 +130,6 @@ export default function Page() {
                                     }
                                 </Tbody>
                             </Table>
-                            <PAGINATION_BODY/>
                         </TableContainer>
                     :
                         <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh' textAlign={'center'}>

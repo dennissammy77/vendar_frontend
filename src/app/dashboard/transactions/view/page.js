@@ -8,8 +8,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
 
-import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
 import { FETCH_TRANSACTION_DATA } from '@/app/api/transaction/route';
+import DELETE_TRANSACTION_ALERT from '@/components/ui/transaction/DELETE_TRANSACTION_ALERT';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -27,11 +27,11 @@ function Page() {
 
     const TRANSACTION_DATA = data?.data?.data;
 
-    const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
+    const DELETE_TRANSACTION_ALERT_DISCLOSURE = useDisclosure()
 
     return (
         <Box>
-            <DELETE_STAKEHOLDER_ACCOUNT_ALERT isOpen={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} TRANSACTION_DATA={TRANSACTION_DATA}/>
+            <DELETE_TRANSACTION_ALERT isOpen={DELETE_TRANSACTION_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_TRANSACTION_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} TRANSACTION_ID={TRANSACTION_ID} STORE_ID={STORE_ID}/>
             <Text fontWeight='bold' fontSize='32px'>Transaction Data</Text>
             <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
                 <BreadcrumbItem>
@@ -48,11 +48,11 @@ function Page() {
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                 <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack onClick={(()=>{router.push(`/dashboard/staff/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`)})}>
+                    <HStack onClick={(()=>{router.push(`/dashboard/staff/edit?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`)})} display={'none'}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
                         <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
                     </HStack>
-                    <HStack onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>
+                    <HStack onClick={DELETE_TRANSACTION_ALERT_DISCLOSURE?.onOpen}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
                         <Icon boxSize='6' as={MdOutlineDeleteOutline} cursor='pointer'/>
                     </HStack>
