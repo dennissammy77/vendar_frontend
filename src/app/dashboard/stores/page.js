@@ -22,7 +22,25 @@ function Page() {
 
     const {data, isLoading} = useQuery({
         queryKey: ['stores_data', {USER_ID, search_query}],
-        queryFn: () => FETCH_STORES_BY_OWNER(USER_ID)
+        queryFn: () => {
+            let ACCOUNT_ID;
+            switch (user?.data?.data?.account_type) {
+                case 'owner':
+                    ACCOUNT_ID = USER_ID;
+                    FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+                    break;
+                case 'manager':
+                    ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
+                    FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+                    break;
+                case 'supervisor':
+                    ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
+                    FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+                    break;
+                default:
+                    return null;
+            }
+        }
     })
 
     const [active_store, set_active_store] = useState(
@@ -36,7 +54,7 @@ function Page() {
             </Flex>
         )
     }
-    const stores = data?.data?.data;
+    const stores = data?.data?.data || user?.data?.data?.store_ref;
     return (
         <Box>
             <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>

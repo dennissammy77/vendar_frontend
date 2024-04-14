@@ -70,6 +70,10 @@ export default function StoreDetails({store}){
                 <Text>{store?.products?.length}</Text>
             </HStack>
             <HStack spacing='2' my='2' fontSize='md'>
+                <Text fontWeight={'bold'}>Transactions:</Text>
+                <Text>{store?.transactions?.length}</Text>
+            </HStack>
+            <HStack spacing='2' my='2' fontSize='md'>
                 <Text fontWeight={'bold'}>Shelves:</Text>
                 <Text>{store?.shelves}</Text>
             </HStack>

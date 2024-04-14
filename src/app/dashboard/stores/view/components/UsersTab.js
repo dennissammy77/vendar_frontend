@@ -108,8 +108,7 @@ const ProductCard=({store})=>{
 
 const StaffItem=({staff,STORE_ID})=>{
   const router = useRouter();
-  const {user} = useContext(UserContext)
-
+  const {user} = useContext(UserContext);
   return(
     <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'}>
       <HStack spacing='2' >
@@ -119,7 +118,7 @@ const StaffItem=({staff,STORE_ID})=>{
           <Text fontSize={'xs'}>{staff?.store_admin_account_ref?.role}</Text>
         </Box>
       </HStack>
-      {user?.data?.data?._id === staff?._id ? 
+      {staff?.store_admin_account_ref.role === 'owner'? 
         null
         :
         <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${staff?._id}`)})}>
