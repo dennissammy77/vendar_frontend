@@ -73,3 +73,25 @@ export async function NEW_STORE_TRANSACTION(data,USER_ID, PRODUCT_ID, STORE_ID){
     });
     return response;
 }
+export async function DELETE_STORE_TRANSACTION(USER_ID, TRANSACTION_ID){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+
+    let config = {
+        method: 'delete',
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}/api/transaction/delete?user_id=${USER_ID}&transaction_id=${TRANSACTION_ID}`,
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+        }
+    };
+
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+}
