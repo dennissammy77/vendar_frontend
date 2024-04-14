@@ -122,7 +122,7 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
       {navigation?.map((item)=>{
         return(
           <NavItem 
-            key={item?.id} 
+            key={item?.id}
             bg={pathArr[2] === item?.title?.toLowerCase() ? '#E4F0FC' : '#FAFAFA'} 
             color={pathArr[2] === item?.title?.toLowerCase() ? '#4E2FD7' : '#9298AC'} 
             borderRadius={pathArr[2] ==- item?.title?.toLowerCase()? 'md' : '5'} 
