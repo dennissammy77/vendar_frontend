@@ -6,6 +6,7 @@ import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
 import { useRouter } from 'next/navigation';
 import DELETE_ACCOUNT_ALERT from '@/components/ui/user/DELETE_ACCOUNT_ALERT';
+import Link from 'next/link';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -77,7 +78,10 @@ function Page() {
                     <Icon as={MdOutlineAdminPanelSettings} boxSize='5'/>
                     <Text>Account Management</Text>
                 </HStack>
-                <Button onClick={DELETE_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>Delete Account</Button>
+                <HStack>
+                    <Link fontSize={'sm'} fontWeight={'bold'} color='gray.400' textDecoration={'1px solid underline'} my='4' cursor={'pointer'} href={`/password_reset?email=${USER_DATA?.email}`}>Reset password</Link>
+                    <Button onClick={DELETE_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>Delete Account</Button>
+                </HStack>
             </Flex>
             <Box p='4' boxShadow={'md'} borderRadius={'md'}>
                 <Text fontWeight={'bold'} my='2'>Permissions</Text>
