@@ -58,7 +58,7 @@ export async function USER_PASSWORD_RESET_TO_NEW (data,EMAIL){
     maxBodyLength: Infinity,
     url: `${BASE_URL}/api/auth/password/new/${EMAIL}`,
     headers: { 
-      'Authorization': `Bearer ${AUTH_TOKEN}`
+      'Authorization': `Bearer ${CODE_TOKEN}`
     },
     data: data
   };
