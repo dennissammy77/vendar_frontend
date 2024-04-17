@@ -5,9 +5,10 @@ import NavigationBody from './components/navigation'
 import { IoPeopleOutline, IoStorefrontOutline } from "react-icons/io5";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter } from 'next/navigation';
-import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts } from 'react-icons/md';
+import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts, MdSupportAgent } from 'react-icons/md';
 import { GiShoppingBag } from "react-icons/gi";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
+import { CiGrid42 } from 'react-icons/ci';
 
 export default function Layout({children}){
     const {user} = useContext(UserContext);
@@ -33,6 +34,7 @@ const navigation = [
     {
         id:     '1',
         title:  'Home',
+        icon: CiGrid42,
         route:  '/dashboard/home'
     },
     {
@@ -67,16 +69,14 @@ const navigation = [
     },
     {
         id: '7',
-        title:  'Analytics',
-    },
-    {
-        id: '8',
         icon: MdOutlineManageAccounts,
         title:  'Settings',
         route: '/dashboard/settings'
     },
     {
-        id: '9',
-        title:  'Help Center',
+        id: '8',
+        title:  'Support',
+        icon: MdSupportAgent,
+        route: '/dashboard/support'
     },
 ]
