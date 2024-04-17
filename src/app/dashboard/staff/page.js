@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react'
+import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react';
 
@@ -79,41 +79,51 @@ export default function Page() {
                 </Flex>
                 :
                 <>
-                    {STAFF_DATA?.filter((staff)=>staff?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((staff)=>{
-                        return(
-                            <Box key={staff?._id} py='2'>
-                                <StaffItem staff={staff} STORE_ID={STORE_ID}/>
-                                <Divider py='1'/>
-                            </Box>
-                        )})
-                    }
+                    <TableContainer boxShadow={'md'}>
+                        <Table variant='simple'>
+                            <Thead bg='#E4F0FC'>
+                                <Tr>
+                                    <Th>Name</Th>
+                                    <Th>Phone</Th>
+                                    <Th>Role</Th>
+                                    <Th>Status</Th>
+                                    <Th>Actions</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {STAFF_DATA?.filter((staff)=>staff?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((staff)=>{
+                                    return(
+                                        <Tr key={staff?._id} >
+                                            <Td>
+                                                <HStack>
+                                                    <Avatar size={'sm'} src='' name={staff?.name}/>
+                                                    <Box>
+                                                        <Text>{staff?.name}</Text>
+                                                        <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{staff?.email}</Text>
+                                                    </Box>
+                                                </HStack>
+                                            </Td>
+                                            <Td>{staff?.mobile}</Td>
+                                            <Td>{staff?.store_admin_account_ref?.role}</Td>
+                                            <Td><Badge colorScheme={staff?.account_status_ref?.suspension_status ? 'orange':'green'}>{staff?.account_status_ref?.suspension_status ? 'suspended' : 'active'}</Badge></Td>
+                                            <Td>
+                                                {staff?.store_admin_account_ref.role === 'owner'? 
+                                                    null
+                                                    :
+                                                    <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${staff?._id}`)})}>
+                                                        <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                                        <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                                    </HStack>
+                                                }
+                                            </Td>
+                                        </Tr>
+                                    )})
+                                }
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
                 </>
             }
         </Box>
     )
-}
-
-const StaffItem=({staff,STORE_ID})=>{
-    const router = useRouter();
-    const {user} = useContext(UserContext)
-  
-    return(
-      <Flex p='2' borderRadius={'5'} align={'center'} justify={'space-between'} transition={'.3s ease-in-out'} _hover={{bg:'gray.100'}} cursor={'pointer'}>
-        <HStack spacing='2' >
-          <Avatar name={staff?.name} size='sm' src={staff?.profile_image_url}/>
-          <Box>
-            <Text fontSize={'sm'} fontWeight={'bold'}>{staff?.name}</Text>
-            <Text fontSize={'xs'}>{staff?.store_admin_account_ref?.role}</Text>
-          </Box>
-        </HStack>
-        {staff?.store_admin_account_ref.role === 'owner'? 
-          null
-          :
-          <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/staff/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${staff?._id}`)})}>
-              <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-              <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
-          </HStack>
-        }
-      </Flex>
-    )
-  }
+};
