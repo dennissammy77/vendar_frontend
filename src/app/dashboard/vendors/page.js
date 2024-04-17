@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react'
+import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react';
 
@@ -79,14 +79,47 @@ export default function Page() {
                 </Flex>
                 :
                 <>
-                    {VENDORS_DATA?.filter((vendor)=>vendor?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((vendor)=>{
-                        return(
-                            <Box key={vendor?._id} py='2'>
-                                <VendorItem vendor={vendor} STORE_ID={STORE_ID}/>
-                                <Divider py='1'/>
-                            </Box>
-                        )})
-                    }
+                    <TableContainer boxShadow={'md'}>
+                        <Table variant='simple'>
+                            <Thead bg='#E4F0FC'>
+                                <Tr>
+                                    <Th>Name</Th>
+                                    <Th>Phone</Th>
+                                    <Th>Status</Th>
+                                    <Th>Actions</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {VENDORS_DATA?.filter((vendor)=>vendor?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((vendor)=>{
+                                    return(
+                                        <Tr key={vendor?._id} >
+                                            <Td>
+                                                <HStack>
+                                                    <Avatar size={'sm'} src='' name={vendor?.name}/>
+                                                    <Box>
+                                                        <Text>{vendor?.name}</Text>
+                                                        <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{vendor?.email}</Text>
+                                                    </Box>
+                                                </HStack>
+                                            </Td>
+                                            <Td>{vendor?.mobile}</Td>
+                                            <Td><Badge colorScheme={vendor?.account_status_ref?.suspension_status ? 'orange':'green'}>{vendor?.account_status_ref?.suspension_status ? 'suspended' : 'active'}</Badge></Td>
+                                            <Td>
+                                                {user?.data?.data?._id === vendor?._id ? 
+                                                    null
+                                                    :
+                                                    <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/vendors/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&account_id=${vendor?._id}`)})}>
+                                                        <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                                        <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                                    </HStack>
+                                                }
+                                            </Td>
+                                        </Tr>
+                                    )})
+                                }
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
                 </>
             }
         </Box>
