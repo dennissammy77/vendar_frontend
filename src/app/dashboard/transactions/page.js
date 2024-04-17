@@ -98,7 +98,7 @@ export default function Page() {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {TRANSACTION_DATA?.filter((transaction)=>transaction?.vendor?.name?.toLowerCase().includes(search_query?.toLowerCase()) || transaction?.product_ref?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((transaction)=>{
+                                    {TRANSACTION_DATA?.filter((transaction)=>transaction?.vendor?.name?.toLowerCase().includes(search_query?.toLowerCase()) || transaction?.product_ref?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((transaction)=>{
                                         return(
                                             <Tr key={transaction?._id} >
                                                 <Td>
