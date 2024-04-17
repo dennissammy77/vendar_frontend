@@ -64,7 +64,6 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
               return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
           })
         } catch (error){
-            console.log(error)
             setError("root", {
                 message: error,
             });
