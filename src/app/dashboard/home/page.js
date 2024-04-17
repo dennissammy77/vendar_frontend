@@ -17,7 +17,6 @@ function Page() {
   const searchParams = useSearchParams();
   const STORE_ID = searchParams.get('store_id');
   const STORE_DATA = USER_DATA?.store_ref?.find((store)=>store?._id === STORE_ID);
-  console.log(STORE_ID, STORE_DATA)
 
   return (
     <Box p=''>
@@ -150,7 +149,7 @@ function Page() {
         >
           <Text fontSize={'2xl'}>Best Products</Text>
           <Text fontSize={'12px'} color='gray.400' my='1'>ranking based on transactions</Text>
-          {STORE_DATA?.products?.map(product =>{
+          {STORE_DATA?.products?.sort((a, b) => b.transactions?.length - a?.transactions?.length)?.map(product =>{
             return(
               <>
                 <HStack align='center' p='4' sapcing='2'>
