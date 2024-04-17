@@ -8,13 +8,13 @@ export function UserProvider({children}) {
     const [user_handler, set_user_handler] = useState('');
 
     useEffect(()=>{
-        FetchUser()
-    },[user_handler]);
-    
-    const FetchUser=async()=>{
-        const data = await useFetchUserData();
-        set_user(data)
-    }
+      FetchUser()
+  },[user_handler]);
+  
+  const FetchUser=async()=>{
+      const data = await useFetchUserData();
+      set_user(data)
+  }
   
     return (
       <UserContext.Provider value={{ user,set_user_handler }}>
