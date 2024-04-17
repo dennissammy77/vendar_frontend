@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon} from '@chakra-ui/react'
 import { MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
@@ -32,7 +32,13 @@ function Page() {
         <Box>
             <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID}/>
             <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+            {PRODUCT_DATA?.items - PRODUCT_DATA?.transactions?.length  <= 0 ? 
+                <Alert status='warning'>
+                    <AlertIcon />
+                    Seems your product is out of stock, edit to add more items.
+                </Alert>
+            : null }
+            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='4'>
                 <BreadcrumbItem>
                     <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
@@ -83,7 +89,7 @@ function Page() {
                             </Box>
                             <Box my='2'>
                                 <Text fontWeight={'bold'}>Items</Text>
-                                <Text fontWeight={''}>{PRODUCT_DATA?.items}</Text>
+                                <Text fontWeight={''}>{PRODUCT_DATA?.items - PRODUCT_DATA?.transactions?.length  <= 0 ? 'out of stock' : PRODUCT_DATA?.items-PRODUCT_DATA?.transactions?.length}</Text>
                             </Box>
                         </GridItem>
                         <GridItem>

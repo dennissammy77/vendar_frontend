@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon } from '@chakra-ui/react'
+import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon, Progress, TableContainer, Table, Thead, Tr, Th, Tbody, Td } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react';
 
@@ -10,6 +10,7 @@ import { IoMdAdd, IoMdSettings } from 'react-icons/io';
 import { FiSearch } from 'react-icons/fi';
 import { FaStore } from 'react-icons/fa';
 import { FETCH_STORE_PRODUCTS_DATA } from '@/app/api/product/route';
+import moment from 'moment';
 
 
 export default function Page() {
@@ -78,37 +79,60 @@ export default function Page() {
                 </Flex>
                 :
                 <>
-                    {PRODUCTS_DATA?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((product)=>{
-                        return(
-                            <Box key={product?._id} py='2'>
-                                <ProductItem product={product} STORE_ID={STORE_ID}/>
-                                <Divider py='1'/>
-                            </Box>
-                        )})
-                    }
+                    <TableContainer boxShadow={'md'}>
+                        <Table variant='simple'>
+                            <Thead bg='#E4F0FC'>
+                                <Tr>
+                                    <Th>Product</Th>
+                                    <Th>Date</Th>
+                                    <Th>Stock</Th>
+                                    <Th>Price</Th>
+                                    <Th>Actions</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {PRODUCTS_DATA?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((product)=>{
+                                    return(
+                                        <Tr key={product?._id} >
+                                            <Td>
+                                                <HStack>
+                                                    <Avatar size={'sm'} src='' name={product?.name}/>
+                                                    <Box>
+                                                        <Text>{product?.name}</Text>
+                                                        <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{product?.category}</Text>
+                                                    </Box>
+                                                </HStack>
+                                            </Td>
+                                            <Td>
+                                                <Box>
+                                                    <Text fontWeight={''}>{moment(product?.createdAt).format("DD MMM YY")}</Text>
+                                                    <Text fontSize={'sm'} color='gray.400'>{moment(product?.createdAt).format("h:mm a")}</Text>
+                                                </Box>
+                                            </Td>
+                                            <Td>
+                                                <Progress 
+                                                    value={product?.items - product?.transactions?.length}
+                                                    colorScheme={product?.items - product?.transactions?.length  === 0? 'orange' : 'green'} 
+                                                    size={'xs'}
+                                                    max={product?.items}
+                                                />
+                                                <Text fontSize={'sm'}>{product?.items - product?.transactions?.length <= 0 ? 'out of stock' : `${product?.items - product?.transactions?.length} in stock`}</Text>
+                                            </Td>
+                                            <Td>KES {product?.price}</Td>
+                                            <Td>
+                                                <HStack color='gray.600' cursor={'pointer'} pr='1' onClick={(()=>{router.push(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`)})}>
+                                                    <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                                    <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                                </HStack>
+                                            </Td>
+                                        </Tr>
+                                    )})
+                                }
+                            </Tbody>
+                        </Table>
+                    </TableContainer>
                 </>
             }
         </Box>
     )
 }
-
-const ProductItem=({product,STORE_ID})=>{
-    const router = useRouter();
-    const {user} = useContext(UserContext)
-  
-    return(
-      <Flex py='2' px='4' borderRadius={'5'} align={'center'} justify={'space-between'} transition={'.3s ease-in-out'} _hover={{bg:'gray.100'}} cursor={'pointer'}>
-        <HStack spacing='2' >
-          <Box>
-            <Text fontSize={'md'} fontWeight={'bold'}>{product?.name}</Text>
-            <Text fontSize={'sm'} color='gray.600' my='1'>{product?.price}</Text>
-            <Text fontSize={'xs'} color='gray.400'>{product?.category}</Text>
-          </Box>
-        </HStack>
-        <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`)})}>
-            <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-            <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
-        </HStack>
-      </Flex>
-    )
-  }
