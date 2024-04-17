@@ -1,5 +1,6 @@
 import { UserContext } from '@/components/providers/user.context'
-import { Avatar, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
+import { Avatar, Badge, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel, TabPanels, Table, TableContainer, Tabs, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
+import moment from 'moment'
 import { useRouter } from 'next/navigation'
 import React, { useContext } from 'react'
 import { IoMdAdd, IoMdSettings } from 'react-icons/io'
@@ -8,14 +9,16 @@ import { MdOutlineAdminPanelSettings } from 'react-icons/md'
 export default function UserTabs({store}) {
   return (
     <Tabs variant='soft-rounded' colorScheme='blue' isLazy>
-        <TabList>
+        <TabList my='2'>
             <Tab>
               <Icon as={MdOutlineAdminPanelSettings} boxSize='5' mx='1'/>
               Staff
             </Tab>
             <Tab>Vendors</Tab>
             <Tab>Products</Tab>
+            <Tab>Transitions</Tab>
         </TabList>
+        <Divider/>
         <TabPanels>
             <TabPanel>
               <StaffCard  store={store}/>
@@ -25,6 +28,9 @@ export default function UserTabs({store}) {
             </TabPanel>
             <TabPanel>
               <ProductCard store={store}/>
+            </TabPanel>
+            <TabPanel>
+              <Transactions_Card store={store}/>
             </TabPanel>
         </TabPanels>
     </Tabs>
@@ -102,6 +108,57 @@ const ProductCard=({store})=>{
             </Box>
           )})
         }
+    </Box>
+  )
+}
+
+const Transactions_Card=({store})=>{
+  const router = useRouter();
+  const {user} = useContext(UserContext)
+  return(
+    <Box>
+        
+        <Flex justify={'end'} w='100%' align={'center'} fontWeight={'bold'} color='#4E2FD7'>
+          <HStack borderRight='1px solid' borderColor='gray.200' px='2' _hover={{textDecoration:'1px solid underline'}} cursor='pointer' onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${store?._id}`)})}>
+            <Icon as={IoMdAdd} boxSize={'4'}  />
+            <Text>New</Text>
+          </HStack>
+          <Text ml='2' onClick={(()=>{router.push(`/dashboard/transactions?uid=${user?.data?.data?._id}&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
+        </Flex>
+        <TableContainer boxShadow={'md'}>
+          <Table variant='simple'>
+              <Thead bg='#E4F0FC'>
+                  <Tr>
+                      <Th>Date</Th>
+                      <Th>Amount</Th>
+                      <Th>Status</Th>
+                      <Th>Actions</Th>
+                  </Tr>
+              </Thead>
+              <Tbody>
+                {store?.transactions?.map((transaction)=>{
+                  return(
+                        <Tr key={transaction?._id} >
+                            <Td>
+                                <Box>
+                                    <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
+                                    <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
+                                </Box>
+                            </Td>
+                            <Td>KES {transaction?.payment_total}</Td>
+                            <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
+                            <Td>
+                                <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${store?._id}&transaction_id=${transaction?._id}`)})}>
+                                    <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                    <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                </HStack>
+                            </Td>
+                        </Tr>
+                    )})
+                }
+              </Tbody>
+          </Table>
+      </TableContainer>
     </Box>
   )
 }
