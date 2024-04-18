@@ -1,6 +1,6 @@
 'use client'
 import { Box, Text, useToast } from '@chakra-ui/react'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, Suspense  } from 'react'
 import NavigationBody from './components/navigation'
 import { IoPeopleOutline, IoStorefrontOutline } from "react-icons/io5";
 import { UserContext } from '@/components/providers/user.context';
@@ -24,7 +24,9 @@ export default function Layout({children}){
     return(
         <Box>
             <NavigationBody navigation={navigation}>
-                {children}
+                <Suspense>
+                    {children}
+                </Suspense>
             </NavigationBody>
         </Box>
     )

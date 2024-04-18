@@ -5,9 +5,9 @@ import LOGO from "./lib/LOGO";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
 import { useContext, useEffect } from "react";
-import { FaPowerOff } from "react-icons/fa";
 import useLogOut from "@/components/hooks/useLogOut.hook";
 import Link from "next/link";
+import Features from "./(Home)/Features/page";
 
 export default function Index() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function Index() {
       <Flex justify={'space-between'} align={'center'} py='4' px={{sm:5,md:'20'}} bg='#ffffff' position={'fixed'} top='0' left='0' w='100%' zIndex='1000'>
           <HStack align='center' mx='4' spacing='4'>
             <LOGO color='#4E2FD7' size='32px'/>
-            <HStack hideBelow={'sm'}>
+            <HStack hideBelow={'sm'} display={'none'}>
               <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Features</Text>
               <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Pricing</Text>
             </HStack>
@@ -51,6 +51,7 @@ export default function Index() {
           }
       </Flex>
       <Home/>
+      <Features/>
     </Box>
   );
 }
