@@ -12,7 +12,7 @@ function Hero() {
                 Your{" "}
                 <Text display={{ base: "block", lg: "inline", }} bgGradient='linear(to-l, #7928CA, #FF0080)' w="full" bgClip="text"> Rental business </Text>{" "} in one single place.
             </Heading>
-            <Text px={{ base: 0, lg: 24, }} mb={6} fontSize={{ base: "lg", md: "xl", }} color="gray.600" _dark={{ color: "gray.300", }} >  Hellonext is a feature voting software where you can allow your users to  vote on features, publish roadmap, and complete your customer feedback  loop.</Text>
+            <Text px={{ base: 0, lg: 24, }} my={10} fontSize={{ base: "lg", md: "xl", }} color="gray.600" _dark={{ color: "gray.300", }} >  Vendar is here to streamline your operations and connect you with the perfect solution. With our innovative platform, You can effortlessly manage your shelf rental business and manage products, your clients and your team.</Text>
             <Stack direction={{ base: "column", sm: "row", }} mb={{ base: 4, md: 8, }} spacing={2} justifyContent={{ sm: "left", md: "center", }} >
                 <Button as="a" variant="solid" bgColor='#4E2FD7' color='#fff' display="inline-flex" alignItems="center" justifyContent="center" w={{ base: "full", sm: "auto", }} mb={{ base: 2, sm: 0, }} size="lg" cursor="pointer"  onClick={(()=>{router.push('/signup')})}> 
                     Get Started
@@ -28,7 +28,7 @@ function Hero() {
             </Stack>
         </Box>
         <Box w={{ base: "full", md: 10 / 12, }} mx="auto" mt={20} textAlign="center" >
-            <Image w="full" rounded="lg" shadow="2xl" src="https://kutty.netlify.app/hero.jpg" alt="Hellonext feedback boards software screenshot" />
+            <Image w="full" rounded="lg" shadow="2xl" src="./WebApp.png" alt="Hellonext feedback boards software screenshot" />
         </Box>
     </Box>
   )

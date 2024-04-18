@@ -39,14 +39,14 @@ function Page() {
 
     const onSubmit = async(data) => {
         try {
-            if(new_password.match(confirm_password)){
+            if(data?.new_password.match(data?.confirm_password)){
                 await USER_PASSWORD_RESET_TO_NEW(data,email).then((response)=>{
                         if(response?.data?.error === true){
                             return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
                         }
                         toast({ title: 'Success!:Password changed sent successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
                         setTimeout(()=>{
-                            router.push(`/`);
+                            router.push(`/signin`);
                         },2000)
                         return ;
                 }).catch((err)=>{
