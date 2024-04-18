@@ -59,15 +59,17 @@ function Page() {
         <Box>
             <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>
                 <Text fontWeight='bold' fontSize='32px'>Stores</Text>
-                <Flex align='center' >
-                    <InputGroup>
-                        <InputLeftElement pointerEvents='none'>
-                            <Icon as={FiSearch} color='gray.500' ml='2'/>
-                        </InputLeftElement>
-                        <Input type='search' placeholder={'Search stores'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
-                    </InputGroup>
-                    <Button variant={'filled'} borderRadius={'md'} bg='#4E2FD7' color='#fff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${user?.data?.data?._id}`)})}>New</Button>
-                </Flex>
+                {user?.data?.data?.account_type === 'vendor'? null : 
+                    <Flex align='center' >
+                        <InputGroup>
+                            <InputLeftElement pointerEvents='none'>
+                                <Icon as={FiSearch} color='gray.500' ml='2'/>
+                            </InputLeftElement>
+                            <Input type='search' placeholder={'Search stores'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                        </InputGroup>
+                        <Button variant={'filled'} borderRadius={'md'} bg='#4E2FD7' color='#fff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${user?.data?.data?._id}`)})}>New</Button>
+                    </Flex>
+                }
             </Flex>
             {isLoading?
                 <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>

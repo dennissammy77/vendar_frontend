@@ -58,13 +58,15 @@ function Page() {
             <DELETE_STORE_ALERT isOpen={DELETE_STORE_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STORE_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} STORE_ID={store_id}/>
             <Flex align='center' justifyContent={'space-between'}>
                 <Text fontWeight='bold' fontSize='32px'>Store Details</Text>
-                <Menu>
-                    <MenuButton as={Button} rightIcon={<HiChevronDown />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
-                    <MenuList>
-                        <MenuItem icon={<GrFormEdit style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>Edit</MenuItem>
-                        <MenuItem icon={<MdDeleteOutline style={{fontSize:'16px'}}/>} onClick={DELETE_STORE_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
-                    </MenuList>
-                </Menu>
+                {user?.data?.data?.account_type === 'vendor'? null : 
+                    <Menu>
+                        <MenuButton as={Button} rightIcon={<HiChevronDown />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
+                        <MenuList>
+                            <MenuItem icon={<GrFormEdit style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>Edit</MenuItem>
+                            <MenuItem icon={<MdDeleteOutline style={{fontSize:'16px'}}/>} onClick={DELETE_STORE_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
+                        </MenuList>
+                    </Menu>
+                }
             </Flex>
             <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='2'>
                 <BreadcrumbItem>
@@ -116,25 +118,33 @@ function Page() {
                         <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.tiktok_url}</Text>
                     </HStack>
                 </Box>
-                <HStack spacing='2' my='2' fontSize='md'>
-                    <Text fontWeight={'bold'}>Staff:</Text>
-                    <Text>{store?.staff?.length}</Text>
-                </HStack>
-                <HStack spacing='2' my='2' fontSize='md'>
-                    <Text fontWeight={'bold'}>Vendors:</Text>
-                    <Text>{store?.vendors?.length}</Text>
-                </HStack>
-                <HStack spacing='2' my='2' fontSize='md'>
-                    <Text fontWeight={'bold'}>Products:</Text>
-                    <Text>{store?.products?.length}</Text>
-                </HStack>
-                <HStack spacing='2' my='2' fontSize='md'>
-                    <Text fontWeight={'bold'}>Shelves:</Text>
-                    <Text>{store?.shelves}</Text>
-                </HStack>
+                {user?.data?.data?.account_type === 'vendor'? null : 
+                <>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>Staff:</Text>
+                        <Text>{store?.staff?.length}</Text>
+                    </HStack>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>Vendors:</Text>
+                        <Text>{store?.vendors?.length}</Text>
+                    </HStack>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>Products:</Text>
+                        <Text>{store?.products?.length}</Text>
+                    </HStack>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>Transactions:</Text>
+                        <Text>{store?.transactions?.length}</Text>
+                    </HStack>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>Shelves:</Text>
+                        <Text>{store?.shelves}</Text>
+                    </HStack>
+                </>
+                }
             </Box>
             {/**Veiw users */}
-            <UserTabs store={store}/>
+            {user?.data?.data?.account_type === 'vendor'? null : <UserTabs store={store}/> }
         </Box>
     )
 }

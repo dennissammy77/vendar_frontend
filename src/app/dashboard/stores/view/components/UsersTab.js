@@ -16,7 +16,7 @@ export default function UserTabs({store}) {
             </Tab>
             <Tab>Vendors</Tab>
             <Tab>Products</Tab>
-            <Tab>Transitions</Tab>
+            <Tab>Transactions</Tab>
         </TabList>
         <Divider/>
         <TabPanels>
