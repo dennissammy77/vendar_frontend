@@ -7,31 +7,22 @@ import { Button, Flex, FormControl, FormLabel, HStack, Icon, Input, Select, Spin
 import { CiWarning } from 'react-icons/ci';
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FETCH_STORE_PRODUCTS_DATA } from '@/app/api/product/route';
-import { useQuery } from '@tanstack/react-query';
-import { NEW_STORE_TRANSACTION } from '@/app/api/transaction/route';
+import { UPDATE_STORE_TRANSACTION } from '@/app/api/transaction/route';
 
-export default function NEW_TRANSACTION_FORM() {
+export default function UPDATE_TRANSACTION_FORM(props) {
 
     const toast = useToast();
     const router = useRouter()
 
     const {user} = useContext(UserContext);
 
-    const searchParams = useSearchParams();
-    const STORE_ID = searchParams.get('store_id');
-
     const USER_ID = user?.data?.data?._id;
-    const [PRODUCT_ID,SET_PRODUCT_ID]=useState('');
-
-    const {data, isLoading} = useQuery({
-        queryKey: ['store_products', {STORE_ID,USER_ID}],
-        queryFn: () => FETCH_STORE_PRODUCTS_DATA(USER_ID,STORE_ID)
-    });
-
-    const PRODUCTS_DATA = data?.data?.data;
+    const PRODUCT_ID = props?.TRANSACTION_DATA?.product_ref?._id
+    const TRANSACTION_ID = props?.TRANSACTION_DATA?._id;
+    console.log(props?.TRANSACTION_DATA)
 
     const schema = yup.object().shape({
+        price: yup.number(),
         delivery_status: yup.boolean(),
         delivery_fee: yup.number().min(0),
         status: yup.string(),
@@ -49,10 +40,22 @@ export default function NEW_TRANSACTION_FORM() {
         formState: { errors, isSubmitting },
     } = useForm({
         resolver: yupResolver(schema),
+        defaultValues:{
+            price: props?.TRANSACTION_DATA?.price,
+            delivery_status: props?.TRANSACTION_DATA?.delivery_status,
+            delivery_fee: props?.TRANSACTION_DATA?.delivery_fee,
+            status: props?.TRANSACTION_DATA?.payment ? 'paid' : 'unpaid',
+            payment: props?.TRANSACTION_DATA?.payment,
+            payment_method: props?.TRANSACTION_DATA?.payment_method,
+            payment_code: props?.TRANSACTION_DATA?.payment_code,
+            payment_total: props?.TRANSACTION_DATA?.payment_total,
+            customer_notification_status: false,
+        }
     });
 
     const onSubmit = async(data) => {
         const payload = {
+            price: data?.price,
             delivery_status: data?.delivery_status,
             delivery_fee: data?.delivery_fee,
             status: data?.payment ? 'paid' : 'unpaid',
@@ -63,11 +66,11 @@ export default function NEW_TRANSACTION_FORM() {
             customer_notification_status: false,
         };
         try {
-          await NEW_STORE_TRANSACTION(payload,USER_ID, PRODUCT_ID, STORE_ID).then((response)=>{
+          await UPDATE_STORE_TRANSACTION(payload,USER_ID, PRODUCT_ID, TRANSACTION_ID).then((response)=>{
             if(response?.data?.error === true){
                 return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
             }
-            toast({ title: 'Success!:Transaction created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+            toast({ title: 'Success!:Transaction updated successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
             setTimeout(()=>{
                 router.back()
             },2000)
@@ -84,27 +87,11 @@ export default function NEW_TRANSACTION_FORM() {
     }
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            {isLoading? 
-                <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                    <Spinner />
-                    <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting Up transaction form</Text>
-                </Flex>
-            :
-                <FormControl isRequired>
-                    <FormLabel my='2' fontWeight={'bold'}>Product</FormLabel>
-                    <Select 
-                        placeholder='Select the product' 
-                        onChange={((e)=>{
-                            SET_PRODUCT_ID(e.target.value);
-                        })}>
-                        {PRODUCTS_DATA?.map((product)=>{
-                            return(
-                                <option value={product?._id} key={product?._id}>{product?.name}</option>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-            }
+            <FormControl mt='1' isRequired>
+                <FormLabel>Price</FormLabel>
+                <Input disabled={isSubmitting} {...register('price')} type='number' placeholder='200' variant='filled'/>
+                {errors.price && ( <Text fontSize={'sm'} color='red'>{errors.price.message}</Text>)}
+            </FormControl>
             <FormControl my='4' isRequired>
                 <FormLabel my='2' fontWeight={'bold'}>Delivery status</FormLabel>
                 <Select {...register("delivery_status")} placeholder='Delivery status'>
@@ -146,9 +133,9 @@ export default function NEW_TRANSACTION_FORM() {
                 </HStack>
             }
             {isSubmitting?
-                <Button isLoading loadingText='creating your transaction' variant='ghost' borderRadius={'md'} w='full'/>
+                <Button isLoading loadingText='updating your transaction' variant='ghost' borderRadius={'md'} w='full'/>
             :
-                <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Create Transaction</Button>
+                <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Save Transaction</Button>
             }
       </form>
     )
