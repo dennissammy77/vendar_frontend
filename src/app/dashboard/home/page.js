@@ -149,7 +149,7 @@ function Page() {
         >
           <Text fontSize={'2xl'}>Best Products</Text>
           <Text fontSize={'12px'} color='gray.400' my='1'>ranking based on transactions</Text>
-          {STORE_DATA?.products?.sort((a, b) => b.transactions?.length - a?.transactions?.length)?.map(product =>{
+          {STORE_DATA?.products?.sort((a, b) => b.transactions?.length - a?.transactions?.length)?.slice(0,3).map(product =>{
             return(
               <>
                 <HStack align='center' p='4' sapcing='2'>
