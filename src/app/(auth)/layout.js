@@ -1,5 +1,5 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
-import React from "react";
+import React, { Suspense } from "react";
 import LOGO from "../lib/LOGO";
 
 export default function Layout({children}){
@@ -10,7 +10,9 @@ export default function Layout({children}){
                 <Image src='../auth_bg.jpg' boxSize={'full'} alt='new_store_bg' objectFit={'cover'} />
             </Flex>
             <Flex h='100%' align='center' justify='center' w={{md:'full',lg:'50%'}}>
-                {children}
+                <Suspense>
+                    {children}
+                </Suspense>
             </Flex>
         </Flex>
     )
