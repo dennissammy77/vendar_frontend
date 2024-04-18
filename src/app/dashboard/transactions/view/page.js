@@ -48,7 +48,7 @@ function Page() {
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                 <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack onClick={(()=>{router.push(`/dashboard/staff/edit?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`)})} display={'none'}>
+                    <HStack onClick={(()=>{router.push(`/dashboard/transactions/edit?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`)})}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
                         <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
                     </HStack>
