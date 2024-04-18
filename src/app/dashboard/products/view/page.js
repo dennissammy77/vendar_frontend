@@ -30,7 +30,7 @@ function Page() {
 
     return (
         <Box>
-            <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID}/>
+            <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID} PRODUCT_DATA={PRODUCT_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
             {PRODUCT_DATA?.items - PRODUCT_DATA?.transactions?.length  <= 0 ? 
                 <Alert status='warning'>

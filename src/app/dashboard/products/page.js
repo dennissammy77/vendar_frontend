@@ -22,10 +22,11 @@ export default function Page() {
 
     const searchParams = useSearchParams();
     const STORE_ID = searchParams.get('store_id');
+    const USER_ID = searchParams.get('uid');
 
     const {data, isLoading} = useQuery({
-        queryKey: ['store_products', {STORE_ID,search_query}],
-        queryFn: () => FETCH_STORE_PRODUCTS_DATA(STORE_ID)
+        queryKey: ['store_products', {STORE_ID,search_query,USER_ID}],
+        queryFn: () => FETCH_STORE_PRODUCTS_DATA(USER_ID,STORE_ID)
     });
 
     const PRODUCTS_DATA = data?.data?.data;
