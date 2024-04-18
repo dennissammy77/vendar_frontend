@@ -14,6 +14,7 @@ import LOGO from "@/app/lib/LOGO";
 import { IoCloseSharp } from "react-icons/io5";
 import Link from "next/link";
 import useLogOut from "@/components/hooks/useLogOut.hook";
+import { IoMdAdd } from "react-icons/io";
 
 export default function NavigationBody({children,navigation}){
     const sidebar = useDisclosure();
@@ -47,6 +48,7 @@ export default function NavigationBody({children,navigation}){
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
+  const router = useRouter();
   const HandleLogout =()=>{
     useLogOut();
     window?.location.href('/')
@@ -58,7 +60,11 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
         <LOGO color='#4E2FD7' size='18px'/>
       </HStack>
       <HStack spacing={{ base: '0', md: '4' }}>
+        {/**
+         * 
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
+         */}
+        {user?.data?.data?.account_type === 'vendor'? null : <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})}>New Sale</Button> }
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
@@ -82,7 +88,10 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='Help'>
+                {/**
+                 * 
                 <MenuItem>FAQs</MenuItem>
+                 */}
                 <MenuItem>Support</MenuItem>
               </MenuGroup>
               <MenuDivider />
@@ -131,6 +140,7 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
               router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
               onClose()
             })}
+            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors') ? 'none' : ''}
           >
             {item.title}
           </NavItem>

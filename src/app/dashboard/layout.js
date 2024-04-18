@@ -16,7 +16,7 @@ export default function Layout({children}){
     const router = useRouter()
     useEffect(()=>{
         if(!user){
-            toast({ title: 'Error!', description: `User is not defined`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            //toast({ title: 'Error!', description: `User is not defined`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             //router.push('/signin');
             return 
         }

@@ -43,15 +43,17 @@ export default function Page() {
         <Box>
             <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>
                 <Text fontWeight='bold' fontSize='32px'>Vendors</Text>
-                <Flex align='center' >
-                    <InputGroup>
-                        <InputLeftElement pointerEvents='none'>
-                            <Icon as={FiSearch} color='gray.500' ml='2'/>
-                        </InputLeftElement>
-                        <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
-                    </InputGroup>
-                    <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/vendors/new?uid=${user?.data?.data?._id}&&store_id=${STORE_ID}`)})}>New</Button>
-                </Flex>
+                {user?.data?.data?.account_type === 'vendor'? null :
+                    <Flex align='center' >
+                        <InputGroup>
+                            <InputLeftElement pointerEvents='none'>
+                                <Icon as={FiSearch} color='gray.500' ml='2'/>
+                            </InputLeftElement>
+                            <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                        </InputGroup>
+                        <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/vendors/new?uid=${user?.data?.data?._id}&&store_id=${STORE_ID}`)})}>New</Button>
+                    </Flex>
+                }
             </Flex>
             <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='2'>
                 <BreadcrumbItem>
