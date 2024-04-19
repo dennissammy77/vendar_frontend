@@ -11,6 +11,7 @@ import { FETCH_USER_DATA } from '@/app/api/auth/route';
 
 import { TiUserDelete } from "react-icons/ti";
 import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
+import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -27,6 +28,8 @@ function Page() {
     });
 
     const USER_DATA = data?.data?.data;
+
+    console.log(USER_DATA);
 
     const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
 
@@ -94,6 +97,62 @@ function Page() {
                         </Box>
                     </GridItem>
                 </Grid>
+                {/**
+                 * 
+                <Grid
+                    templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
+                    templateColumns={{base:'repeat(1, 1fr)',md:'repeat(3, 1fr)'}}
+                    gap={4}
+                    my='5'
+                >
+                <GridItem
+                    colSpan={2} 
+                    bg='#FFFFFF'
+                    p='4'
+                    borderRadius={20}
+                    boxShadow={'md'}
+                    fontSize={'12px'}
+                    h='300px'
+                >
+                    <BarChartPlot data={STORE_DATA?.transactions}/>
+                </GridItem>
+                <GridItem
+                colSpan={1}
+                >
+                <Stat
+                    bg='#daf7e9'
+                    p='4'
+                    borderRadius={20}
+                    boxShadow={'sm'}
+                    align='center'
+                >
+                    <StatLabel fontSize='lg'>Vendors</StatLabel>
+                    <StatNumber fontSize={'lg'}>{STORE_DATA?.vendors?.length}</StatNumber>
+                </Stat>
+                <Stat
+                    bg='#d3f5f9'
+                    p='4'
+                    borderRadius={20}
+                    boxShadow={'sm'}
+                    align='center'
+                    my='2'
+                >
+                    <StatLabel fontSize='lg'>Products</StatLabel>
+                    <StatNumber fontSize={'lg'}>{STORE_DATA?.products?.length}</StatNumber>
+                </Stat>
+                <Stat
+                    bg='#Cfc7f1'
+                    p='4'
+                    borderRadius={20}
+                    boxShadow={'sm'}
+                    align='center'
+                >
+                    <StatLabel fontSize='lg'>Transactions</StatLabel>
+                    <StatNumber fontSize={'lg'}>{STORE_DATA?.transactions?.length}</StatNumber>
+                </Stat>
+                </GridItem>
+            </Grid>
+                 */}
             </Box>
         </Box>
   )
