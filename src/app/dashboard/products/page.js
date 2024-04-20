@@ -30,6 +30,7 @@ export default function Page() {
     });
 
     const PRODUCTS_DATA = data?.data?.data;
+    //console.log(PRODUCTS_DATA[0]);
 
     if (data?.data?.error){
         return (
@@ -93,6 +94,10 @@ export default function Page() {
                             </Thead>
                             <Tbody>
                                 {PRODUCTS_DATA?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((product)=>{
+                                    const sold_products = product?.transactions?.reduce(
+                                        (accumulator, currentValue) => accumulator + currentValue.items,
+                                        0,
+                                    );
                                     return(
                                         <Tr key={product?._id} >
                                             <Td>
@@ -112,12 +117,12 @@ export default function Page() {
                                             </Td>
                                             <Td>
                                                 <Progress 
-                                                    value={product?.items - product?.transactions?.length}
-                                                    colorScheme={product?.items - product?.transactions?.length  === 0? 'orange' : 'green'} 
+                                                    value={product?.items - sold_products}
+                                                    colorScheme={product?.items - sold_products  === 0? 'orange' : 'green'} 
                                                     size={'xs'}
                                                     max={product?.items}
                                                 />
-                                                <Text fontSize={'sm'}>{product?.items - product?.transactions?.length <= 0 ? 'out of stock' : `${product?.items - product?.transactions?.length} in stock`}</Text>
+                                                <Text fontSize={'sm'}>{product?.items - sold_products <= 0 ? 'out of stock' : `${product?.items - sold_products} in stock`}</Text>
                                             </Td>
                                             <Td>KES {product?.price}</Td>
                                             <Td>
