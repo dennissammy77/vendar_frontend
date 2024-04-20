@@ -10,44 +10,29 @@ const BarChartPlot = ({data}) => {
                 amount: item?.payment_total,
             }
         )
-    })
-    // const data = [
-    //     {
-    //       name: 'Page A',
-    //       total: 2400,
-    //     },
-    //     {
-    //       name: 'Page B',
-    //       total: 1398,
-    //     },
-    //     {
-    //       name: 'Page C',
-    //       total: 9800,
-    //     },
-    //     {
-    //       name: 'Page D',
-    //       total: 3908,
-    //     },
-    //     {
-    //       name: 'Page E',
-    //       total: 4800,
-    //     },
-    //     {
-    //       name: 'Page F',
-    //       total: 3800,
-    //     },
-    //     {
-    //       name: 'Page G',
-    //       total: 4300,
-    //     },
-    //   ];
+    });
+    
+    const GroupedByDateArray = Object.groupBy(TempVArr || [], ({ name }) => name);
+
+    let temp_arr = [];
+    for(let i = 0; i <= Object.entries(GroupedByDateArray).length - 1; i++){
+        temp_arr.push(
+            {
+                name: Object.entries(GroupedByDateArray)[i][0],
+                amount: Object.entries(GroupedByDateArray)[i][1].reduce(
+                    (accumulator, currentValue) => accumulator + currentValue.amount,
+                    0,
+                ),
+            }
+        )
+    };
     return (
         <>
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                 width={500}
                 height={300}
-                data={TempVArr}
+                data={temp_arr}
                 margin={{
                     top: 5,
                     right: 0,
