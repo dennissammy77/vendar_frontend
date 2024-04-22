@@ -121,7 +121,7 @@ export default function NewStaffForm() {
                 </HStack>
             }
             {isSubmitting?
-                <Button isLoading loadingText='creating your account' variant='ghost' borderRadius={'md'} w='full'/>
+                <Button isLoading loadingText='creating user account' variant='ghost' borderRadius={'md'} w='full'/>
             :
                 <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Create User</Button>
             }

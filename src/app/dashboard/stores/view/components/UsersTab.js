@@ -3,13 +3,16 @@ import { Avatar, Badge, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel
 import moment from 'moment'
 import { useRouter } from 'next/navigation'
 import React, { useContext } from 'react'
+import { GiShoppingBag } from 'react-icons/gi'
 import { IoMdAdd, IoMdSettings } from 'react-icons/io'
+import { IoPeopleOutline } from 'react-icons/io5'
+import { LiaMoneyBillWaveSolid } from 'react-icons/lia'
 import { MdOutlineAdminPanelSettings } from 'react-icons/md'
 
 export default function UserTabs({store}) {
   return (
-    <Tabs variant='soft-rounded' colorScheme='blue' isLazy>
-        <TabList my='2'>
+    <Tabs variant='soft-rounded' colorScheme='blue' isLazy w='100%'>
+        <TabList my='2' overflowX='scroll'>
             <Tab>
               <Icon as={MdOutlineAdminPanelSettings} boxSize='5' mx='1'/>
               Staff
@@ -75,13 +78,22 @@ const VendorCard=({store})=>{
           </HStack>
           <Text ml='2' onClick={(()=>{router.push(`/dashboard/vendors?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
         </Flex>
-        {store?.vendors?.map((vendor)=>{
-          return(
-            <Box key={vendor?._id} py='2'>
-              <VendorItem vendor={vendor} STORE_ID={store?._id}/>
-              <Divider py='1'/>
-            </Box>
-          )})
+        {store?.vendors?.length === 0? 
+          <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+            <Icon as={IoPeopleOutline} boxSize={'6'}/>
+            <Text>You do not have any vendors at the moment.</Text>
+          </Flex>
+        :
+          <>
+            {store?.vendors?.map((vendor)=>{
+              return(
+                <Box key={vendor?._id} py='2'>
+                  <VendorItem vendor={vendor} STORE_ID={store?._id}/>
+                  <Divider py='1'/>
+                </Box>
+              )})
+            }
+          </>
         }
     </Box>
   )
@@ -100,13 +112,22 @@ const ProductCard=({store})=>{
           </HStack>
           <Text ml='2' onClick={(()=>{router.push(`/dashboard/products?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
         </Flex>
-        {store?.products?.map((product)=>{
-          return(
-            <Box key={product?._id} py='2'>
-              <ProductItem product={product} STORE_ID={store?._id}/>
-              <Divider py='1'/>
-            </Box>
-          )})
+        {store?.products?.length === 0? 
+          <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+            <Icon as={GiShoppingBag} boxSize={'6'}/>
+            <Text>You do not have any products at the moment.</Text>
+          </Flex>
+        :
+          <>
+            {store?.products?.map((product)=>{
+              return(
+                <Box key={product?._id} py='2'>
+                  <ProductItem product={product} STORE_ID={store?._id}/>
+                  <Divider py='1'/>
+                </Box>
+              )})
+            }
+          </>
         }
     </Box>
   )
@@ -125,40 +146,47 @@ const Transactions_Card=({store})=>{
           </HStack>
           <Text ml='2' onClick={(()=>{router.push(`/dashboard/transactions?uid=${user?.data?.data?._id}&store_id=${store?._id}`)})} _hover={{textDecoration:'1px solid underline'}} cursor='pointer'>view all</Text>          
         </Flex>
-        <TableContainer boxShadow={'md'}>
-          <Table variant='simple'>
-              <Thead bg='#E4F0FC'>
-                  <Tr>
-                      <Th>Date</Th>
-                      <Th>Amount</Th>
-                      <Th>Status</Th>
-                      <Th>Actions</Th>
-                  </Tr>
-              </Thead>
-              <Tbody>
-                {store?.transactions?.map((transaction)=>{
-                  return(
-                        <Tr key={transaction?._id} >
-                            <Td>
-                                <Box>
-                                    <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
-                                    <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
-                                </Box>
-                            </Td>
-                            <Td>KES {transaction?.payment_total}</Td>
-                            <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
-                            <Td>
-                                <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${store?._id}&transaction_id=${transaction?._id}`)})}>
-                                    <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-                                    <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
-                                </HStack>
-                            </Td>
-                        </Tr>
-                    )})
-                }
-              </Tbody>
-          </Table>
-      </TableContainer>
+        {store?.transactions?.length === 0? 
+          <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+            <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+            <Text>You do not have any transactions at the moment.</Text>
+          </Flex>
+        :
+          <TableContainer boxShadow={'md'}>
+            <Table variant='simple'>
+                <Thead bg='#E4F0FC'>
+                    <Tr>
+                        <Th>Date</Th>
+                        <Th>Amount</Th>
+                        <Th>Status</Th>
+                        <Th>Actions</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                  {store?.transactions?.map((transaction)=>{
+                    return(
+                          <Tr key={transaction?._id} >
+                              <Td>
+                                  <Box>
+                                      <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
+                                      <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
+                                  </Box>
+                              </Td>
+                              <Td>KES {transaction?.payment_total}</Td>
+                              <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
+                              <Td>
+                                  <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${store?._id}&transaction_id=${transaction?._id}`)})}>
+                                      <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                      <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                  </HStack>
+                              </Td>
+                          </Tr>
+                      )})
+                  }
+                </Tbody>
+            </Table>
+          </TableContainer>
+        }
     </Box>
   )
 }

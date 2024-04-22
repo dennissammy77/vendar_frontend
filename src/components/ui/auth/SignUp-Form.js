@@ -54,9 +54,7 @@ const SignUpForm=()=>{
             return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
           }
           toast({ title: 'Success!:Account created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-          setTimeout(()=>{
-            router.push('/onboarding/newstore');
-          },2000)
+          router.push('/onboarding/newstore');
           set_user_handler(response)
           return ;
       }).catch((err)=>{

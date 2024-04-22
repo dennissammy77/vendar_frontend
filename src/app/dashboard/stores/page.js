@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Flex, Grid, GridItem, HStack, Icon, Input, InputGroup, InputLeftElement, Spinner, Text } from '@chakra-ui/react'
+import { Badge, Box, Button, Flex, Grid, GridItem, HStack, Icon, Input, InputGroup, InputLeftElement, Spinner, Text } from '@chakra-ui/react'
 import React, { useContext, useState } from 'react';
 import { IoMdAdd } from "react-icons/io";
 
@@ -43,9 +43,7 @@ function Page() {
         }
     })
 
-    const [active_store, set_active_store] = useState(
-        data?.data?.data[0]
-    );
+    const [active_store, set_active_store] = useState(null || data?.data?.data[0]);
     
     if (data?.data?.error){
         return (
@@ -125,7 +123,10 @@ const StoreItem = ({store, set_active_store}) =>{
     return(
         <HStack align='center' bg='#E4F0FC' borderRadius={'md'} mb='2' p='4' spacing='4' cursor={'pointer'} border={'2px solid'} borderColor={'gray.300'} onClick={(()=>{set_active_store(store)})}>
             <Icon as={FaStore} boxSize={'4'} color='gray.500'/>
-            <Text fontWeight={'semibold'}>{store.name}</Text>
+            <Box>
+                <Text fontWeight={'semibold'}>{store.name}</Text>
+                <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
+            </Box>
         </HStack>
     )
 }

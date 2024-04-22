@@ -46,10 +46,7 @@ const LoginForm=()=>{
     try {
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-          setTimeout(()=>{
-            router.push('/dashboard/home');
-          },2000)
-          set_user_handler(response)
+          router.push('/dashboard/home');
           return ;
       }).catch((err)=>{
           return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });

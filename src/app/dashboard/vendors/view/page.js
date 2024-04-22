@@ -1,6 +1,6 @@
 'use client'
-import React, { useContext } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure} from '@chakra-ui/react'
+import React, { useContext, useState } from 'react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, Avatar, Progress} from '@chakra-ui/react'
 import { MdChevronRight, MdClose, MdDone, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
@@ -12,6 +12,10 @@ import { FETCH_USER_DATA } from '@/app/api/auth/route';
 import { TiUserDelete } from "react-icons/ti";
 import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+import moment from 'moment';
+import { IoMdSettings } from 'react-icons/io';
+import { GiShoppingBag } from 'react-icons/gi';
+import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -28,8 +32,8 @@ function Page() {
     });
 
     const USER_DATA = data?.data?.data;
-
-    console.log(USER_DATA);
+    const PRODUCTS_DATA = USER_DATA?.store_ref[0]?.products;
+    const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions?.filter((transaction)=>transaction?.vendor === USER_DATA?._id);
 
     const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
 
@@ -48,7 +52,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink isCurrentPage>{ACCOUNT_ID}</BreadcrumbLink>
+                    <BreadcrumbLink isCurrentPage>{USER_DATA?.username || USER_DATA?.name}</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
@@ -97,65 +101,171 @@ function Page() {
                         </Box>
                     </GridItem>
                 </Grid>
-                {/**
-                 * 
-                <Grid
-                    templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
-                    templateColumns={{base:'repeat(1, 1fr)',md:'repeat(3, 1fr)'}}
-                    gap={4}
-                    my='5'
-                >
-                <GridItem
-                    colSpan={2} 
-                    bg='#FFFFFF'
-                    p='4'
-                    borderRadius={20}
-                    boxShadow={'md'}
-                    fontSize={'12px'}
-                    h='300px'
-                >
-                    <BarChartPlot data={STORE_DATA?.transactions}/>
-                </GridItem>
-                <GridItem
-                colSpan={1}
-                >
-                <Stat
-                    bg='#daf7e9'
-                    p='4'
-                    borderRadius={20}
-                    boxShadow={'sm'}
-                    align='center'
-                >
-                    <StatLabel fontSize='lg'>Vendors</StatLabel>
-                    <StatNumber fontSize={'lg'}>{STORE_DATA?.vendors?.length}</StatNumber>
-                </Stat>
-                <Stat
-                    bg='#d3f5f9'
-                    p='4'
-                    borderRadius={20}
-                    boxShadow={'sm'}
-                    align='center'
-                    my='2'
-                >
-                    <StatLabel fontSize='lg'>Products</StatLabel>
-                    <StatNumber fontSize={'lg'}>{STORE_DATA?.products?.length}</StatNumber>
-                </Stat>
-                <Stat
-                    bg='#Cfc7f1'
-                    p='4'
-                    borderRadius={20}
-                    boxShadow={'sm'}
-                    align='center'
-                >
-                    <StatLabel fontSize='lg'>Transactions</StatLabel>
-                    <StatNumber fontSize={'lg'}>{STORE_DATA?.transactions?.length}</StatNumber>
-                </Stat>
-                </GridItem>
-            </Grid>
-                 */}
             </Box>
+            <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4' w='100%'>
+                <TabList my='2' overflowX='scroll'>
+                    <Tab>Products</Tab>
+                    <Tab>Transactions</Tab>
+                    <Tab>Data</Tab>
+                </TabList>
+                <Divider/>
+                <TabPanels>
+                    <TabPanel>
+                        {PRODUCTS_DATA?.length === 0? 
+                            <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                <Icon as={GiShoppingBag} boxSize={'6'}/>
+                                <Text>This user has not added any products yet.</Text>
+                            </Flex>
+                            :
+                            <Products_Section PRODUCTS_DATA={PRODUCTS_DATA} USER_DATA={USER_DATA}/>
+                        }
+                    </TabPanel>
+                    <TabPanel>
+                        {TRANSACTIONS_DATA?.length === 0? 
+                            <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                <Text>This user does not have any transactions at the moment.</Text>
+                            </Flex>
+                            :
+                            <Transaction_Section TRANSACTIONS_DATA={TRANSACTIONS_DATA} USER_DATA={USER_DATA}/>
+                        }
+                    </TabPanel>
+                    <TabPanel>
+                        <Box
+                            bg='#FFFFFF'
+                            p='4'
+                            borderRadius={20}
+                            boxShadow={'md'}
+                            fontSize={'12px'}
+                            h='300px'
+                        >
+                            {TRANSACTIONS_DATA?.length === 0? 
+                                <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                    <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                    <Text>This user does not have any transactions at the moment.</Text>
+                                </Flex>
+                                :
+                                <BarChartPlot data={TRANSACTIONS_DATA}/>
+                            }
+                        </Box>
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
         </Box>
   )
 }
 
-export default Page
+export default Page;
+
+const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
+    const [search_query, set_search_query]=useState('')
+    const router = useRouter();
+    return(
+        <TableContainer boxShadow={'md'}>
+            <Table variant='simple'>
+                <Thead bg='#E4F0FC'>
+                    <Tr>
+                        <Th>Product</Th>
+                        <Th>Date</Th>
+                        <Th>Amount</Th>
+                        <Th>Status</Th>
+                        <Th>Actions</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {TRANSACTIONS_DATA?.reverse()?.map((transaction)=>{
+                        return(
+                            <Tr key={transaction?._id} >
+                                <Td>
+                                    <HStack>
+                                        <Avatar size={'sm'} src='' name={transaction?.product_ref?.name}/>
+                                        <Box>
+                                            <Text fontSize={'12px'}>{transaction?.product_ref?.name}</Text>
+                                            <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{transaction?._id}</Text>
+                                        </Box>
+                                    </HStack>
+                                </Td>
+                                <Td>
+                                    <Box>
+                                        <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
+                                        <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
+                                    </Box>
+                                </Td>
+                                <Td>KES {transaction?.payment_total}</Td>
+                                <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
+                                <Td>
+                                    <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${USER_DATA?._id}&store_id=${USER_DATA?.store_ref[0]?._id}&transaction_id=${transaction?._id}`)})}>
+                                        <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                        <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                    </HStack>
+                                </Td>
+                            </Tr>
+                        )})
+                    }
+                </Tbody>
+            </Table>
+        </TableContainer>
+    )
+}
+const Products_Section = ({PRODUCTS_DATA,USER_DATA})=>{
+    const [search_query, set_search_query]=useState('')
+    const router = useRouter();
+    return(
+            <TableContainer boxShadow={'md'}>
+                <Table variant='simple'>
+                    <Thead bg='#E4F0FC'>
+                        <Tr>
+                            <Th>Product</Th>
+                            <Th>Date</Th>
+                            <Th>Stock</Th>
+                            <Th>Price</Th>
+                            <Th>Actions</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {PRODUCTS_DATA?.filter((vendor)=>vendor?.owner_ref_id === USER_DATA?._id)?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((product)=>{
+                            const sold_products = product?.transactions?.reduce(
+                                (accumulator, currentValue) => accumulator + currentValue.items,
+                                0,
+                            );
+                            return(
+                                <Tr key={product?._id} >
+                                    <Td>
+                                        <HStack>
+                                            <Avatar size={'sm'} src='' name={product?.name}/>
+                                            <Box>
+                                                <Text>{product?.name}</Text>
+                                                <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{product?.category}</Text>
+                                            </Box>
+                                        </HStack>
+                                    </Td>
+                                    <Td>
+                                        <Box>
+                                            <Text fontWeight={''}>{moment(product?.createdAt).format("DD MMM YY")}</Text>
+                                            <Text fontSize={'sm'} color='gray.400'>{moment(product?.createdAt).format("h:mm a")}</Text>
+                                        </Box>
+                                    </Td>
+                                    <Td>
+                                        <Progress 
+                                            value={product?.items - sold_products}
+                                            colorScheme={product?.items - sold_products  === 0? 'orange' : 'green'} 
+                                            size={'xs'}
+                                            max={product?.items}
+                                        />
+                                        <Text fontSize={'sm'}>{product?.items - sold_products <= 0 ? 'out of stock' : `${product?.items - sold_products} in stock`}</Text>
+                                    </Td>
+                                    <Td>KES {product?.price}</Td>
+                                    <Td>
+                                        <HStack color='gray.600' cursor={'pointer'} pr='1' onClick={(()=>{router.push(`/dashboard/products/view?uid=${USER_DATA?._id}&store_id=${USER_DATA?.store_ref[0]?._id}&product_id=${product?._id}`)})}>
+                                            <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                            <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                        </HStack>
+                                    </Td>
+                                </Tr>
+                            )})
+                        }
+                    </Tbody>
+                </Table>
+            </TableContainer>
+    )
+}

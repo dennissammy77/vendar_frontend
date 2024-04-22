@@ -1,7 +1,7 @@
 'use client'
 import { FETCH_STORE_DATA } from '@/app/api/shop/route';
 import { UserContext } from '@/components/providers/user.context';
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, useDisclosure, VStack} from '@chakra-ui/react'
+import { Badge, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, useDisclosure, VStack} from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react'
@@ -78,13 +78,14 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink fontSize={'sm'} color='gray.400' fontWeight={'bold'}>#{store_id}</BreadcrumbLink>
+                    <BreadcrumbLink fontSize={'sm'} color='gray.400' fontWeight={'bold'}>{store?.name}</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
             <Box bg='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='4' mb='2'>
                 <Flex justify={'space-between'}>
                     <HStack>
                         <Text fontSize={'x-large'} fontWeight={'bold'} my='2'>{store?.name}</Text>
+                        <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
                     </HStack>
                 </Flex>
                 <Text my='2'>{store?.description}</Text>

@@ -26,6 +26,7 @@ function Page() {
     });
 
     const TRANSACTION_DATA = data?.data?.data;
+    console.log(TRANSACTION_DATA)
 
     const DELETE_TRANSACTION_ALERT_DISCLOSURE = useDisclosure()
 
@@ -43,11 +44,11 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink isCurrentPage>{TRANSACTION_ID}</BreadcrumbLink>
+                    <BreadcrumbLink isCurrentPage>-</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
-            <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
+            <Box>
+                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'} boxShadow={'md'} my='2' p='4' borderRadius={'sm'}>
                     <HStack onClick={(()=>{router.push(`/dashboard/transactions/edit?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`)})}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
                         <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
@@ -63,23 +64,38 @@ function Page() {
                     gap={4}
                     my='2'
                 >
-                    <GridItem>
-                        <Flex align='center' justify={'space-between'}>
+                    <GridItem boxShadow={'md'} my='2' p='4' borderRadius={'md'}>
+                        <Flex align='center' justify={'space-between'} my='2'>
                             <Text fontWeight={'bold'}>Transaction Details</Text>
                             <Badge colorScheme={TRANSACTION_DATA?.payment? 'green':'orange'}>{TRANSACTION_DATA?.status}</Badge>
                         </Flex>
+                        <Divider/>
+                        <Flex justify={'space-between'}>
+                            <Box my='2'>
+                                <Text fontWeight={'bold'} fontSize={'xl'}>SubTotal</Text>
+                                <Text fontWeight={''}>KES {TRANSACTION_DATA?.price}</Text>
+                            </Box>
+                            <Box my='2'>
+                                <Text fontWeight={''}>Items</Text>
+                                <Text fontWeight={''}>{TRANSACTION_DATA?.items}</Text>
+                            </Box>
+                        </Flex>
                         <Box my='2'>
-                            <Text fontWeight={'bold'}>SubTotal</Text>
-                            <Text fontWeight={''}>{TRANSACTION_DATA?.price}</Text>
+                            <Text fontWeight={'bold'}>Delivery Details</Text>
+                            <Divider/>
                         </Box>
-                        <Box my='2'>
-                            <Text fontWeight={'bold'}>Items</Text>
-                            <Text fontWeight={''}>{TRANSACTION_DATA?.items}</Text>
-                        </Box>
-                        <Box my='2'>
-                            <Text fontWeight={'bold'}>Delivery</Text>
-                            <Text fontWeight={''}>KES{TRANSACTION_DATA?.delivery_fee}</Text>
-                        </Box>
+                        <HStack my='2'>
+                            <Text>Fee: </Text>
+                            <Text>KES {TRANSACTION_DATA?.delivery_fee}</Text>
+                        </HStack>
+                        <HStack my='2'>
+                            <Text>Rider: </Text>
+                            <Text>{TRANSACTION_DATA?.delivery_person_name}</Text>
+                        </HStack>
+                        <HStack my='2'>
+                            <Text>contact: </Text>
+                            <Text>{TRANSACTION_DATA?.delivery_person_contact}</Text>
+                        </HStack>
                         <Box my='2'>
                             <Text fontWeight={'bold'}>Payment Details</Text>
                             <Text fontWeight={''} my='1'>{TRANSACTION_DATA?.payment_method}</Text>
@@ -87,24 +103,34 @@ function Page() {
                         </Box>
                         <Divider/>
                         <Box my='2'>
-                            <Text fontWeight={'bold'}>Total</Text>
-                            <Text fontWeight={''}>{TRANSACTION_DATA?.payment_total}</Text>
+                            <Text fontWeight={'bold'} fontSize='xl'>Total</Text>
+                            <Text fontWeight={''}>KES {TRANSACTION_DATA?.payment_total}</Text>
                         </Box>
                     </GridItem>
-                    <GridItem>
+                    <GridItem boxShadow={'md'} my='2' p='4' borderRadius={'md'}>
                         <Text fontWeight={'bold'} fontSize={'lg'}>Product Details</Text>
-                        <Box>
-                            <Text fontWeight={'bold'}>Name</Text>
-                            <Text fontWeight={''}>{TRANSACTION_DATA?.product_ref?.name}</Text>
-                        </Box>
-                        <Box my='2'>
-                            <Text fontWeight={'bold'}>Price</Text>
-                            <Text fontWeight={''}>{TRANSACTION_DATA?.product_ref?.price}</Text>
-                        </Box>
+                        <Divider/>
+                        <Flex justify='space-between'>
+                            <Box>
+                                <Text fontWeight={'bold'}>Name</Text>
+                                <Text fontWeight={''}>{TRANSACTION_DATA?.product_ref?.name}</Text>
+                            </Box>
+                            <Box my='2'>
+                                <Text fontWeight={'bold'}>Price</Text>
+                                <Text fontWeight={''}>{TRANSACTION_DATA?.product_ref?.price}</Text>
+                            </Box>
+                        </Flex>
                         <Text fontWeight={'bold'} fontSize={'lg'} my='2'>Store Details</Text>
+                        <Divider/>
                         <Box my='2'>
                             <Text fontWeight={'bold'}>Name</Text>
                             <Text fontWeight={''}>{TRANSACTION_DATA?.store_ref?.name}</Text>
+                        </Box>
+                        <Text fontWeight={'bold'} fontSize={'lg'} my='2'>Vendor Details</Text>
+                        <Divider/>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Name</Text>
+                            <Text fontWeight={''}>{TRANSACTION_DATA?.vendor?.name}</Text>
                         </Box>
                     </GridItem>
                 </Grid>
