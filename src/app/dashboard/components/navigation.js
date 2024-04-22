@@ -64,7 +64,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
          * 
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
          */}
-        {user?.data?.data?.account_type === 'vendor'? null : <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})}>New Sale</Button> }
+        {user?.data?.data?.account_type === 'vendor'? null : <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})} mr='2'>New Sale</Button> }
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
@@ -72,7 +72,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 <Avatar size={'sm'} name={user?.data?.data?.name}/>
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
                   <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
-                  <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7'>{user?.data?.data?.store_admin_account_ref?.role}</Badge>
+                  <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7'>{user?.data?.data?.account_type}</Badge>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
                   {/**
@@ -140,7 +140,7 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
               router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
               onClose()
             })}
-            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors') ? 'none' : ''}
+            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' ) ? 'none' : ''}
           >
             {item.title}
           </NavItem>

@@ -3,13 +3,11 @@ import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
-import { Button, Divider, Flex, FormControl, FormLabel, HStack, Icon, Input, Select, Spinner, Switch, Text, Textarea, useToast } from '@chakra-ui/react';
+import { Button, Divider, FormControl, FormLabel, HStack, Icon, Input, Select, Text, Textarea, useToast } from '@chakra-ui/react';
 import { CiWarning } from 'react-icons/ci';
 import { TbTruckDelivery } from "react-icons/tb";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FETCH_STORE_PRODUCTS_DATA } from '@/app/api/product/route';
-import { useQuery } from '@tanstack/react-query';
 import { NEW_STORE_TRANSACTION } from '@/app/api/transaction/route';
 import { IoIosPerson } from 'react-icons/io';
 import { GrMoney } from 'react-icons/gr';
@@ -26,12 +24,6 @@ export default function NEW_TRANSACTION_FORM() {
 
     const USER_ID = user?.data?.data?._id;
     const [PRODUCT_ID,SET_PRODUCT_ID]=useState('');
-
-    // const {data, isLoading} = useQuery({
-    //     queryKey: ['store_products', {STORE_ID,USER_ID}],
-    //     queryFn: () => FETCH_STORE_PRODUCTS_DATA(USER_ID,STORE_ID)
-    // });
-    //console.log(user?.data?.data?.store_ref.find(products => products?._id === STORE_ID))
 
     const PRODUCTS_DATA = user?.data?.data?.store_ref.find(products => products?._id === STORE_ID)
 

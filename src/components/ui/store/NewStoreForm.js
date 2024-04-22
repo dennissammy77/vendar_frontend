@@ -44,12 +44,10 @@ export default function NewStoreForm() {
                     return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
                 }
                 toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-                setTimeout(()=>{
-                    if(pathArr.some(path => path === 'onboarding')){
-                        router.push(`/dashboard/home?uid=${user?.data?.data?._id}`);
-                    }
-                    router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
-                },2000)
+                if(pathArr.some(path => path === 'onboarding')){
+                    router.push(`/dashboard/home?uid=${user?.data?.data?._id}`);
+                }
+                router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
                 return ;
             }).catch((err)=>{
                 return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });

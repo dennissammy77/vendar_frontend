@@ -34,7 +34,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`}>staff</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`}>transactions</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>

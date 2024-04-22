@@ -14,6 +14,8 @@ import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEH
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
+import { GiShoppingBag } from 'react-icons/gi';
+import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -31,11 +33,7 @@ function Page() {
 
     const USER_DATA = data?.data?.data;
     const PRODUCTS_DATA = USER_DATA?.store_ref[0]?.products;
-    const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions;
-
-    console.log(USER_DATA);
-    console.log(PRODUCTS_DATA);
-    console.log(TRANSACTIONS_DATA);
+    const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions?.filter((transaction)=>transaction?.vendor === USER_DATA?._id);
 
     const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
 
@@ -104,8 +102,8 @@ function Page() {
                     </GridItem>
                 </Grid>
             </Box>
-            <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4'>
-                <TabList my='2'>
+            <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4' w='100%'>
+                <TabList my='2' overflowX='scroll'>
                     <Tab>Products</Tab>
                     <Tab>Transactions</Tab>
                     <Tab>Data</Tab>
@@ -113,10 +111,24 @@ function Page() {
                 <Divider/>
                 <TabPanels>
                     <TabPanel>
-                        <Products_Section PRODUCTS_DATA={PRODUCTS_DATA} USER_DATA={USER_DATA}/>
+                        {PRODUCTS_DATA?.length === 0? 
+                            <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                <Icon as={GiShoppingBag} boxSize={'6'}/>
+                                <Text>This user has not added any products yet.</Text>
+                            </Flex>
+                            :
+                            <Products_Section PRODUCTS_DATA={PRODUCTS_DATA} USER_DATA={USER_DATA}/>
+                        }
                     </TabPanel>
                     <TabPanel>
-                        <Transaction_Section TRANSACTIONS_DATA={TRANSACTIONS_DATA} USER_DATA={USER_DATA}/>
+                        {TRANSACTIONS_DATA?.length === 0? 
+                            <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                <Text>This user does not have any transactions at the moment.</Text>
+                            </Flex>
+                            :
+                            <Transaction_Section TRANSACTIONS_DATA={TRANSACTIONS_DATA} USER_DATA={USER_DATA}/>
+                        }
                     </TabPanel>
                     <TabPanel>
                         <Box
@@ -127,7 +139,14 @@ function Page() {
                             fontSize={'12px'}
                             h='300px'
                         >
-                            <BarChartPlot data={TRANSACTIONS_DATA?.filter((transaction)=>transaction?.vendor === USER_DATA?._id)}/>
+                            {TRANSACTIONS_DATA?.length === 0? 
+                                <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                    <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                    <Text>This user does not have any transactions at the moment.</Text>
+                                </Flex>
+                                :
+                                <BarChartPlot data={TRANSACTIONS_DATA}/>
+                            }
                         </Box>
                     </TabPanel>
                 </TabPanels>
@@ -154,7 +173,7 @@ const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {TRANSACTIONS_DATA?.filter((transaction)=>transaction?.vendor === USER_DATA?._id)?.reverse()?.map((transaction)=>{
+                    {TRANSACTIONS_DATA?.reverse()?.map((transaction)=>{
                         return(
                             <Tr key={transaction?._id} >
                                 <Td>
@@ -209,7 +228,6 @@ const Products_Section = ({PRODUCTS_DATA,USER_DATA})=>{
                                 (accumulator, currentValue) => accumulator + currentValue.items,
                                 0,
                             );
-                            console.log(product)
                             return(
                                 <Tr key={product?._id} >
                                     <Td>

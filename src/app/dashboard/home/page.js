@@ -1,13 +1,14 @@
 'use client'
 import { UserContext } from '@/components/providers/user.context';
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
-import { Badge, Box, Button, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
+import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
 import moment from 'moment';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useContext, useState } from 'react'
-import { CiTrophy } from 'react-icons/ci';
-import { FaStore, FaTrophy } from 'react-icons/fa';
+import React, { useContext } from 'react';
 import { FaBagShopping } from 'react-icons/fa6';
+import { GiShoppingBag } from 'react-icons/gi';
+import { IoPeopleOutline } from 'react-icons/io5';
+import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 
 function Page() {
   const router = useRouter();
@@ -15,7 +16,7 @@ function Page() {
 
   const USER_DATA = user?.data?.data;
   const searchParams = useSearchParams();
-  const STORE_ID = searchParams.get('store_id');
+  const STORE_ID = searchParams.get('store_id') || USER_DATA?.store_ref[0]?._id;
   const STORE_DATA = USER_DATA?.store_ref?.find((store)=>store?._id === STORE_ID);
 
   return (
@@ -54,7 +55,13 @@ function Page() {
           fontSize={'12px'}
           h='300px'
         >
-          <BarChartPlot data={STORE_DATA?.transactions}/>
+          {STORE_DATA?.transactions?.length === 0?
+            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='100%' textAlign={'center'}>
+              <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>No transactions found <br/>start by<br/>creating new sales.</Text>
+            </Flex>
+          :
+            <BarChartPlot data={STORE_DATA?.transactions}/>
+          }
         </GridItem>
         <GridItem
           colSpan={1}
@@ -67,7 +74,10 @@ function Page() {
             align='center'
           >
             <StatLabel fontSize='lg'>Vendors</StatLabel>
-            <StatNumber fontSize={'lg'}>{STORE_DATA?.vendors?.length}</StatNumber>
+            <StatNumber fontSize={'lg'} my='1'>
+              <Icon as={IoPeopleOutline} mx='4'/>
+              {STORE_DATA?.vendors?.length}
+            </StatNumber>
           </Stat>
           <Stat
             bg='#d3f5f9'
@@ -78,7 +88,10 @@ function Page() {
             my='2'
           >
             <StatLabel fontSize='lg'>Products</StatLabel>
-            <StatNumber fontSize={'lg'}>{STORE_DATA?.products?.length}</StatNumber>
+            <StatNumber fontSize={'lg'} my='1'>
+              <Icon as={GiShoppingBag} mx='4'/>
+              {STORE_DATA?.products?.length}
+            </StatNumber>
           </Stat>
           <Stat
             bg='#Cfc7f1'
@@ -88,83 +101,89 @@ function Page() {
             align='center'
           >
             <StatLabel fontSize='lg'>Transactions</StatLabel>
-            <StatNumber fontSize={'lg'}>{STORE_DATA?.transactions?.length}</StatNumber>
+            <StatNumber fontSize={'lg'} my='1'>
+              <Icon as={LiaMoneyBillWaveSolid} mx='4'/>
+              {STORE_DATA?.transactions?.length}
+            </StatNumber>
           </Stat>
         </GridItem>
       </Grid>
       {/**Stats section end here */}
       {/**Leaderboard section start here */}
-      <Grid
-        templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
-        templateColumns={{base:'repeat(1, 1fr)',md:'repeat(3, 1fr)'}}
-        gap={4}
-        my='4'
-      >
-        <GridItem
-          colSpan={2}
-          bg='#FFFFFF'
-          p='4'
-          borderRadius={20}
-          boxShadow={'md'}
+      {STORE_DATA?.transactions?.length === 0?
+      null:
+        <Grid
+          templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
+          templateColumns={{base:'repeat(1, 1fr)',md:'repeat(3, 1fr)'}}
+          gap={4}
+          my='4'
         >
-          <Text fontSize={'2xl'}>Recent Transactions</Text>
-          <TableContainer>
-            <Table variant='simple'>
-              <Thead>
-                <Tr>
-                  <Th>Amount</Th>
-                  <Th>Method</Th>
-                  <Th>Date</Th>
-                  <Th>Status</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {STORE_DATA?.transactions?.slice(-3).reverse().map((transaction)=>{
-                  return(
-                    <Tr>
-                      <Td>{transaction?.payment_total}</Td>
-                      <Td>{transaction?.payment_method}</Td>
-                      <Td>
-                          <Box>
-                              <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
-                              <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
-                          </Box>
-                      </Td>
-                      <Td>
-                        <Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge>
-                      </Td>
-                    </Tr>
-                  )
-                })}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </GridItem>
-        <GridItem
-          colSpan={1}
-          bg='#FFFFFF'
-          p='4'
-          borderRadius={20}
-          boxShadow={'md'}
-        >
-          <Text fontSize={'2xl'}>Best Products</Text>
-          <Text fontSize={'12px'} color='gray.400' my='1'>ranking based on transactions</Text>
-          {STORE_DATA?.products?.sort((a, b) => b.transactions?.length - a?.transactions?.length)?.slice(0,3).map(product =>{
-            return(
-              <>
-                <HStack align='center' p='4' sapcing='2'>
-                  <Icon as={FaBagShopping} boxSize={'4'} color='gray.300'/>
-                  <Box>
-                    <Text fontSize={'md'}>{product?.name}</Text>
-                    <Text fontSize={'sm'}>{product?.transactions?.length}</Text>
-                  </Box>
-                </HStack>
-                <Divider/>
-              </>
-            )
-          })}
-        </GridItem>
-      </Grid>
+          <GridItem
+            colSpan={2}
+            bg='#FFFFFF'
+            p='4'
+            borderRadius={20}
+            boxShadow={'md'}
+          >
+            <Text fontSize={'2xl'}>Recent Transactions</Text>
+            <TableContainer>
+              <Table variant='simple'>
+                <Thead>
+                  <Tr>
+                    <Th>Amount</Th>
+                    <Th>Method</Th>
+                    <Th>Date</Th>
+                    <Th>Status</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {STORE_DATA?.transactions?.slice(-3).reverse().map((transaction)=>{
+                    return(
+                      <Tr>
+                        <Td>{transaction?.payment_total}</Td>
+                        <Td>{transaction?.payment_method}</Td>
+                        <Td>
+                            <Box>
+                                <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
+                                <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
+                            </Box>
+                        </Td>
+                        <Td>
+                          <Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge>
+                        </Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </GridItem>
+          <GridItem
+            colSpan={1}
+            bg='#FFFFFF'
+            p='4'
+            borderRadius={20}
+            boxShadow={'md'}
+          >
+            <Text fontSize={'2xl'}>Best Products</Text>
+            <Text fontSize={'12px'} color='gray.400' my='1'>ranking based on transactions</Text>
+            {STORE_DATA?.products?.sort((a, b) => b.transactions?.length - a?.transactions?.length)?.slice(0,3).map(product =>{
+              return(
+                <>
+                  <HStack align='center' p='4' sapcing='2'>
+                    <Icon as={FaBagShopping} boxSize={'4'} color='gray.300'/>
+                    <Box>
+                      <Text fontSize={'md'}>{product?.name}</Text>
+                      <Text fontSize={'sm'}>{product?.transactions?.length}</Text>
+                    </Box>
+                  </HStack>
+                  <Divider/>
+                </>
+              )
+            })}
+          </GridItem>
+        </Grid>
+      }
       {/**Leaderboard section end here */}
     </Box>
   )

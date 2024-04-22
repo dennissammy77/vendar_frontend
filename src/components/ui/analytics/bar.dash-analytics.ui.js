@@ -3,7 +3,7 @@ import moment from 'moment';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const BarChartPlot = ({data}) => {
-    const TempVArr= data?.map((item)=>{
+    const TempVArr= data?.filter((item)=>item?.payment)?.map((item)=>{
         return (
             {
                 name: moment(item?.createdAt).format("DD MMM YY"),
