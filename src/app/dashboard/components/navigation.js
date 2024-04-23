@@ -9,7 +9,7 @@ import { UserContext } from "@/components/providers/user.context";
 import { IoMenu } from "react-icons/io5";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { HiOutlineLogout } from "react-icons/hi";
-import { FaBell } from "react-icons/fa";
+import { FaBell, FaStore } from "react-icons/fa";
 import LOGO from "@/app/lib/LOGO";
 import { IoCloseSharp } from "react-icons/io5";
 import Link from "next/link";
@@ -64,7 +64,34 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
          * 
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
          */}
-        {user?.data?.data?.account_type === 'vendor'? null : <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<IoMdAdd />} onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})} mr='2'>New Sale</Button> }
+        {user?.data?.data?.account_type === 'vendor'? null : 
+          <Menu>
+            <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
+              <Button 
+                bgColor={'#4E2FD7'} 
+                color='#ffffff' 
+                leftIcon={<IoMdAdd />} 
+                //onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})} 
+                mr='2'
+              >
+                New Sale
+              </Button> 
+            </MenuButton>
+            <MenuList>
+                {user?.data?.data?.store_ref?.map((store)=>{
+                  return(
+                    <MenuItem  
+                      as='a' 
+                      href={`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${store?._id}`} 
+                      icon={<FaStore/>}
+                    > 
+                     {store?.name}
+                    </MenuItem>
+                  )
+                })}
+            </MenuList>
+          </Menu>
+        }
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
@@ -92,7 +119,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                  * 
                 <MenuItem>FAQs</MenuItem>
                  */}
-                <MenuItem>Support</MenuItem>
+                <MenuItem as='a' href={`/dashboard/support?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`}>Support</MenuItem>
               </MenuGroup>
               <MenuDivider />
               <MenuItem as='a' onClick={(()=>{HandleLogout()})} href='/' cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
@@ -109,10 +136,12 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
 const NavItem = (props) => {
     const { icon, children, ...rest } = props;
     return (
-      <Flex align="center" mx='3' my='2' px="4" pl="4" py="3" cursor="pointer" _hover={{ bg: "gray.300", color: "gray.900", borderRadius:5,boxShadow:'sm' }} fontWeight="bold" fontSize={'md'} transition=".3s ease" {...rest}>
-        {icon && ( <Icon mx="2" boxSize="5" _groupHover={{ color: "gray.900", }} as={icon} /> )}
-        {children}
-      </Flex>
+      <Link href={`${props?.route}?uid=${props?.user_id}&store_id=${props?.store_id}`} >
+          <Flex align="center" mx='3' my='2' px="4" pl="4" py="3" cursor="pointer" _hover={{ bg: "gray.300", color: "gray.900", borderRadius:5,boxShadow:'sm' }} fontWeight="bold" fontSize={'md'} transition=".3s ease" {...rest}>
+          {icon && ( <Icon mx="2" boxSize="5" _groupHover={{ color: "gray.900", }} as={icon} /> )}
+          {children}
+          </Flex>
+      </Link>
     );
   };
 
@@ -135,12 +164,15 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
             bg={pathArr[2] === item?.title?.toLowerCase() ? '#E4F0FC' : '#FAFAFA'} 
             color={pathArr[2] === item?.title?.toLowerCase() ? '#4E2FD7' : '#9298AC'} 
             borderRadius={pathArr[2] ==- item?.title?.toLowerCase()? 'md' : '5'} 
-            icon={item?.icon} 
+            icon={item?.icon}
+            route={item?.route}
+            user_id={user?.data?.data?._id}
+            store_id={user?.data?.data?.store_ref[0]?._id}
             onClick={(()=>{
-              router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
+              //router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
               onClose()
             })}
-            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' ) ? 'none' : ''}
+            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' || item?.title.toLowerCase() === 'home' ) ? 'none' : ''}
           >
             {item.title}
           </NavItem>

@@ -9,6 +9,7 @@ import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts, MdSupportAgent } 
 import { GiShoppingBag } from "react-icons/gi";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { CiGrid42 } from 'react-icons/ci';
+import LOADING from './loading';
 
 export default function Layout({children}){
     const {user} = useContext(UserContext);
@@ -24,7 +25,7 @@ export default function Layout({children}){
     return(
         <Box>
             <NavigationBody navigation={navigation}>
-                <Suspense>
+                <Suspense fallback={<LOADING/>}>
                     {children}
                 </Suspense>
             </NavigationBody>

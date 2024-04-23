@@ -19,7 +19,7 @@ export default function DELETE_ACCOUNT_ALERT({isOpen, onClose, USER_ID, USER_DAT
             setTimeout(()=>{
                 onClose();
                 useLogOut();
-                router.push(`/`)
+                window?.location.href('/')
             },5000)
             return ;
         }).catch((err)=>{

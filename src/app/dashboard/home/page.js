@@ -1,7 +1,7 @@
 'use client'
 import { UserContext } from '@/components/providers/user.context';
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
-import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
+import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Spinner, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
 import moment from 'moment';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useContext } from 'react';
@@ -16,8 +16,17 @@ function Page() {
 
   const USER_DATA = user?.data?.data;
   const searchParams = useSearchParams();
-  const STORE_ID = searchParams.get('store_id') || USER_DATA?.store_ref[0]?._id;
+  const STORE_ID = USER_DATA?.store_ref[0]?._id || searchParams.get('store_id');
   const STORE_DATA = USER_DATA?.store_ref?.find((store)=>store?._id === STORE_ID);
+
+  if (!user){
+    return (
+      <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+          <Spinner />
+          <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting Up your dashboard</Text>
+      </Flex>
+    )
+}
 
   return (
     <Box p=''>

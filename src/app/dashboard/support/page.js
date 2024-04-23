@@ -97,30 +97,29 @@ function Page() {
         </GridItem>
         <GridItem 
           colSpan={1}
-          opacity={.2}
         >
-          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4'>
+          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4' opacity={.2}>
             <Icon as={FaBook} boxSize='6' color='gray.400'/>
             <Box>
               <Text fontWeight={'bold'} fontSize={'lg'}>User Guides</Text>
               <Text>Find your way through key features in the application</Text>
             </Box>
           </HStack>
-          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4'>
-            <Icon as={GoCommentDiscussion} boxSize='6' color='gray.400'/>
-            <Box>
-              <Text fontWeight={'bold'} fontSize={'lg'}>FAQs</Text>
-              <Text>Find frequently answered questions</Text>
-            </Box>
-          </HStack>
-          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4'>
+          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4' cursor='pointer' onClick={(()=>{router.push(`/dashboard/support/terms?uid=${user?.data?.data?._id}`)})}>
             <Icon as={IoDocumentTextOutline} boxSize='6' color='gray.400'/>
             <Box>
               <Text fontWeight={'bold'} fontSize={'lg'}>Terms&Conditions</Text>
               <Text>Read through our terms of service, disclaimers and guidelines.</Text>
             </Box>
           </HStack>
-          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4'>
+          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4' cursor='pointer' onClick={(()=>{router.push(`/dashboard/support/disclaimer?uid=${user?.data?.data?._id}`)})}>
+            <Icon as={GoCommentDiscussion} boxSize='6' color='gray.400'/>
+            <Box>
+              <Text fontWeight={'bold'} fontSize={'lg'}>Disclaimer</Text>
+              <Text>Read about our disclaimers</Text>
+            </Box>
+          </HStack>
+          <HStack p='4' align='center' boxShadow={'sm'} borderRadius={'md'} my='2' spacing='4' cursor='pointer' onClick={(()=>{router.push(`/dashboard/support/privacy?uid=${user?.data?.data?._id}`)})}>
             <Icon as={MdOutlinePrivacyTip} boxSize='6' color='gray.400'/>
             <Box>
               <Text fontWeight={'bold'} fontSize={'lg'}>Privacy Policy</Text>
