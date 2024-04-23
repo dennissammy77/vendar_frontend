@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon, Progress, TableContainer, Table, Thead, Tr, Th, Tbody, Td } from '@chakra-ui/react'
+import { Box, Button, Text, Flex, Spinner, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Divider, HStack, Avatar, Icon, InputGroup, InputLeftElement, Input, Tag, TagLabel, TagLeftIcon, Progress, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Badge } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useContext, useState } from 'react';
 
@@ -31,7 +31,6 @@ export default function Page() {
     });
 
     const PRODUCTS_DATA = data?.data?.data;
-    //console.log(PRODUCTS_DATA[0]);
 
     if (data?.data?.error){
         return (
@@ -101,10 +100,6 @@ export default function Page() {
                                 </Thead>
                                 <Tbody>
                                     {PRODUCTS_DATA?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((product)=>{
-                                        const sold_products = product?.transactions?.reduce(
-                                            (accumulator, currentValue) => accumulator + currentValue.items,
-                                            0,
-                                        );
                                         return(
                                             <Tr key={product?._id} >
                                                 <Td>
@@ -123,13 +118,12 @@ export default function Page() {
                                                     </Box>
                                                 </Td>
                                                 <Td>
-                                                    <Progress 
-                                                        value={product?.items - sold_products}
-                                                        colorScheme={product?.items - sold_products  === 0? 'orange' : 'green'} 
-                                                        size={'xs'}
-                                                        max={product?.items}
-                                                    />
-                                                    <Text fontSize={'sm'}>{product?.items - sold_products <= 0 ? 'out of stock' : `${product?.items - sold_products} in stock`}</Text>
+                                                    <Badge 
+                                                        fontSize={'sm'}
+                                                        colorScheme={product?.items === 0 ? 'orange':'purple'}
+                                                    >
+                                                        {product?.items === 0 ? 'out of stock' : `${product?.items} in stock`}
+                                                    </Badge>
                                                 </Td>
                                                 <Td>KES {product?.price}</Td>
                                                 <Td>

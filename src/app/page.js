@@ -8,11 +8,13 @@ import { useContext, useEffect } from "react";
 import useLogOut from "@/components/hooks/useLogOut.hook";
 import Link from "next/link";
 import Features from "./(Home)/Features/page";
+import useFetchToken from "@/components/hooks/useFetchToken.hook";
 
 export default function Index() {
   const router = useRouter();
   const toast = useToast()
   const {user} = useContext(UserContext);
+  const token = useFetchToken()
   const HandleLogout =()=>{
     useLogOut();
     window?.location.href('/')
@@ -23,14 +25,19 @@ export default function Index() {
       <Flex justify={'space-between'} align={'center'} py='4' px={{sm:5,md:'20'}} bg='#ffffff' position={'fixed'} top='0' left='0' w='100%' zIndex='1000'>
           <HStack align='center' mx='4' spacing='4'>
             <LOGO color='#4E2FD7' size='32px'/>
+            {/**
+             * 
             <HStack hideBelow={'sm'} display={'none'}>
               <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Features</Text>
               <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Pricing</Text>
             </HStack>
+             */}
           </HStack>
-          {!user?
+          {!token?
             <HStack align='center' spacing='2' fontWeight={'regular'}>
-              <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} onClick={(()=>{router.push('/signin')})}>SignIn</Text>
+              <Link href={`/signin`} >
+                <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'}>SignIn</Text>
+              </Link>
               <Button as="a" size={'sm'} variant="solid" bgColor='#4E2FD7' color='#fff' display="inline-flex" alignItems="center" justifyContent="center" w={{ base: "full", sm: "auto", }} mr='1' cursor="pointer"  onClick={(()=>{router.push('/signup')})}> 
                   Get Started
                   <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor" hideBelow={'sm'}>

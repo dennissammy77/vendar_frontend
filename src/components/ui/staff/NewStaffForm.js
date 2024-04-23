@@ -135,9 +135,10 @@ export const NEW_VENDOR_FORM=()=>{
     const {user} = useContext(UserContext);
 
     const EXISTING_STORES = user?.data?.data?.store_ref;
+    const [select_store,set_select_store]=useState('')
 
     const searchParams = useSearchParams()
-    const STORE_ID = searchParams.get('store_id');
+    const STORE_ID = select_store || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
 
     const schema = yup.object().shape({
@@ -205,7 +206,7 @@ export const NEW_VENDOR_FORM=()=>{
             </FormControl>
             <FormControl isRequired>
                 <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
-                <Select {...register("shop_ref")} placeholder='Select the store for the vendor'>
+                <Select placeholder='Select the store for the vendor' onChange={((e)=>{set_select_store(e.target.value)})}>
                     {EXISTING_STORES?.map((store)=>{
                         return(
                             <option key={store?._id} value={store?._id}>{store?.name}</option>

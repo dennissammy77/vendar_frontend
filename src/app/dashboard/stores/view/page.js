@@ -17,8 +17,6 @@ import Link from "next/link";
 
 function Page() {
     const {user} = useContext(UserContext);
-    
-    //const USER_ID = user?.data?.data?._id;
 
     const DELETE_STORE_ALERT_DISCLOSURE = useDisclosure()
 

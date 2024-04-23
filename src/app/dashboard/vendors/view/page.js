@@ -224,10 +224,6 @@ const Products_Section = ({PRODUCTS_DATA,USER_DATA})=>{
                     </Thead>
                     <Tbody>
                         {PRODUCTS_DATA?.filter((vendor)=>vendor?.owner_ref_id === USER_DATA?._id)?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((product)=>{
-                            const sold_products = product?.transactions?.reduce(
-                                (accumulator, currentValue) => accumulator + currentValue.items,
-                                0,
-                            );
                             return(
                                 <Tr key={product?._id} >
                                     <Td>
@@ -246,13 +242,12 @@ const Products_Section = ({PRODUCTS_DATA,USER_DATA})=>{
                                         </Box>
                                     </Td>
                                     <Td>
-                                        <Progress 
-                                            value={product?.items - sold_products}
-                                            colorScheme={product?.items - sold_products  === 0? 'orange' : 'green'} 
-                                            size={'xs'}
-                                            max={product?.items}
-                                        />
-                                        <Text fontSize={'sm'}>{product?.items - sold_products <= 0 ? 'out of stock' : `${product?.items - sold_products} in stock`}</Text>
+                                        <Badge 
+                                            fontSize={'sm'}
+                                            colorScheme={product?.items === 0 ? 'orange':'purple'}
+                                        >
+                                            {product?.items === 0 ? 'out of stock' : `${product?.items} in stock`}
+                                        </Badge>
                                     </Td>
                                     <Td>KES {product?.price}</Td>
                                     <Td>
