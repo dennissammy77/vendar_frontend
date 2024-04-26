@@ -20,7 +20,7 @@ import { SignInApi } from '@/app/api/auth/route';
 const LoginForm=()=>{
   const router = useRouter();
   const toast = useToast();
-  const {set_user_handler} = useContext(UserContext)
+  const {user,set_user_handler} = useContext(UserContext)
 
   const [show, setShow] = useState(false); //handle state to toggle password
 	const handleClick = () => setShow(!show); //handle state to toggle view of password 
@@ -40,13 +40,17 @@ const LoginForm=()=>{
   });
 
   useEffect(()=>{
-    router.prefetch('/dashboard/home');
+    router.prefetch('/dashboard/stores');
   },[])
   const onSubmit = async(data) => {
     try {
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-          router.push('/dashboard/stores');
+          if (typeof(window) === "undefined") {
+            window.location.href(`/dashboard/stores/uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
+          }else{
+            router.push('/dashboard/stores');
+          }
           set_user_handler(response);
           return ;
       }).catch((err)=>{

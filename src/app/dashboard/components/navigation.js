@@ -1,7 +1,5 @@
 'use client'
 import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure, MenuGroup } from "@chakra-ui/react";
-import { MdAdminPanelSettings, MdOutlineMenu, MdUpgrade } from "react-icons/md";
-//import { dashboardContext } from "../../providers/dashboard.context";
 import { useContext } from "react";
 import { usePathname, useRouter  } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
@@ -15,6 +13,10 @@ import { IoCloseSharp } from "react-icons/io5";
 import Link from "next/link";
 import useLogOut from "@/components/hooks/useLogOut.hook";
 import { IoMdAdd } from "react-icons/io";
+import SELECT_ACTIVE_STORE from "@/components/hooks/SELECT_ACTIVE_STORE";
+
+import Cookies from 'universal-cookie';
+
 
 export default function NavigationBody({children,navigation}){
     const sidebar = useDisclosure();
@@ -29,7 +31,7 @@ export default function NavigationBody({children,navigation}){
                     <SidebarContent navigation={navigation} onClose={sidebar.onClose} width='full'/>
                 </DrawerContent>
             </Drawer>
-            <TopNav isOpen={sidebar.isOpen} onClose={sidebar.onClose} onToggle={sidebar.onToggle}/>
+            <TopNav onClose={sidebar.onClose} onToggle={sidebar.onToggle}/>
             {/**body of the dasboard */}
             <Box ml={{ base: 0, md: 60, }} transition=".3s ease" p='4'>
                 {/**Header for the body section 
@@ -48,11 +50,19 @@ export default function NavigationBody({children,navigation}){
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
-  const router = useRouter();
+  const cookies = new Cookies();
+
   const HandleLogout =()=>{
     useLogOut();
-    window?.location.href('/')
+    if (typeof(window) === "undefined") {
+      window.location.href(`/`);
+    }
   }
+
+  const Handle_select_active_store=(store)=>{
+    SELECT_ACTIVE_STORE(store)
+  }
+  const active_store = cookies.get('active_store');
   return (
     <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <HStack spacing='2' align='center' hideFrom={'md'}>
@@ -66,8 +76,8 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
          */}
         {user?.data?.data?.account_type === 'vendor'? null : 
           <Menu>
-            <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
-              <Button 
+            <MenuButton
+                as={Button}
                 bgColor={'#4E2FD7'} 
                 color='#ffffff' 
                 leftIcon={<IoMdAdd />} 
@@ -75,7 +85,6 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 mr='2'
               >
                 New Sale
-              </Button> 
             </MenuButton>
             <MenuList>
                 {user?.data?.data?.store_ref?.map((store)=>{
@@ -84,6 +93,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                       as='a' 
                       href={`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${store?._id}`} 
                       icon={<FaStore/>}
+                      key={store?._id}
                     > 
                      {store?.name}
                     </MenuItem>
@@ -110,8 +120,30 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
               </HStack>
             </MenuButton>
             <MenuList>
+              <MenuGroup title='Store(s)'>
+                {user?.data?.data?.store_ref?.map((store)=>{
+                  return(
+                    <MenuItem  
+                      as='a' 
+                      href={`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store?._id}`} 
+                      icon={<FaStore/>}
+                      key={store?._id}
+                      onClick={(()=>{Handle_select_active_store(store?._id)})}
+                      bg={active_store === store?._id ? '#E4F0FC' : ''}
+                      color={active_store === store?._id ? '#4E2FD7' : ''}
+                    > 
+                     {store?.name}
+                    </MenuItem>
+                  )
+                })}
+              </MenuGroup>
               <MenuGroup title='Profile'>
-                <MenuItem  as='a' href={`/dashboard/settings?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`} icon={<RiAccountCircleLine/>}> My Account </MenuItem>
+                <MenuItem  
+                as='a' 
+                href={`/dashboard/settings?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`} 
+                icon={<RiAccountCircleLine/>}
+              > 
+                My Account </MenuItem>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='Help'>
@@ -122,7 +154,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 <MenuItem as='a' href={`/dashboard/support?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`}>Support</MenuItem>
               </MenuGroup>
               <MenuDivider />
-              <MenuItem as='a' onClick={(()=>{HandleLogout()})} href='/' cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
+              <MenuItem as='a' onClick={(()=>{HandleLogout})} href={'/'} cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
                 Log out  
               </MenuItem>
             </MenuList>
@@ -151,6 +183,9 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
   const pathArr = pathname?.split('/');
   const router = useRouter();
 
+  const cookies = new Cookies();
+
+  const active_store = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
   return(
     <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'md'} w={width} display={display}>
       <Flex px='4' py='5' align='center' justify='space-between'>
@@ -167,9 +202,8 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
             icon={item?.icon}
             route={item?.route}
             user_id={user?.data?.data?._id}
-            store_id={user?.data?.data?.store_ref[0]?._id}
+            store_id={active_store}
             onClick={(()=>{
-              //router.push(item?.route+'?uid='+user?.data?.data?._id+'&'+'store_id='+user?.data?.data?.store_ref[0]?._id);
               onClose()
             })}
             display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' || item?.title.toLowerCase() === 'home' ) ? 'none' : ''}
