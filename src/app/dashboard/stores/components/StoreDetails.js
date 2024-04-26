@@ -8,7 +8,7 @@ import { GrFormEdit } from "react-icons/gr";
 import { IoMdSettings } from "react-icons/io";
 import { MdDeleteOutline, MdEmail } from "react-icons/md";
 
-export default function StoreDetails({store}){
+export default function StoreDetails({store,active_store}){
     const {user} = useContext(UserContext);
     const router = useRouter();
     return(
@@ -16,7 +16,10 @@ export default function StoreDetails({store}){
             <Flex justify={'space-between'}>
                 <HStack>
                     <Text fontSize={{base:'lg',md:'x-large'}} fontWeight={'bold'} my='2'>{store?.name}</Text>
-                    <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
+                    <HStack>
+                        <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
+                        {active_store === store?._id ? <Badge fontSize="xs" colorScheme={'purple'}>active</Badge> : null }
+                    </HStack>
                 </HStack>
                 {user?.data?.data?.account_type === 'vendor'? null : 
                     <HStack align='center' gap='2'>
