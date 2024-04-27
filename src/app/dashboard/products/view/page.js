@@ -1,18 +1,19 @@
 'use client'
-import React, { useContext } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar} from '@chakra-ui/react'
+import React, { useContext, useState } from 'react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position} from '@chakra-ui/react'
 import { MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { FETCH_PRODUCT_DATA } from '@/app/api/product/route';
+import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
 import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
+import {set} from 'react-hook-form';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -32,7 +33,34 @@ function Page() {
 
     const PRODUCT_DATA = data?.data?.data;
 
-    const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure()
+    const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure();
+
+	const [loading_status,set_loading_status]=useState(false)
+
+	const HANDLE_APPROVE_PRODUCT = async()=>{
+		set_loading_status(true);
+		const data = {
+			suspension_status:PRODUCT_DATA?.product_status?.suspension_status,
+			suspension_reason:PRODUCT_DATA?.product_status?.suspension_reason,
+			approval_status:true,
+			deletion_status:PRODUCT_DATA?.product_status?.deletion_status,
+			publish_status:PRODUCT_DATA?.product_status?.publish_status
+		};
+		const FLAG = 'status';
+		try{
+				await UPDATE_STORE_PRODUCT(data, STORE_ID, USER_ID, PRODUCT_ID, FLAG).then((response)=>{
+					if(response?.data?.error === true){
+						return toast({ title: `Error!:${response?.data?.message}`,description: ``, status: 'warning', variant: 'left-accent', position: 'top-left', isClosable: true });
+					}
+					toast({ title: 'Success!: Product updated successfully', description: ``, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
+				})
+			set_loading_status(false)
+		}catch(error){
+				set_loading_status(false);
+				return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
+
+			}
+	};
 
     return (
         <Box>
@@ -48,8 +76,15 @@ function Page() {
                         {user?.data?.data?.account_type === 'vendor'?
                             null
                         :
-                            <Button bg='#05232e' color='#FFFFFF'>Approve</Button>
-                        }
+							<>
+								{loading_status? 
+									<Button isLoading loadingText='Approving Product...' variant={'ghost'}/>
+								:
+								<Button bg='#05232e' color='#FFFFFF' onClic={(()=>{HANDLE_APPROVE_PRODUCT()})}>Approve</Button>
+								
+								}
+							</>
+						}
                     </Box>
                 </Alert>
             : null }
