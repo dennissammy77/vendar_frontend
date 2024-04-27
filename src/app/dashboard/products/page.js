@@ -13,6 +13,9 @@ import { FETCH_STORE_PRODUCTS_DATA } from '@/app/api/product/route';
 import moment from 'moment';
 import { GiShoppingBag } from 'react-icons/gi';
 
+import Cookies from 'universal-cookie';
+
+
 
 export default function Page() {
     const router = useRouter();
@@ -20,13 +23,13 @@ export default function Page() {
 
     const [search_query, set_search_query]=useState('')
 
+    const cookies = new Cookies();
 
-    const searchParams = useSearchParams();
-    const STORE_ID = searchParams.get('store_id');
-    const USER_ID = searchParams.get('uid');
+    const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+    const USER_ID = user?.data?.data?._id;
 
     const {data, isLoading} = useQuery({
-        queryKey: ['store_products', {STORE_ID,search_query,USER_ID}],
+        queryKey: ['store_products', {STORE_ID,USER_ID}],
         queryFn: () => FETCH_STORE_PRODUCTS_DATA(USER_ID,STORE_ID)
     });
 
@@ -64,16 +67,6 @@ export default function Page() {
                     <BreadcrumbLink fontSize={'sm'} color='gray.400' fontWeight={'bold'}>Products</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
-            <HStack spacing='2' my='4'>
-                {user?.data?.data?.store_ref?.map((store)=>{
-                    return(
-                        <Tag size={'md'} key={store?._id} variant='outline' borderRadius='full' colorScheme={store?._id === STORE_ID?'blue':null} cursor='pointer' onClick={(()=>{router.replace(`/dashboard/products?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
-                            <TagLeftIcon as={FaStore} />
-                            <TagLabel>{store?.name}</TagLabel>
-                        </Tag>
-                    )
-                })}
-            </HStack>
             {isLoading?
                 <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
                     <Spinner />
@@ -95,6 +88,7 @@ export default function Page() {
                                         <Th>Date</Th>
                                         <Th>Stock</Th>
                                         <Th>Price</Th>
+                                        <Th>Approval</Th>
                                         <Th>Actions</Th>
                                     </Tr>
                                 </Thead>
@@ -126,6 +120,14 @@ export default function Page() {
                                                     </Badge>
                                                 </Td>
                                                 <Td>KES {product?.price}</Td>
+                                                <Td>
+                                                    <Badge 
+                                                        fontSize={'sm'}
+                                                        colorScheme={product?.product_status?.approval_status ? 'green':'gray'}
+                                                    >
+                                                        {product?.product_status?.approval_status ? 'Approved':'pending'}
+                                                    </Badge>
+                                                </Td>
                                                 <Td>
                                                     <HStack color='gray.600' cursor={'pointer'} pr='1' onClick={(()=>{router.push(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`)})}>
                                                         <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>

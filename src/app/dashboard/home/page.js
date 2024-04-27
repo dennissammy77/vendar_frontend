@@ -10,44 +10,51 @@ import { GiShoppingBag } from 'react-icons/gi';
 import { IoPeopleOutline } from 'react-icons/io5';
 import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 
+import Cookies from 'universal-cookie';
+import { useQuery } from '@tanstack/react-query';
+import { FETCH_STORE_DATA } from '@/app/api/shop/route';
+
+
+
 function Page() {
   const router = useRouter();
   const {user} = useContext(UserContext);
 
   const USER_DATA = user?.data?.data;
-  const searchParams = useSearchParams();
-  const STORE_ID = USER_DATA?.store_ref[0]?._id || searchParams.get('store_id');
-  const STORE_DATA = USER_DATA?.store_ref?.find((store)=>store?._id === STORE_ID);
+  const USER_ID = user?.data?.data?._id;
 
-  if (!user){
+  const cookies = new Cookies();
+
+  const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+
+  const {data, isLoading} = useQuery({
+      queryKey: ['store_data', {STORE_ID}],
+      queryFn: () => FETCH_STORE_DATA(STORE_ID,USER_ID)
+  })
+  const STORE_DATA = data?.data?.data;
+
+  if (isLoading){
     return (
       <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
           <Spinner />
           <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting Up your dashboard</Text>
       </Flex>
-    )
-}
+      )
+  }
 
   return (
     <Box p=''>
       <Text fontSize={'xl'} my='2'> Welcome 👋, <br/>{USER_DATA?.name} </Text>
-      <Wrap spacing='2' my=''>
-          {user?.data?.data?.store_ref?.map((store)=>{
-              return(
-                  <Text 
-                    fontSize={store?._id === STORE_ID?'32px':'md'} 
-                    fontWeight={store?._id === STORE_ID?'bold':''} 
-                    onClick={(()=>{router.replace(`/dashboard/home?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})} 
-                    cursor={'pointer'}
-                    borderRight={'1px solid'}
-                    borderColor={'#E4F0FC'}
-                    px='4'
-                  >
-                    {store?.name}
-                  </Text>
-              )
-          })}
-      </Wrap>
+      <Text 
+        fontSize={'32px'}
+        fontWeight={'bold'}
+        cursor={'pointer'}
+        borderRight={'1px solid'}
+        borderColor={'#E4F0FC'}
+        px='4'
+      >
+        {STORE_DATA?.name}
+      </Text>
       {/**Stats section start here */}
       <Grid
         templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}

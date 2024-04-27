@@ -38,6 +38,21 @@ function Page() {
         <Box>
             <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID} PRODUCT_DATA={PRODUCT_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
+            {!PRODUCT_DATA?.product_status?.approval_status ? 
+                <Alert status='info'>
+                    <AlertIcon />
+                    <Box>
+                        <Text>
+                            This product is pending approval.
+                        </Text>
+                        {user?.data?.data?.account_type === 'vendor'?
+                            null
+                        :
+                            <Button bg='#05232e' color='#FFFFFF'>Approve</Button>
+                        }
+                    </Box>
+                </Alert>
+            : null }
             {PRODUCT_DATA?.items === 0 ? 
                 <Alert status='warning'>
                     <AlertIcon />
@@ -54,7 +69,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink isCurrentPage>{PRODUCT_ID}</BreadcrumbLink>
+                    <BreadcrumbLink isCurrentPage>{PRODUCT_DATA?.name}</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
             {isLoading?

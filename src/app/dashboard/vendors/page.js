@@ -10,6 +10,7 @@ import { MdChevronRight } from 'react-icons/md';
 import { IoMdAdd, IoMdSettings } from 'react-icons/io';
 import { FiSearch } from 'react-icons/fi';
 import { FaStore } from 'react-icons/fa';
+import Cookies from 'universal-cookie';
 
 
 export default function Page() {
@@ -19,12 +20,13 @@ export default function Page() {
     const [search_query, set_search_query]=useState('')
 
 
-    const searchParams = useSearchParams();
-    const STORE_ID = searchParams.get('store_id');
+    const cookies = new Cookies();
+
+    const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
     const ACCOUNT_TYPE = 'vendor';
 
     const {data, isLoading} = useQuery({
-        queryKey: ['stakeholders', {STORE_ID,search_query}],
+        queryKey: ['stakeholders', {STORE_ID}],
         queryFn: () => FETCH_STAKEHOLDERS_DATA(STORE_ID,ACCOUNT_TYPE)
     });
 
@@ -64,16 +66,6 @@ export default function Page() {
                     <BreadcrumbLink fontSize={'sm'} color='gray.400' fontWeight={'bold'}>Vendors</BreadcrumbLink>
                 </BreadcrumbItem>
             </Breadcrumb>
-            <HStack spacing='2' my='4'>
-                {user?.data?.data?.store_ref?.map((store)=>{
-                    return(
-                        <Tag size={'md'} key={store?._id} variant='outline' borderRadius='full' colorScheme={store?._id === STORE_ID?'blue':null} cursor='pointer' onClick={(()=>{router.replace(`/dashboard/vendors?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
-                            <TagLeftIcon as={FaStore} />
-                            <TagLabel>{store?.name}</TagLabel>
-                        </Tag>
-                    )
-                })}
-            </HStack>
             {isLoading?
                 <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
                     <Spinner />
