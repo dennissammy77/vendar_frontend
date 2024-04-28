@@ -72,7 +72,7 @@ export async function DELETE_STORE_PRODUCT (USER_ID,PRODUCT_ID){
   return response;
 }
 
-export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID){
+export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID,SEARCH_QUERY,STOCK_FILTER,FROM_DATE,TO_DATE){
     let BASE_URL = await RouteHandler();
     const cookies = new Cookies();
     const AUTH_TOKEN = cookies.get('user_token1');
@@ -80,7 +80,7 @@ export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID){
     let CONFIG = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${BASE_URL}/api/product/store/all?store_id=${STORE_ID}&user_id=${USER_ID}`,
+      url: `${BASE_URL}/api/product/store/all?store_id=${STORE_ID}&user_id=${USER_ID}&stock_filter=${STOCK_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}`,
       headers: { 
         'Authorization': `Bearer ${AUTH_TOKEN}`
       }
