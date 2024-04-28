@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext, useState } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast} from '@chakra-ui/react'
 import { MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
@@ -21,6 +21,7 @@ function Page() {
     const USER_DATA = user?.data?.data;
 
     const router = useRouter();
+    const toast = useToast()
 
     const searchParams = useSearchParams();
     const PRODUCT_ID = searchParams.get('product_id');
@@ -38,6 +39,7 @@ function Page() {
 	const [loading_status,set_loading_status]=useState(false)
 
 	const HANDLE_APPROVE_PRODUCT = async()=>{
+        console.log('process started')
 		set_loading_status(true);
 		const data = {
 			suspension_status:PRODUCT_DATA?.product_status?.suspension_status,
@@ -66,7 +68,7 @@ function Page() {
         <Box>
             <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID} PRODUCT_DATA={PRODUCT_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
-            {!PRODUCT_DATA?.product_status?.approval_status ? 
+            {PRODUCT_DATA?.product_status?.approval_status === false && (
                 <Alert status='info'>
                     <AlertIcon />
                     <Box>
@@ -80,14 +82,13 @@ function Page() {
 								{loading_status? 
 									<Button isLoading loadingText='Approving Product...' variant={'ghost'}/>
 								:
-								<Button bg='#05232e' color='#FFFFFF' onClic={(()=>{HANDLE_APPROVE_PRODUCT()})}>Approve</Button>
+								<Button bg='#05232e' color='#FFFFFF' onClick={HANDLE_APPROVE_PRODUCT}>Approve</Button>
 								
 								}
 							</>
 						}
                     </Box>
-                </Alert>
-            : null }
+                </Alert>)}
             {PRODUCT_DATA?.items === 0 ? 
                 <Alert status='warning'>
                     <AlertIcon />
@@ -160,8 +161,9 @@ function Page() {
                                 </Box>
                                 <Box my='2'>
                                     <Text fontWeight={'bold'}>Listed By</Text>
-                                    <Text fontWeight={''} my='2'>{PRODUCT_DATA?.owner_ref_id?.name}</Text>
-                                    <Text fontWeight={''} my='2'>{PRODUCT_DATA?.owner_ref_id?.email}</Text>
+                                    <Text fontWeight={''} my='2'>Name: {PRODUCT_DATA?.owner_ref_id?.name}</Text>
+                                    <Text fontWeight={''} my='2'>Mobile: {PRODUCT_DATA?.owner_ref_id?.mobile}</Text>
+                                    <Text fontWeight={''} my='2'>Account: {PRODUCT_DATA?.owner_ref_id?.account_type}</Text>
                                 </Box>
                             </GridItem>
                         </Grid>
