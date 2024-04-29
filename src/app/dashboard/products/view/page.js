@@ -1,7 +1,7 @@
 'use client'
 import React, { useContext, useState } from 'react'
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast} from '@chakra-ui/react'
-import { MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
+import { MdAddShoppingCart, MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -26,9 +26,11 @@ function Page() {
     const searchParams = useSearchParams();
     const PRODUCT_ID = searchParams.get('product_id');
     const STORE_ID = searchParams.get('store_id');
+	const [loading_status,set_loading_status]=useState(false)
+
     
     const {data, isLoading} = useQuery({
-        queryKey: ['product data', {PRODUCT_ID}],
+        queryKey: ['product data', {PRODUCT_ID,loading_status}],
         queryFn: () => FETCH_PRODUCT_DATA(PRODUCT_ID)
     });
 
@@ -36,7 +38,6 @@ function Page() {
 
     const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure();
 
-	const [loading_status,set_loading_status]=useState(false)
 
 	const HANDLE_APPROVE_PRODUCT = async()=>{
         console.log('process started')
@@ -56,7 +57,10 @@ function Page() {
 					}
 					toast({ title: 'Success!: Product updated successfully', description: ``, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
 				})
-			set_loading_status(false)
+			set_loading_status(false);
+            if(typeof(window) === undefined){
+            }
+            window.location.href(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)
 		}catch(error){
 				set_loading_status(false);
 				return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
@@ -117,6 +121,10 @@ function Page() {
                 <>
                     <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                         <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
+                            <HStack onClick={(()=>{router.push(`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)})}>
+                                <Text fontWeight={'bold'} fontSize={'md'}>Restock</Text>
+                                <Icon boxSize='6' as={MdAddShoppingCart} cursor='pointer'/>
+                            </HStack>
                             <HStack onClick={(()=>{router.push(`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)})}>
                                 <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
                                 <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>

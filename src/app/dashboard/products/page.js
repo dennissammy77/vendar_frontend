@@ -15,6 +15,7 @@ import { GiShoppingBag } from 'react-icons/gi';
 
 import Cookies from 'universal-cookie';
 import { CiExport, CiFilter, CiImport } from 'react-icons/ci';
+import { EXPORT_PRODUCT_EXCEL } from '@/components/hooks/export/EXCEL';
 
 
 
@@ -45,6 +46,13 @@ export default function Page() {
         set_to_date(Date.now());
     }
     const PRODUCTS_DATA = data?.data?.data;
+
+    const HANDLE_EXPORT_DATA = async()=>{
+        console.log(PRODUCTS_DATA)
+        await EXPORT_PRODUCT_EXCEL(PRODUCTS_DATA).then(()=>{
+            console.log('Exported');
+        })
+    }
 
 
 
@@ -128,7 +136,7 @@ export default function Page() {
                             <Button fontWeight={'bold'} m='2' leftIcon={<CiImport/>} variant='ghost' flex='1' onClick={(()=>{router.push(`/dashboard/products/new/import?uid=${user?.data?.data?._id}&&store_id=${STORE_ID}`)})}>
                                 import
                             </Button>
-                            <Button fontWeight={'bold'} m='2' leftIcon={<CiExport/>} variant='ghost' flex='1'>
+                            <Button fontWeight={'bold'} m='2' leftIcon={<CiExport/>} variant='ghost' flex='1' onClick={HANDLE_EXPORT_DATA}>
                                 export
                             </Button>
                         </Flex>

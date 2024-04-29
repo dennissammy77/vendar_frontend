@@ -3,10 +3,11 @@ import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
-import { Button, FormControl, FormLabel, HStack, Icon, Input, Select, Text, useToast, Textarea } from '@chakra-ui/react';
+import { Button, FormControl, FormLabel, HStack, Icon, Input, Select, Text, useToast, Textarea, Flex } from '@chakra-ui/react';
 import { CiWarning } from 'react-icons/ci';
 import { useRouter } from 'next/navigation';
 import { UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
+import Link from 'next/link';
 
 
 export default function UPDATE_STORE_PRODUCT_FORM(props) {
@@ -103,6 +104,12 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
+            <Flex p='4' borderRadius='sm' boxShadow='sm' align='center' justify={'space-between'} color='gray.300' my='4'>
+                <Text fontWeight={'bold'}>Ownership management</Text>
+                <Link href={`/dashboard/products/edit/management?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
+                    <Button variant={'ghost'} color='gray.300'>Transfer</Button>
+                </Link>
+            </Flex>
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
                     <Icon as={CiWarning} boxSize='4'/>
