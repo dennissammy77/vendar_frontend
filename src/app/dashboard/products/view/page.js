@@ -1,46 +1,46 @@
 'use client'
-import React, { useContext, useState } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast} from '@chakra-ui/react'
-import { MdAddShoppingCart, MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
-import { UserContext } from '@/components/providers/user.context';
-import { GrFormEdit } from 'react-icons/gr';
-import { useRouter, useSearchParams } from 'next/navigation';
 
+import React, { useContext, useState } from 'react'
+// utils
+import { UserContext } from '@/components/providers/user.context';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
-import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
-import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
-import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import moment from 'moment';
+import Link from 'next/link';
+// styling
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast} from '@chakra-ui/react'
+// api
+import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
+// icons
 import { IoMdSettings } from 'react-icons/io';
-import {set} from 'react-hook-form';
+import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
+import { MdAddShoppingCart, MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
+import { GrFormEdit } from 'react-icons/gr';
+// components
+import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
+import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
+
 
 function Page() {
+    // utils
     const {user} = useContext(UserContext);
-    const USER_ID = user?.data?.data?._id;
-    const USER_DATA = user?.data?.data;
-
     const router = useRouter();
     const toast = useToast()
-
+    // config
+    const USER_ID = user?.data?.data?._id;
+    const USER_DATA = user?.data?.data;
     const searchParams = useSearchParams();
     const PRODUCT_ID = searchParams.get('product_id');
     const STORE_ID = searchParams.get('store_id');
 	const [loading_status,set_loading_status]=useState(false)
-
-    
+    const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure();
+    // Functions
     const {data, isLoading} = useQuery({
         queryKey: ['product data', {PRODUCT_ID,loading_status}],
         queryFn: () => FETCH_PRODUCT_DATA(PRODUCT_ID)
     });
-
-    const PRODUCT_DATA = data?.data?.data;
-
-    const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure();
-
-
 	const HANDLE_APPROVE_PRODUCT = async()=>{
-        console.log('process started')
 		set_loading_status(true);
 		const data = {
 			suspension_status:PRODUCT_DATA?.product_status?.suspension_status,
@@ -51,22 +51,20 @@ function Page() {
 		};
 		const FLAG = 'status';
 		try{
-				await UPDATE_STORE_PRODUCT(data, STORE_ID, USER_ID, PRODUCT_ID, FLAG).then((response)=>{
-					if(response?.data?.error === true){
-						return toast({ title: `Error!:${response?.data?.message}`,description: ``, status: 'warning', variant: 'left-accent', position: 'top-left', isClosable: true });
-					}
-					toast({ title: 'Success!: Product updated successfully', description: ``, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
-				})
-			set_loading_status(false);
-            if(typeof(window) === undefined){
-            }
-            window.location.href(`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)
-		}catch(error){
-				set_loading_status(false);
-				return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
-
-			}
+            await UPDATE_STORE_PRODUCT(data, STORE_ID, USER_ID, PRODUCT_ID, FLAG).then((response)=>{
+                if(response?.data?.error === true){
+                    return toast({ title: `Error!:${response?.data?.message}`,description: ``, status: 'warning', variant: 'left-accent', position: 'top-left', isClosable: true });
+                }
+                toast({ title: 'Success!: Product updated successfully', description: ``, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
+            })
+            set_loading_status(false);
+    }catch(error){
+            set_loading_status(false);
+            return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
+		}
 	};
+    // DATA
+    const PRODUCT_DATA = data?.data?.data;
 
     return (
         <Box>
@@ -77,7 +75,7 @@ function Page() {
                     <AlertIcon />
                     <Box>
                         <Text>
-                            This product is pending approval.
+                            This product is pending approval. This is because the product has recently been added or has recently been restocked.
                         </Text>
                         {user?.data?.data?.account_type === 'vendor'?
                             null
@@ -86,22 +84,31 @@ function Page() {
 								{loading_status? 
 									<Button isLoading loadingText='Approving Product...' variant={'ghost'}/>
 								:
-								<Button bg='#05232e' color='#FFFFFF' onClick={HANDLE_APPROVE_PRODUCT}>Approve</Button>
-								
+								    <Button bg='#05232e' color='#FFFFFF' onClick={HANDLE_APPROVE_PRODUCT}>Approve</Button>
 								}
 							</>
 						}
                     </Box>
-                </Alert>)}
-            {PRODUCT_DATA?.items === 0 ? 
-                <Alert status='warning'>
-                    <AlertIcon />
-                    Seems your product is out of stock, edit to add more items.
                 </Alert>
-            : null }
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='4'>
+            )}
+            {PRODUCT_DATA?.items === 0 ? 
+                <Alert status='warning' mt='2'>
+                    <AlertIcon />
+                    <Box>
+                        <Text>
+                            Seems your product is out of stock.
+                        </Text>
+                        <Link href={`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
+                            <Button bg='#05232e' color='#FFFFFF' rightIcon={<SHOPPING_CART_ICON/>}>Restock</Button>
+                        </Link>
+                    </Box>
+                </Alert>
+            : 
+                null 
+            }
+            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='4'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -121,17 +128,21 @@ function Page() {
                 <>
                     <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                         <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                            <HStack onClick={(()=>{router.push(`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)})}>
-                                <Text fontWeight={'bold'} fontSize={'md'}>Restock</Text>
-                                <Icon boxSize='6' as={MdAddShoppingCart} cursor='pointer'/>
-                            </HStack>
-                            <HStack onClick={(()=>{router.push(`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`)})}>
-                                <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                                <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
-                            </HStack>
+                            <Link href={`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
+                                <HStack p='1' px='2' color='#FFFFFF' bg='#05232e' borderRadius={'full'}>
+                                    <Text fontWeight={'bold'} fontSize={'md'}>Restock</Text>
+                                    <Icon boxSize='4' as={SHOPPING_CART_ICON} cursor='pointer'/>
+                                </HStack>
+                            </Link>
+                            <Link href={`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
+                                <HStack>
+                                    <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
+                                    <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
+                                </HStack>
+                            </Link>
                             <HStack onClick={DELETE_PRODUCT_ALERT_DISCLOSURE?.onOpen}>
                                 <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                                <Icon boxSize='6' as={MdOutlineDeleteOutline} cursor='pointer'/>
+                                <Icon boxSize='6' as={DELETE_ICON} cursor='pointer'/>
                             </HStack>
                         </Flex>
                         <Grid
@@ -188,7 +199,7 @@ function Page() {
                             <TabPanel>
                                 {PRODUCT_DATA?.transactions?.length === 0? 
                                     <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
-                                        <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                        <Icon as={TRANSACTION_ICON} boxSize={'6'}/>
                                         <Text>This product does not have any transactions at the moment.</Text>
                                     </Flex>
                                     :
@@ -206,7 +217,7 @@ function Page() {
                                 >
                                     {PRODUCT_DATA?.transactions?.length === 0? 
                                         <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
-                                            <Icon as={LiaMoneyBillWaveSolid} boxSize={'6'}/>
+                                            <Icon as={TRANSACTION_ICON} boxSize={'6'}/>
                                             <Text>This product does not have any transactions at the moment.</Text>
                                         </Flex>
                                         :
@@ -263,7 +274,7 @@ const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
                                 <Td>
                                     <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${USER_DATA?._id}&store_id=${USER_DATA?.store_ref[0]?._id}&transaction_id=${transaction?._id}`)})}>
                                         <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-                                        <Icon boxSize='4' as={IoMdSettings } cursor='pointer'/>
+                                        <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>
                                     </HStack>
                                 </Td>
                             </Tr>
