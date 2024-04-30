@@ -1,17 +1,19 @@
 'use client'
-import { UserContext } from '@/components/providers/user.context';
-import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
-import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Spinner, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
-import moment from 'moment';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useContext } from 'react';
-import { FaBagShopping } from 'react-icons/fa6';
-import { GiShoppingBag } from 'react-icons/gi';
-import { IoPeopleOutline } from 'react-icons/io5';
-import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
 
+import React, { useContext } from 'react';
+// util
+import moment from 'moment';
+import { UserContext } from '@/components/providers/user.context';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'universal-cookie';
 import { useQuery } from '@tanstack/react-query';
+// component
+import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+// styling
+import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Spinner, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Table, TableCaption, TableContainer, Tag, TagLabel, TagLeftIcon, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
+// icons
+import { PEOPLE_ICON, PRODUCT_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
+// api
 import { FETCH_STORE_DATA } from '@/app/api/shop/route';
 
 
@@ -28,8 +30,9 @@ function Page() {
   const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
 
   const {data, isLoading} = useQuery({
-      queryKey: ['store_data', {STORE_ID}],
-      queryFn: () => FETCH_STORE_DATA(STORE_ID,USER_ID)
+      queryKey: ['store_data', {STORE_ID, USER_ID}],
+      queryFn: () => FETCH_STORE_DATA(STORE_ID,USER_ID),
+      enabled: USER_ID !== undefined && STORE_ID !== undefined
   })
   const STORE_DATA = data?.data?.data;
 
@@ -44,14 +47,14 @@ function Page() {
 
   return (
     <Box p=''>
-      <Text fontSize={'xl'} my='2'> Welcome 👋, <br/>{USER_DATA?.name} </Text>
+      <Text fontSize={'xl'} my='2'> Welcome 👋, {USER_DATA?.name} </Text>
       <Text 
         fontSize={'32px'}
         fontWeight={'bold'}
         cursor={'pointer'}
         borderRight={'1px solid'}
         borderColor={'#E4F0FC'}
-        px='4'
+        py='2'
       >
         {STORE_DATA?.name}
       </Text>
@@ -91,7 +94,7 @@ function Page() {
           >
             <StatLabel fontSize='lg'>Vendors</StatLabel>
             <StatNumber fontSize={'lg'} my='1'>
-              <Icon as={IoPeopleOutline} mx='4'/>
+              <Icon as={PEOPLE_ICON} mx='4'/>
               {STORE_DATA?.vendors?.length}
             </StatNumber>
           </Stat>
@@ -105,7 +108,7 @@ function Page() {
           >
             <StatLabel fontSize='lg'>Products</StatLabel>
             <StatNumber fontSize={'lg'} my='1'>
-              <Icon as={GiShoppingBag} mx='4'/>
+              <Icon as={PRODUCT_ICON} mx='4'/>
               {STORE_DATA?.products?.length}
             </StatNumber>
           </Stat>
@@ -118,7 +121,7 @@ function Page() {
           >
             <StatLabel fontSize='lg'>Transactions</StatLabel>
             <StatNumber fontSize={'lg'} my='1'>
-              <Icon as={LiaMoneyBillWaveSolid} mx='4'/>
+              <Icon as={TRANSACTION_ICON} mx='4'/>
               {STORE_DATA?.transactions?.length}
             </StatNumber>
           </Stat>
@@ -187,7 +190,7 @@ function Page() {
               return(
                 <>
                   <HStack align='center' p='4' sapcing='2'>
-                    <Icon as={FaBagShopping} boxSize={'4'} color='gray.300'/>
+                    <Icon as={PRODUCT_ICON} boxSize={'4'} color='gray.300'/>
                     <Box>
                       <Text fontSize={'md'}>{product?.name}</Text>
                       <Text fontSize={'sm'}>{product?.transactions?.length}</Text>
