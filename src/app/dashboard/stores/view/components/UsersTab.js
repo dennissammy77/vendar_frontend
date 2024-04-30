@@ -1,8 +1,14 @@
+'use client'
+
+import React, { useContext } from 'react'
+// utils
 import { UserContext } from '@/components/providers/user.context'
-import { Avatar, Badge, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel, TabPanels, Table, TableContainer, Tabs, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
 import moment from 'moment'
 import { useRouter } from 'next/navigation'
-import React, { useContext } from 'react'
+// styling
+import { Avatar, Badge, Box, Divider, Flex, HStack, Icon, Tab, TabList, TabPanel, TabPanels, Table, TableContainer, Tabs, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react'
+// icons
+// components
 import { GiShoppingBag } from 'react-icons/gi'
 import { IoMdAdd, IoMdSettings } from 'react-icons/io'
 import { IoPeopleOutline } from 'react-icons/io5'

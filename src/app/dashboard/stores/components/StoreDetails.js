@@ -1,18 +1,21 @@
+'use client'
+
+// util
 import { UserContext } from "@/components/providers/user.context";
-import { Badge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
-import { FaInstagram, FaPhone, FaTiktok, FaWhatsapp } from "react-icons/fa";
-import { FaLocationDot, FaXTwitter } from "react-icons/fa6";
-import { GrFormEdit } from "react-icons/gr";
-import { IoMdSettings } from "react-icons/io";
-import { MdDeleteOutline, MdEmail } from "react-icons/md";
+// styling
+import { Badge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
+// icon
+import { EMAIL_ICON, INSTAGRAM_ICON, LOCATION_ICON, MANAGE_ICON, PHONE_ICON, TIKTOK_ICON, TWITTER_ICON, WHATSAPP_ICON } from "@/components/lib/constants/icons";
+import Link from "next/link";
+// api
+// component
 
 export default function StoreDetails({store,active_store}){
     const {user} = useContext(UserContext);
-    const router = useRouter();
     return(
-        <Box bg='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='4'>
+        <Box bg='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='4' my='2'>
             <Flex justify={'space-between'}>
                 <HStack>
                     <Text fontSize={{base:'lg',md:'x-large'}} fontWeight={'bold'} my='2'>{store?.name}</Text>
@@ -23,10 +26,12 @@ export default function StoreDetails({store,active_store}){
                 </HStack>
                 {user?.data?.data?.account_type === 'vendor'? null : 
                     <HStack align='center' gap='2'>
-                        <HStack color='gray.600'  _hover={{color:'#4E2FD7'}} cursor={'pointer'} pr='1' onClick={(()=>{router.push(`/dashboard/stores/view?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>
-                            <Text fontSize={'md'} fontWeight={'bold'}>manage</Text>
-                            <Icon boxSize='5' as={IoMdSettings} cursor='pointer'/>
-                        </HStack>
+                        <Link href={`/dashboard/stores/view?uid=${user?.data?.data?._id}&&store_id=${store?._id}`}>
+                            <HStack color='gray.600'  _hover={{color:'#4E2FD7'}} cursor={'pointer'} pr='1'>
+                                <Text fontSize={'md'} fontWeight={'bold'}>manage</Text>
+                                <Icon boxSize='5' as={MANAGE_ICON} cursor='pointer'/>
+                            </HStack>
+                        </Link>
                         {/**
                          * 
                         <Icon color='gray.600' boxSize='6' as={GrFormEdit} _hover={{color:'#4E2FD7'}} cursor='pointer' onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}/>
@@ -38,31 +43,31 @@ export default function StoreDetails({store,active_store}){
             {/**Contact */}
             <Box>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={MdEmail}/>
+                    <Icon color='gray.600' boxSize='3' as={EMAIL_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.email}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaPhone}/>
+                    <Icon color='gray.600' boxSize='3' as={PHONE_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.mobile}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaLocationDot}/>
+                    <Icon color='gray.600' boxSize='3' as={LOCATION_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.location}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaInstagram}/>
+                    <Icon color='gray.600' boxSize='3' as={INSTAGRAM_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.instagram_url}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaXTwitter}/>
+                    <Icon color='gray.600' boxSize='3' as={TWITTER_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.twitter_url}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaWhatsapp}/>
+                    <Icon color='gray.600' boxSize='3' as={WHATSAPP_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.whatsapp_url}</Text>
                 </HStack>
                 <HStack my='3'>
-                    <Icon color='gray.600' boxSize='3' as={FaTiktok}/>
+                    <Icon color='gray.600' boxSize='3' as={TIKTOK_ICON}/>
                     <Text fontWeight={'bold'} fontSize='sm' color='gray.600' ml='2'>{store?.tiktok_url}</Text>
                 </HStack>
             </Box>

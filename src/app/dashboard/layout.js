@@ -12,16 +12,6 @@ import { CiGrid42 } from 'react-icons/ci';
 import LOADING from './loading';
 
 export default function Layout({children}){
-    const {user} = useContext(UserContext);
-    const toast = useToast();
-    const router = useRouter()
-    useEffect(()=>{
-        if(!user){
-            //toast({ title: 'Error!', description: `User is not defined`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
-            //router.push('/signin');
-            return 
-        }
-    })
     return(
         <Box>
             <NavigationBody navigation={navigation}>

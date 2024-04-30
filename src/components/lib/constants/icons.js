@@ -1,0 +1,41 @@
+import { CiExport, CiImport } from "react-icons/ci";
+import { FaInstagram, FaPhone, FaStore, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { FaLocationDot, FaWandMagicSparkles, FaXTwitter } from "react-icons/fa6";
+import { FiSearch } from "react-icons/fi";
+import { GiShoppingBag } from "react-icons/gi";
+import { GrFormEdit } from "react-icons/gr";
+import { HiChevronDown } from "react-icons/hi";
+import { IoMdSettings } from "react-icons/io";
+import { IoPeopleOutline } from "react-icons/io5";
+import { LiaMoneyBillWaveSolid } from "react-icons/lia";
+import { MdAdd, MdAddShoppingCart, MdChevronRight, MdClose, MdDeleteForever, MdDeleteOutline, MdDone, MdEmail, MdFilterAlt, MdFilterAltOff } from "react-icons/md";
+import { TiUserDelete } from "react-icons/ti";
+
+export const FILTER_ICON = (props)=> <MdFilterAlt {...props}/>
+export const FILTER_ICON_CLOSE = (props)=> <MdFilterAltOff {...props}/>
+export const IMPORT_ICON = (props)=> <CiImport {...props}/>
+export const EXPORT_ICON = (props)=> <CiExport {...props}/>
+export const CHEVRON_RIGHT_ICON = (props)=> <MdChevronRight {...props}/>
+export const CHEVRON_DOWN_ICON = (props)=> <HiChevronDown {...props}/>
+export const ADD_ICON = (props)=> <MdAdd {...props}/>
+export const SEARCH_ICON = (props)=> <FiSearch {...props}/>
+export const CLEAR_FILTER_ICON = (props)=> <MdDeleteForever {...props}/>
+export const PRODUCT_ICON = (props)=> <GiShoppingBag {...props}/>
+export const MANAGE_ICON = (props)=> <IoMdSettings {...props}/>
+export const TRANSACTION_ICON = (props)=> <LiaMoneyBillWaveSolid {...props}/>
+export const PEOPLE_ICON = (props)=> <IoPeopleOutline {...props}/>
+export const STORE_ICON = (props)=> <FaStore {...props}/>
+export const INSTAGRAM_ICON = (props)=> <FaInstagram {...props}/>
+export const TIKTOK_ICON = (props)=> <FaTiktok {...props}/>
+export const WHATSAPP_ICON = (props)=> <FaWhatsapp {...props}/>
+export const LOCATION_ICON = (props)=> <FaLocationDot {...props}/>
+export const TWITTER_ICON = (props)=> <FaXTwitter {...props}/>
+export const EMAIL_ICON = (props)=> <MdEmail {...props}/>
+export const PHONE_ICON = (props)=> <FaPhone {...props}/>
+export const SPARKS_ICON = (props)=> <FaWandMagicSparkles {...props}/>
+export const EDIT_ICON = (props)=> <GrFormEdit {...props}/>
+export const DELETE_ICON = (props)=> <MdDeleteOutline {...props}/>
+export const DONE_ICON = (props)=> <MdDone {...props}/>
+export const CLOSE_ICON = (props)=> <MdClose {...props}/>
+export const USER_DELETE_ICON = (props)=> <TiUserDelete {...props}/>
+export const SHOPPING_CART_ICON = (props)=> <MdAddShoppingCart {...props}/>

@@ -2,7 +2,9 @@ import Excel from 'exceljs';
 import moment from 'moment';
 
 export const EXPORT_PRODUCT_EXCEL=async (PRODUCTS_ARRAY)=>{
-    console.log(PRODUCTS_ARRAY)
+    if (PRODUCTS_ARRAY?.length === 0){
+        throw new Error('No products to export');
+    }
     const workbook = new Excel.Workbook();
     const worksheet = workbook.addWorksheet(`VENDAR Products`, {views:[{state: 'frozen', xSplit: 1, ySplit:1}]});
     let date = new Date()
@@ -37,7 +39,6 @@ export const EXPORT_PRODUCT_EXCEL=async (PRODUCTS_ARRAY)=>{
     worksheet.getRows(1).alignment = { horizontal: 'center', vertical: 'center' };
     for (let i = 0; i <= PRODUCTS_ARRAY?.length - 1; i++) {
         let product = PRODUCTS_ARRAY[i];
-        console.log(product);
         worksheet.addRow({
             id: product?._id,
             date: moment(product?.createdAt).format("DD MMM YY"),
@@ -79,6 +80,6 @@ export const EXPORT_PRODUCT_EXCEL=async (PRODUCTS_ARRAY)=>{
             };
         }
     }catch(error){
-        console.error(error);
+        throw new Error("Could not export your products");
     };
 }
