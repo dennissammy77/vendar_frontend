@@ -16,9 +16,13 @@ import { useRouter } from 'next/navigation';
 import { UserContext } from '@/components/providers/user.context';
 import { CiWarning } from 'react-icons/ci';
 import { SignInApi } from '@/app/api/auth/route';
+import SELECT_ACTIVE_STORE from '@/components/hooks/SELECT_ACTIVE_STORE';
+import Cookies from 'universal-cookie';
+
 
 const LoginForm=()=>{
   const router = useRouter();
+  const cookies = new Cookies();
   const toast = useToast();
   const {user,set_user_handler} = useContext(UserContext)
 
@@ -41,17 +45,19 @@ const LoginForm=()=>{
 
   useEffect(()=>{
     router.prefetch('/dashboard/stores');
-  },[])
+  },[]);
+
   const onSubmit = async(data) => {
     try {
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-          if (typeof(window) === "undefined") {
-            window.location.href(`/dashboard/stores/uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
+          if (typeof(window) === undefined) {
+            window.location.href(`/dashboard/stores?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
           }else{
-            router.push('/dashboard/stores');
+            router.replace(`/dashboard/stores?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
           }
-          set_user_handler(response);
+          set_user_handler(response?.data.token);
+          SELECT_ACTIVE_STORE(cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id)
           return ;
       }).catch((err)=>{
           return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
