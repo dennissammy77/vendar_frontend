@@ -16,7 +16,7 @@ export function UserProvider({children}) {
     const USER_ID = RETREIVED_TOKEN?.sub || undefined;
 
     const {data, isLoading} = useQuery({
-        queryKey: ['USER_DATA', {user_handler}],
+        queryKey: ['USER_DATA',{USER_ID}],
         queryFn: async () => {
           try{
             if(USER_ID === undefined){
