@@ -51,18 +51,23 @@ export default function NavigationBody({children,navigation}){
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
   const cookies = new Cookies();
+  const router = useRouter();
 
   const HandleLogout =()=>{
     useLogOut();
-    if (typeof(window) === "undefined") {
+    if (typeof(window) === undefined) {
       window.location.href(`/`);
+    }else{
+      router.push('/')
     }
   }
 
+  const active_store = cookies.get('active_store');
+  
   const Handle_select_active_store=(store)=>{
     SELECT_ACTIVE_STORE(store)
+    router.replace(`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store}`) 
   }
-  const active_store = cookies.get('active_store');
   return (
     <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <HStack spacing='2' align='center' hideFrom={'md'}>
@@ -125,7 +130,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                   return(
                     <MenuItem  
                       as='a' 
-                      href={`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store?._id}`} 
+                      //router.replace({`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store?._id}`}) 
                       icon={<FaStore/>}
                       key={store?._id}
                       onClick={(()=>{Handle_select_active_store(store?._id)})}
@@ -154,7 +159,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 <MenuItem as='a' href={`/dashboard/support?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`}>Support</MenuItem>
               </MenuGroup>
               <MenuDivider />
-              <MenuItem as='a' onClick={(()=>{HandleLogout})} href={'/'} cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
+              <MenuItem as='a' onClick={HandleLogout} cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
                 Log out  
               </MenuItem>
             </MenuList>
