@@ -10,6 +10,7 @@ import { GiShoppingBag } from "react-icons/gi";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { CiGrid42 } from 'react-icons/ci';
 import LOADING from './loading';
+import { ACCOUNT_SETTINGS_ICON, HOME_ICON, PEOPLE_ICON, PICKUPS_ICON, PRODUCT_ICON, STAFF_ICON, STORE_ICON, SUPPORT_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 
 export default function Layout({children}){
     return(
@@ -27,49 +28,55 @@ const navigation = [
     {
         id:     '1',
         title:  'Home',
-        icon: CiGrid42,
+        icon: HOME_ICON,
         route:  '/dashboard/home'
     },
     {
         id: '2',
         title:  'Stores',
-        icon: IoStorefrontOutline,
+        icon: STORE_ICON,
         route:  '/dashboard/stores'
     },
     {
         id: '3',
-        icon: GiShoppingBag,
+        icon: PRODUCT_ICON,
         title:  'Products',
         route: '/dashboard/products'
     },
     {
         id: '4',
-        icon: MdOutlineAdminPanelSettings,
+        icon: PICKUPS_ICON,
+        title:  'PickUps',
+        route: '/dashboard/pickups'
+    },
+    {
+        id: '5',
+        icon: STAFF_ICON,
         title:  'Staff',
         route: '/dashboard/staff'
     },
     {
-        id: '5',
-        icon: IoPeopleOutline,
+        id: '6',
+        icon: PEOPLE_ICON,
         title:  'Vendors',
         route: '/dashboard/vendors'
     },
     {
-        id: '6',
-        icon: LiaMoneyBillWaveSolid,
+        id: '7',
+        icon: TRANSACTION_ICON,
         title:  'Transactions',
         route: '/dashboard/transactions'
     },
     {
-        id: '7',
-        icon: MdOutlineManageAccounts,
+        id: '8',
+        icon: ACCOUNT_SETTINGS_ICON,
         title:  'Settings',
         route: '/dashboard/settings'
     },
     {
-        id: '8',
+        id: '9',
         title:  'Support',
-        icon: MdSupportAgent,
+        icon: SUPPORT_ICON,
         route: '/dashboard/support'
     },
 ]

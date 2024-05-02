@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import useFetchUserData from '../hooks/useFetchUserData.hook';
 import useFetchToken from '../hooks/useFetchToken.hook';
 import { FETCH_USER_DATA } from '@/app/api/auth/route';
 import { useQuery } from '@tanstack/react-query';
@@ -28,8 +27,7 @@ export function UserProvider({children}) {
             throw new Error('Error while fetching user data',error)
           }
         },
-        enabled: USER_ID !== undefined,
-        retry:3
+        enabled: USER_ID !== undefined
     });
 
     return (
