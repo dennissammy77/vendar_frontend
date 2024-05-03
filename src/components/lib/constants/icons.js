@@ -1,5 +1,5 @@
 import { CiCalendarDate, CiExport, CiGrid42, CiImport, CiWarning } from "react-icons/ci";
-import { FaInstagram, FaPhone, FaStore, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { FaInstagram, FaLongArrowAltLeft, FaPhone, FaStore, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { FaLocationDot, FaWandMagicSparkles, FaXTwitter } from "react-icons/fa6";
 import { FiSearch } from "react-icons/fi";
 import { GiShoppingBag } from "react-icons/gi";
@@ -51,3 +51,4 @@ export const PERSON_ICON = (props)=> <IoIosPerson {...props}/>
 export const MONEY_COINS_ICON = (props)=> <GrMoney {...props}/>
 export const CALENDER_ICON = (props)=> <CiCalendarDate {...props}/>
 export const WARNING_ICON = (props)=> <CiWarning {...props}/>
+export const LEFT_ARROW_ICON = (props)=> <FaLongArrowAltLeft {...props}/>
