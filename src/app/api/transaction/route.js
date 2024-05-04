@@ -2,7 +2,7 @@ import { Cookies } from "react-cookie";
 import RouteHandler from "../routehandler";
 import axios from "axios";
 
-export async function FETCH_STORE_TRANSACTIONS_DATA(user_id,store_id){
+export async function FETCH_STORE_TRANSACTIONS_DATA(USER_ID,STORE_ID,SEARCH_QUERY,STATUS_FILTER,FROM_DATE,TO_DATE,PAGE){
     let BASE_URL = await RouteHandler();
     const cookies = new Cookies();
     const AUTH_TOKEN = cookies.get('user_token1');
@@ -10,7 +10,30 @@ export async function FETCH_STORE_TRANSACTIONS_DATA(user_id,store_id){
     let config = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: `${BASE_URL}/api/transaction/store?store_id=${store_id}&user_id=${user_id}`,
+        url: `${BASE_URL}/api/transaction/store?store_id=${STORE_ID}&user_id=${USER_ID}&status_filter=${STATUS_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}&page=${PAGE}`,
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+        },
+    };
+
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+    
+}
+export async function FETCH_ALL_STORE_TRANSACTION_DATA_FOR_EXPORT(USER_ID,STORE_ID){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}/api/transaction/store/all/export?store_id=${STORE_ID}&user_id=${USER_ID}`,
         headers: { 
             'Content-Type': 'application/json', 
             'Authorization': `Bearer ${AUTH_TOKEN}`

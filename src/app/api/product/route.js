@@ -95,7 +95,7 @@ export async function DELETE_STORE_PRODUCT (USER_ID,PRODUCT_ID){
   return response;
 }
 
-export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID,SEARCH_QUERY,STOCK_FILTER,FROM_DATE,TO_DATE){
+export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID,SEARCH_QUERY,STOCK_FILTER,FROM_DATE,TO_DATE,PAGE){
     let BASE_URL = await RouteHandler();
     const cookies = new Cookies();
     const AUTH_TOKEN = cookies.get('user_token1');
@@ -103,7 +103,49 @@ export async function FETCH_STORE_PRODUCTS_DATA (USER_ID,STORE_ID,SEARCH_QUERY,S
     let CONFIG = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `${BASE_URL}/api/product/store/all?store_id=${STORE_ID}&user_id=${USER_ID}&stock_filter=${STOCK_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}`,
+      url: `${BASE_URL}/api/product/store/all?store_id=${STORE_ID}&user_id=${USER_ID}&stock_filter=${STOCK_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}&page=${PAGE}`,
+      headers: { 
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      }
+    };
+  
+    const result = await axios.request(CONFIG).then((response) => {
+        return response;
+      }).catch((error) => {
+        return(error)
+      });
+    return result;
+  }
+export async function FETCH_ALL_STORE_PRODUCT_DATA_FOR_EXPORT (USER_ID,STORE_ID){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+  
+    let CONFIG = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/api/product/store/all/export?store_id=${STORE_ID}&user_id=${USER_ID}`,
+      headers: { 
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      }
+    };
+  
+    const result = await axios.request(CONFIG).then((response) => {
+        return response;
+      }).catch((error) => {
+        return(error)
+      });
+    return result;
+  }
+export async function FETCH_ALL_STORE_PRODUCT_DATA_FOR_SEARCH (USER_ID,STORE_ID,SEARCH_QUERY){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+  
+    let CONFIG = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/api/product/store/all/search?store_id=${STORE_ID}&user_id=${USER_ID}&search_query=${SEARCH_QUERY}`,
       headers: { 
         'Authorization': `Bearer ${AUTH_TOKEN}`
       }

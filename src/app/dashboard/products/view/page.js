@@ -20,6 +20,7 @@ import { GrFormEdit } from 'react-icons/gr';
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 
 function Page() {
@@ -65,6 +66,11 @@ function Page() {
 	};
     // DATA
     const PRODUCT_DATA = data?.data?.data;
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
+    }
 
     return (
         <Box>

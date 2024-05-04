@@ -25,7 +25,7 @@ import axios from 'axios';
         return response;
     }
 
-    export async function FETCH_STORE_PICKUP_DATA (USER_ID,STORE_ID,SEARCH_QUERY,STOCK_FILTER,FROM_DATE,TO_DATE){
+    export async function FETCH_STORE_PICKUP_DATA (USER_ID,STORE_ID,SEARCH_QUERY,STATUS_FILTER,FROM_DATE,TO_DATE,SPECIFIC_DATE,PAGE){
         let BASE_URL = await RouteHandler();
         const cookies = new Cookies();
         const AUTH_TOKEN = cookies.get('user_token1');
@@ -33,7 +33,7 @@ import axios from 'axios';
         let CONFIG = {
           method: 'get',
           maxBodyLength: Infinity,
-          url: `${BASE_URL}/api/pickup/store/all?store_id=${STORE_ID}&user_id=${USER_ID}&stock_filter=${STOCK_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}`,
+          url: `${BASE_URL}/api/pickup/store/all?store_id=${STORE_ID}&user_id=${USER_ID}&status_filter=${STATUS_FILTER}&search_query=${SEARCH_QUERY}&from_date=${FROM_DATE}&to_date=${TO_DATE}&specific_date=${SPECIFIC_DATE}&page=${PAGE}`,
           headers: { 
             'Authorization': `Bearer ${AUTH_TOKEN}`
           }

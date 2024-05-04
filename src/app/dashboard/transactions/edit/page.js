@@ -9,6 +9,7 @@ import { VscDiscard } from 'react-icons/vsc';
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_TRANSACTION_DATA } from '@/app/api/transaction/route';
 import UPDATE_TRANSACTION_FORM from '@/components/ui/transaction/UPDATE_TRANSACTION_FORM';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -22,6 +23,12 @@ function Page() {
         queryKey: ['transaction_id', {TRANSACTION_ID}],
         queryFn: () => FETCH_TRANSACTION_DATA(TRANSACTION_ID)
     });
+
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
+    }
 
     const TRANSACTION_DATA = data?.data?.data;
 

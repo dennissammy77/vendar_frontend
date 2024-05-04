@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
 import { MdChevronRight } from 'react-icons/md';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     
@@ -71,6 +72,11 @@ function Page() {
             });
           return;
         }
+    }
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
     }
 
     // Fetch All store users - done

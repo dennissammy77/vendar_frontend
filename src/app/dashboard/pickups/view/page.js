@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { BASE_BRAND, SECONDARY_BRAND } from '@/components/lib/constants/theme';
 import moment from 'moment';
 import DELETE_PICKUP_ALERT from '@/components/ui/pickups/DELETE_PICKUP_ALERT';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     // util
@@ -37,11 +38,7 @@ function Page() {
     });
     if (data?.data?.error){
         return (
-            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                <Text fontSize={'large'} fontWeight={'bold'} color='gray.400' my='2'>Error occured fetching pickup data</Text>
-                <Text fontSize={'large'} fontWeight={'bold'} color='gray.400' my='2'>{data?.data?.message}</Text>
-                <Button bg={SECONDARY_BRAND} variant='filled' borderRadius={'md'} mt='2' color={BASE_BRAND} onClick={(()=>{router.back()})} leftIcon={<LEFT_ARROW_ICON />}>Go Back</Button>
-            </Flex>
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
         )
     }
     if (isLoading){

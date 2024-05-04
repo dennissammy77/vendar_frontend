@@ -8,6 +8,7 @@ import React, { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_PICKUP_DATA } from '@/app/api/pickup/route';
 import UPDATE_STORE_PICKUP_FORM from '@/components/ui/pickups/UPDATE_STORE_PICKUP_FORM';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 
 function Page() {
@@ -25,6 +26,12 @@ function Page() {
     });
 
     const PICKUP_DATA = data?.data?.data;
+
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
+    }
 
     if (isLoading){
         return (

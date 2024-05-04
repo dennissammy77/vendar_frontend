@@ -9,6 +9,7 @@ import { VscDiscard } from 'react-icons/vsc';
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_PRODUCT_DATA } from '@/app/api/product/route';
 import UPDATE_STORE_PRODUCT_FORM from '@/components/ui/product/UPDATE_STORE_PRODUCT_FORM';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -24,6 +25,11 @@ function Page() {
     });
 
     const PRODUCT_DATA = data?.data?.data;
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
+    }
 
     return (
         <Box>

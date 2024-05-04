@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
 import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 
 function Page() {
@@ -60,6 +61,11 @@ function Page() {
           });
         return;
       }
+  }
+  if (data?.data?.error){
+      return (
+          <FAILED_DATA_REQUEST message={data?.data?.message}/>
+      )
   }
 
   return (

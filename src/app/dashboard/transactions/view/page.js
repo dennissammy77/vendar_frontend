@@ -10,11 +10,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { FETCH_TRANSACTION_DATA } from '@/app/api/transaction/route';
 import DELETE_TRANSACTION_ALERT from '@/components/ui/transaction/DELETE_TRANSACTION_ALERT';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     const {user} = useContext(UserContext);
     const USER_ID = user?.data?.data?._id;
     const router = useRouter();
+    const DELETE_TRANSACTION_ALERT_DISCLOSURE = useDisclosure()
 
     const searchParams = useSearchParams();
     const TRANSACTION_ID = searchParams.get('transaction_id');
@@ -25,10 +27,13 @@ function Page() {
         queryFn: () => FETCH_TRANSACTION_DATA(TRANSACTION_ID)
     });
 
-    const TRANSACTION_DATA = data?.data?.data;
-    console.log(TRANSACTION_DATA)
+    if (data?.data?.error){
+        return (
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
+        )
+    }
 
-    const DELETE_TRANSACTION_ALERT_DISCLOSURE = useDisclosure()
+    const TRANSACTION_DATA = data?.data?.data;
 
     return (
         <Box>
