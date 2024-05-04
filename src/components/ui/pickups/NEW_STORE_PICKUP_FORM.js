@@ -35,6 +35,8 @@ export default function NEW_STORE_PICKUP_FORM() {
         on_the_go_client_name: yup.string().required(),
         on_the_go_client_mobile: yup.string().required(),
         pickup_date: yup.date().required(),
+        pickup_status: yup.boolean().required(),
+        pickup_stage: yup.string().required(),        
     });
 
     const {
@@ -49,6 +51,8 @@ export default function NEW_STORE_PICKUP_FORM() {
             payment_status: false,
             payment_method: 'N/A',
             payment_code: 'N/A',
+            pickup_status: false,
+            pickup_stage: 'pending',
         }
     });
 
@@ -129,7 +133,7 @@ export default function NEW_STORE_PICKUP_FORM() {
             </FormControl>
             <HStack align={'center'} my='2'>
                 <Icon as={CALENDER_ICON} boxSize={'6'}/>
-                <Text fontWeight={'bold'}>PICKUP Date</Text>
+                <Text fontWeight={'bold'}>PickUp Date</Text>
             </HStack>
             <Divider />
             <FormControl isRequired my='2'>

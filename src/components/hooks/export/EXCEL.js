@@ -83,3 +83,94 @@ export const EXPORT_PRODUCT_EXCEL=async (PRODUCTS_ARRAY)=>{
         throw new Error("Could not export your products");
     };
 }
+
+export const EXPORT_TRANSACTIONS_EXCEL=async (TRANSACTIONS_ARRAY)=>{
+    if (TRANSACTIONS_ARRAY?.length === 0){
+        throw new Error('No transactions found to export');
+    }
+    const workbook = new Excel.Workbook();
+    const worksheet = workbook.addWorksheet(`VENDAR TRANSACTIONS`, {views:[{state: 'frozen', xSplit: 1, ySplit:1}]});
+    let date = new Date()
+    workbook.creator = 'VENDAR';
+    workbook.created = date;
+    workbook.modified = date;
+    workbook.views = [
+        {
+          x: 0, y: 0, width: 10000, height: 20000,
+          firstSheet: 0, activeTab: 1, visibility: 'visible'
+        }
+    ]
+    worksheet.columns = [
+        { header: 'Sale ID', key: 'id', width: 10 },
+        { header: 'Date', key: 'date', width: 10 },
+        { header: 'Store Name', key: 'store_name', width: 32 },
+        { header: 'Product Name', key: 'product_name', width: 32 },
+        { header: 'Product ID', key: 'product_id', width: 32 },
+        { header: 'Price', key: 'price', width: 10 },
+        { header: 'Category', key: 'category', width: 32 },
+        { header: 'Vendor Name', key: 'vendor_name', width: 32 },
+        { header: 'Vendor ID', key: 'vendor_id', width: 32 },
+        { header: 'Vendor Contact', key: 'vendor_mobile', width: 32 },
+        { header: 'Sale made by', key: 'staff_name', width: 32 },
+        { header: 'Delivery Status', key: 'delivery_status', width: 32 },
+        { header: 'Rider name', key: 'rider_name', width: 32 },
+        { header: 'Rider contact', key: 'rider_contact', width: 32 },
+        { header: 'Payment status', key: 'payment_status', width: 32 },
+        { header: 'Payment method', key: 'payment_method', width: 32 },
+        { header: 'Payment reference code', key: 'payment_code', width: 32 },
+        { header: 'Items', key: 'items', width: 24 },
+        { header: 'SubTotal', key: 'sub_total', width: 32 },
+        { header: 'Delivery Fee', key: 'delivery_fee', width: 32 },
+        { header: 'Total', key: 'payment_total', width: 32 },
+    ];
+    worksheet.getRows(1).alignment = { horizontal: 'center', vertical: 'center' };
+    for (let i = 0; i <= TRANSACTIONS_ARRAY?.length - 1; i++) {
+        let transaction = TRANSACTIONS_ARRAY[i];
+        worksheet.addRow({
+            id: transaction?._id,
+            date: moment(transaction?.createdAt).format("DD MMM YY"),
+            store_name: transaction?.store_ref?.name,
+            product_name: transaction?.product_ref?.name,
+            product_id: transaction?.product_ref?._id,
+            price: transaction?.price,
+            category: transaction?.product_ref?.category,
+            items: transaction?.items,
+            delivery_status: transaction?.delivery_status? 'delivered':'N/A',
+            rider_name: transaction?.delivery_status? transaction?.delivery_person_name:'N/A',
+            rider_contact: transaction?.delivery_status? transaction?.delivery_person_contact:'N/A',
+            payment_status: transaction?.status,
+            payment_method: transaction?.payment_method || 'N/A',
+            payment_code: transaction?.payment_code || 'N/A',
+            sub_total: transaction?.price,
+            delivery_fee: transaction?.delivery_fee || 0,
+            payment_total: transaction?.payment_total,
+            vendor_name: transaction?.vendor?.name,
+            vendor_id: transaction?.vendor?._id,
+            vendor_mobile: transaction?.vendor?.mobile,
+            staff_name: transaction?.created_by?.name,
+        })
+    };
+    try{
+        const buffer = await workbook.xlsx.writeBuffer();
+        const file_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8';
+        let EXTENSION = '.xlsx';
+        const blob = new Blob([buffer], { type: file_type });
+
+        if(navigator.msSaveBlog){
+            navigator.msSaveBlog(blob, `VENDAR Trasactions Excel`+ EXTENSION);
+        }else{
+            const link = document.createElement('a');
+            if (link.download !== undefined){
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `VENDAR Transactions Excel`+ EXTENSION);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+    }catch(error){
+        throw new Error("Could not export your transactions");
+    };
+}

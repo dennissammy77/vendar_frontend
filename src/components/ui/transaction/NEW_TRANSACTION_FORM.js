@@ -1,32 +1,59 @@
 'use client'
+
 import React, { useContext, useState } from 'react';
+// utils
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
-import { Button, Divider, FormControl, FormLabel, HStack, Icon, Input, Select, Text, Textarea, useToast } from '@chakra-ui/react';
-import { CiWarning } from 'react-icons/ci';
-import { TbTruckDelivery } from "react-icons/tb";
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+
+// api
 import { NEW_STORE_TRANSACTION } from '@/app/api/transaction/route';
+// components
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+// styling
+import { Box, Button, Collapse, Divider, Flex, FormControl, FormLabel, HStack, Icon, IconButton, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Select, Text, Textarea, useDisclosure, useToast } from '@chakra-ui/react';
+import { CiWarning } from 'react-icons/ci';
+import { TbTruckDelivery } from "react-icons/tb";
 import { IoIosPerson } from 'react-icons/io';
 import { GrMoney } from 'react-icons/gr';
+import { PRODUCT_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
+import { IoClose } from 'react-icons/io5';
+import { FETCH_ALL_STORE_PRODUCT_DATA_FOR_SEARCH } from '@/app/api/product/route';
+import { BASE_BRAND, TERTIARY_BRAND } from '@/components/lib/constants/theme';
 
 export default function NEW_TRANSACTION_FORM() {
-
+    // utils
     const toast = useToast();
     const router = useRouter()
-
     const {user} = useContext(UserContext);
-
     const searchParams = useSearchParams();
-    const STORE_ID = searchParams.get('store_id');
-
+    // api
+    // components
+    // styling
+    // hooks
+    // context
+    // config
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
-    const [PRODUCT_ID,SET_PRODUCT_ID]=useState('');
+    const PRODUCT_SEARCH_DISCLOSURE = useDisclosure();
 
-    const PRODUCTS_DATA = user?.data?.data?.store_ref.find(products => products?._id === STORE_ID)
+    // state handlesrs
+    const [delivery_state_handler,set_delivery_state_handler]=useState(null);
+    const [search_query,set_search_query]=useState('');
 
+    const {data, isLoading} = useQuery({
+        queryKey: ['store_products', {STORE_ID,USER_ID,search_query}],
+        queryFn: () => FETCH_ALL_STORE_PRODUCT_DATA_FOR_SEARCH(USER_ID,STORE_ID,search_query),
+        enabled: USER_ID !== undefined && STORE_ID !== undefined
+    });
+    
+    const PRODUCTS_DATA = data?.data?.data;
+
+    const [SELECTED_PRODUCT,SET_SELECTED_PRODUCT]=useState('');
+    const PRODUCT_ID = SELECTED_PRODUCT?._id;
     const schema = yup.object().shape({
         items: yup.number().min(1).required(),
         delivery_status: yup.boolean(),
@@ -40,8 +67,6 @@ export default function NEW_TRANSACTION_FORM() {
         payment_code: yup.string(),
         customer_notification_status: yup.boolean()
     });
-
-    const [delivery_state_handler,set_delivery_state_handler]=useState(null);
 
     const {
         register,
@@ -100,17 +125,40 @@ export default function NEW_TRANSACTION_FORM() {
         <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isRequired>
                 <FormLabel my='2' fontWeight={'bold'}>Product</FormLabel>
-                <Select 
-                    placeholder='Select the product' 
-                    onChange={((e)=>{
-                        SET_PRODUCT_ID(e.target.value);
-                    })}>
-                    {PRODUCTS_DATA?.products?.map((product)=>{
-                        return(
-                            <option value={product?._id} key={product?._id}>{product?.name}</option>
-                        )
-                    })}
-                </Select>
+                {SELECTED_PRODUCT?.name?.length > 0 ? 
+                <Flex boxShadow={'sm'} bg={TERTIARY_BRAND} borderRadius={'sm'} justify={'space-between'} align={'center'} p='2'>
+                    <Text fontWeight={'bold'} fontSize={'lg'}>({SELECTED_PRODUCT?.items})-{SELECTED_PRODUCT?.name}</Text>
+                    <Text cursor={'pointer'} fontSize={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT({})})}>change product</Text>
+                </Flex>
+                    :
+                <Box position={'relative'}>
+                    <InputGroup>
+                        <InputLeftElement pointerEvents='none'>
+                            <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
+                        </InputLeftElement>
+                        <Input type='search' placeholder={'Search products'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                    </InputGroup>
+                    <Box boxShadow={'md'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
+                        {PRODUCTS_DATA?.length === 0? 
+                                <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                    <Icon as={PRODUCT_ICON} boxSize={'6'}/>
+                                    <Text>No products found!.</Text>
+                                </Flex>
+                            :
+                            <>
+                                {PRODUCTS_DATA?.map((product)=>{
+                                    return(
+                                        <Text key={product?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT(product);set_search_query('')})}>
+                                            ({product?.items})-
+                                            {product?.name}
+                                        </Text>
+                                    )
+                                })}
+                            </>
+                        }
+                    </Box>
+                </Box>
+                }
             </FormControl>
             <FormControl>
                 <FormLabel my='2' fontWeight={'bold'}>Items Sold</FormLabel>
@@ -196,15 +244,6 @@ export default function NEW_TRANSACTION_FORM() {
             :
                 <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Create Transaction</Button>
             }
-            {/* {isLoading? 
-                <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                    <Spinner />
-                    <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting Up transaction form</Text>
-                </Flex>
-            :
-                <>
-                </>
-            } */}
       </form>
     )
 }

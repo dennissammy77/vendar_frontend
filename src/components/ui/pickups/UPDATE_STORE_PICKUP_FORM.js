@@ -37,6 +37,8 @@ export default function UPDATE_STORE_PICKUP_FORM(props) {
         on_the_go_client_name: yup.string().required(),
         on_the_go_client_mobile: yup.string().required(),
         pickup_date: yup.date().required(),
+        pickup_status: yup.boolean().required(),
+        pickup_stage: yup.string().required(),
     });
 
     const {
@@ -59,6 +61,8 @@ export default function UPDATE_STORE_PICKUP_FORM(props) {
             on_the_go_client_name: props?.PICKUP_DATA?.on_the_go_client_name,
             on_the_go_client_mobile:props?.PICKUP_DATA?.on_the_go_client_mobile,
             pickup_date: props?.PICKUP_DATA?.pickup_date,
+            pickup_status: props?.PICKUP_DATA?.pickup_status,
+            pickup_stage: props?.PICKUP_DATA?.pickup_stage,
         }
     });
 

@@ -29,6 +29,8 @@ const LoginForm=()=>{
   const [show, setShow] = useState(false); //handle state to toggle password
 	const handleClick = () => setShow(!show); //handle state to toggle view of password 
 
+  const [isLoggedIn,set_isLoggedIn]=useState(false)
+
   const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const schema = yup.object().shape({
     email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
@@ -51,6 +53,7 @@ const LoginForm=()=>{
     try {
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+          set_isLoggedIn(true)
           if (typeof(window) === undefined) {
             window.location.href(`/dashboard/stores?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
           }else{
@@ -96,7 +99,7 @@ const LoginForm=()=>{
         {isSubmitting?
           <Button isLoading loadingText='Signing you in' variant='ghost' borderRadius={'md'} w='full'/>
           :
-          <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>SignIn</Button>
+          <Button type='submit' disabled={isLoggedIn} variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>{isLoggedIn? 'Signed In':'SignIn'}</Button>
         }
       </form>
       <Text fontSize={'sm'} color='red' my='4' cursor={'pointer'} onClick={(()=>{router.push('/password_reset')})}>Forgot password?</Text>

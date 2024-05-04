@@ -6,9 +6,9 @@ import { GiShoppingBag } from "react-icons/gi";
 import { GrFormEdit, GrMoney } from "react-icons/gr";
 import { HiChevronDown } from "react-icons/hi";
 import { IoIosPerson, IoMdSettings } from "react-icons/io";
-import { IoPeopleOutline } from "react-icons/io5";
+import { IoPeopleOutline, IoReload } from "react-icons/io5";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
-import { MdAdd, MdAddShoppingCart, MdChevronRight, MdClose, MdDeleteForever, MdDeleteOutline, MdDone, MdEmail, MdFilterAlt, MdFilterAltOff, MdOutlineAdminPanelSettings, MdOutlineManageAccounts, MdSupportAgent } from "react-icons/md";
+import { MdAdd, MdAddShoppingCart, MdChevronLeft, MdChevronRight, MdClose, MdDeleteForever, MdDeleteOutline, MdDone, MdEmail, MdFilterAlt, MdFilterAltOff, MdOutlineAdminPanelSettings, MdOutlineManageAccounts, MdSupportAgent } from "react-icons/md";
 import { TiUserDelete } from "react-icons/ti";
 import { BsBoxSeam } from "react-icons/bs";
 import { VscDiscard } from "react-icons/vsc";
@@ -18,6 +18,7 @@ export const FILTER_ICON_CLOSE = (props)=> <MdFilterAltOff {...props}/>
 export const IMPORT_ICON = (props)=> <CiImport {...props}/>
 export const EXPORT_ICON = (props)=> <CiExport {...props}/>
 export const CHEVRON_RIGHT_ICON = (props)=> <MdChevronRight {...props}/>
+export const CHEVRON_LEFT_ICON = (props)=> <MdChevronLeft {...props}/>
 export const CHEVRON_DOWN_ICON = (props)=> <HiChevronDown {...props}/>
 export const ADD_ICON = (props)=> <MdAdd {...props}/>
 export const SEARCH_ICON = (props)=> <FiSearch {...props}/>
@@ -52,3 +53,4 @@ export const MONEY_COINS_ICON = (props)=> <GrMoney {...props}/>
 export const CALENDER_ICON = (props)=> <CiCalendarDate {...props}/>
 export const WARNING_ICON = (props)=> <CiWarning {...props}/>
 export const LEFT_ARROW_ICON = (props)=> <FaLongArrowAltLeft {...props}/>
+export const RELOAD_ICON = (props)=> <IoReload {...props}/>
