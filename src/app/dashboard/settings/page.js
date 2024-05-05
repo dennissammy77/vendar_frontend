@@ -1,17 +1,20 @@
 'use client'
 import React, { useContext } from 'react'
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure} from '@chakra-ui/react'
-import { MdChevronRight, MdClose, MdDone, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
-import { GrFormEdit } from 'react-icons/gr';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DELETE_ACCOUNT_ALERT from '@/components/ui/user/DELETE_ACCOUNT_ALERT';
 import Link from 'next/link';
+import { CHEVRON_RIGHT_ICON, CLOSE_ICON, DONE_ICON, EDIT_ICON, STAFF_ICON } from '@/components/lib/constants/icons';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import { PRIMARY_BRAND } from '@/components/lib/constants/theme';
 
 function Page() {
     const {user} = useContext(UserContext);
     const USER_DATA = user?.data?.data;
     const USER_ID = user?.data?.data?._id;
+    const searchParams = useSearchParams();
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const router = useRouter();
     const DELETE_ACCOUNT_ALERT_DISCLOSURE = useDisclosure();
 
@@ -22,9 +25,9 @@ function Page() {
         <Box>
             <DELETE_ACCOUNT_ALERT isOpen={DELETE_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} USER_DATA={USER_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Personal Settings</Text>
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -32,9 +35,9 @@ function Page() {
                 </BreadcrumbItem>
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' onClick={(()=>{router.push(`/dashboard/settings/edit?uid=${user?.data?.data?._id}`)})} cursor={'pointer'}>
+                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' onClick={(()=>{router.push(`/dashboard/settings/edit?uid=${USER_ID}&store_id=${STORE_ID}`)})} cursor={'pointer'}>
                     <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                    <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
+                    <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
                 </Flex>
                 <Grid
                     templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
@@ -64,7 +67,7 @@ function Page() {
                         {USER_DATA?.account_type === 'vendor'? null : 
                             <Box>
                                 <Text fontWeight={'bold'}>Current role</Text>
-                                <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7' >{USER_DATA?.store_admin_account_ref?.role}</Badge>
+                                <Badge fontSize="xs" color="#ffffff" bg={PRIMARY_BRAND} >{USER_DATA?.store_admin_account_ref?.role}</Badge>
                             </Box>
                         }
                         <Box my='2'>
@@ -80,7 +83,7 @@ function Page() {
             </Box>
             <Flex boxShadow={'md'} borderRadius={'md'} justify={'space-between'} p='4' my='4' align={'center'} flexDirection={{base:'column',md:'row'}} gap='2'>
                 <HStack align={'center'}>
-                    <Icon as={MdOutlineAdminPanelSettings} boxSize='5'/>
+                    <Icon as={STAFF_ICON} boxSize='5'/>
                     <Text>Account Management</Text>
                 </HStack>
                 <HStack>
@@ -91,11 +94,11 @@ function Page() {
             {USER_DATA?.account_status_ref?.email_status ? null : 
                 <Flex boxShadow={'md'} borderRadius={'md'} justify={'space-between'} p='4' my='4' align={'center'} flexDirection={{base:'column',md:'row'}} gap='2' bg='#E4F0FC'>
                     <HStack align={'center'}>
-                        <Icon as={MdOutlineAdminPanelSettings} boxSize='5'/>
+                        <Icon as={STAFF_ICON} boxSize='5'/>
                         <Text>Account Verification</Text>
                     </HStack>
                     <HStack bg='#4E2FD7' p='2' borderRadius={'md'} color='#FFFFFF'>
-                        <Link fontSize={'sm'} fontWeight={'bold'} color='#fff' textDecoration={'1px solid underline'} my='4' cursor={'pointer'} href={`${prodbaseurl}/api/auth/verify/email=${USER_DATA?.email}`}>Verify My account</Link>
+                        <Link fontSize={'sm'} fontWeight={'bold'} color='#fff' textDecoration={'1px solid underline'} my='4' cursor={'pointer'} href={`${prodbaseurl}/api/auth/verify/${USER_DATA?.email}`} rel="noopener noreferrer" target="_blank">Verify My account</Link>
                     </HStack>
                 </Flex>
             }  
@@ -116,45 +119,45 @@ function Page() {
                             <Tbody>
                                 <Tr>
                                     <Td>Store</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Staff</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Vendor</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Product</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Customer</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                                 <Tr>
                                     <Td>Transcations</Td>
-                                    <Td><Icon as={MdDone} boxSize={'5'} color={'gray.400'}/></Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
-                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={MdDone} boxSize={'5'} color={'gray.400'}/> : <Icon as={MdClose} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td><Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/></Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
+                                    <Td>{USER_DATA?.store_admin_account_ref?.role === 'owner' || USER_DATA?.store_admin_account_ref?.role === 'manager'? <Icon as={DONE_ICON} boxSize={'5'} color={'gray.400'}/> : <Icon as={CLOSE_ICON} boxSize={'5'} color={'gray.400'}/>}</Td>
                                 </Tr>
                             </Tbody>
                         </Table>
