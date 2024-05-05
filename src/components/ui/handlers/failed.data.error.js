@@ -12,7 +12,20 @@ function FAILED_DATA_REQUEST({message}) {
             <Text fontSize={'large'} fontWeight={'bold'} color='gray.400' my='2'>{message}</Text>
             <HStack spacing='2' my='2'>
                 <Button bg={SECONDARY_BRAND} variant='filled' borderRadius={'md'} color={BASE_BRAND} onClick={(()=>{router.back()})} leftIcon={<LEFT_ARROW_ICON />}>Go Back</Button>
-                <Button bg={TERTIARY_BRAND} variant='filled' borderRadius={'md'} color={SECONDARY_BRAND} onClick={(()=>{if(typeof(window) === undefined ){window.location.reload()}else{router.refresh}})} rightIcon={<RELOAD_ICON />}>Reload</Button>
+                <Button 
+                    bg={TERTIARY_BRAND} 
+                    variant='filled' 
+                    borderRadius={'md'} 
+                    color={SECONDARY_BRAND} 
+                    onClick={(()=>{
+                        if(typeof(window) === undefined ){
+                            router.refresh
+                        }else{
+                            window.location.reload()
+                        }
+                    })} 
+                    rightIcon={<RELOAD_ICON />}
+                >Reload</Button>
             </HStack>
         </Flex>
     )
