@@ -2,12 +2,13 @@
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
-import React from 'react'
-import { Button, Divider, FormControl, FormErrorMessage, FormLabel, HStack, Icon, Input, Select, Text, Textarea, useToast } from '@chakra-ui/react';
+import React, { useState } from 'react'
+import { Button, Divider, Flex, FormControl, FormErrorMessage, FormLabel, HStack, Icon, Input, Select, Text, Textarea, useToast } from '@chakra-ui/react';
 import { CALENDER_ICON, MONEY_COINS_ICON, PERSON_ICON, WARNING_ICON } from '@/components/lib/constants/icons';
 import { useForm } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NEW_STORE_PICKUP, UPDATE_STORE_PICKUP } from '@/app/api/pickup/route';
+import moment from 'moment';
 
 
 export default function UPDATE_STORE_PICKUP_FORM(props) {
@@ -22,6 +23,7 @@ export default function UPDATE_STORE_PICKUP_FORM(props) {
     const USER_ID = props?.USER_ID;
     const FLAG = 'details';
     // config
+    const [change_date,set_change_date]=useState(false)
 
 
     const SCHEMA = yup.object().shape({
@@ -36,7 +38,7 @@ export default function UPDATE_STORE_PICKUP_FORM(props) {
         payment_code: yup.string(),
         on_the_go_client_name: yup.string().required(),
         on_the_go_client_mobile: yup.string().required(),
-        pickup_date: yup.date().required(),
+        pickup_date: yup.date(),
         pickup_status: yup.boolean().required(),
         pickup_stage: yup.string().required(),
     });
@@ -174,7 +176,17 @@ export default function UPDATE_STORE_PICKUP_FORM(props) {
             <Divider />
             <FormControl isRequired my='2'>
                 <FormLabel>Date</FormLabel>
-                <Input disabled={isSubmitting} type='date' variant={'outline'} {...register('pickup_date')} min={new Date().toISOString().split('T')[0]}/>
+                {change_date? 
+                    <Input disabled={isSubmitting} type='date' variant={'outline'} {...register('pickup_date')} min={new Date().toISOString().split('T')[0]}/>
+                :
+                    <Flex align='center' justify='space-between'>
+                        <HStack align={'center'}>
+                            <Icon as={CALENDER_ICON} boxSize='4'/>
+                            <Text fontWeight={''}>{moment(props?.PICKUP_DATA?.pickup_date).format("DD MMM YY")}</Text>
+                        </HStack>
+                        <Text cursor='pointer' onClick={(()=>{set_change_date(true)})}>change date</Text>
+                    </Flex>
+                }
                 <FormErrorMessage>{errors.pickup_date?.message}</FormErrorMessage>
             </FormControl>
             {errors.root && 

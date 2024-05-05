@@ -138,7 +138,7 @@ export default function NEW_STORE_PICKUP_FORM() {
             <Divider />
             <FormControl isRequired my='2'>
                 <FormLabel>Date</FormLabel>
-                <Input disabled={isSubmitting} type='date' variant={'outline'} {...register('pickup_date')} min={new Date().toISOString().split('T')[0]}/>
+                <Input disabled={isSubmitting} type='datetime-local' variant={'outline'} {...register('pickup_date')} min={new Date().toISOString().split('T')[0]}/>
                 <FormErrorMessage>{errors.pickup_date?.message}</FormErrorMessage>
             </FormControl>
             {errors.root && 
