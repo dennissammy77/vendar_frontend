@@ -174,3 +174,74 @@ export const EXPORT_TRANSACTIONS_EXCEL=async (TRANSACTIONS_ARRAY)=>{
         throw new Error("Could not export your transactions");
     };
 }
+
+export const EXPORT_PICKUPS_EXCEL=async (PICKUP_ARRAY)=>{
+    if (PICKUP_ARRAY?.length === 0){
+        throw new Error('No pickups found to export');
+    }
+    const workbook = new Excel.Workbook();
+    const worksheet = workbook.addWorksheet(`VENDAR PICKUPS`, {views:[{state: 'frozen', xSplit: 1, ySplit:1}]});
+    let date = new Date()
+    workbook.creator = 'VENDAR';
+    workbook.created = date;
+    workbook.modified = date;
+    workbook.views = [
+        {
+          x: 0, y: 0, width: 10000, height: 20000,
+          firstSheet: 0, activeTab: 1, visibility: 'visible'
+        }
+    ]
+    worksheet.columns = [
+        { header: 'PickUp ID', key: 'id', width: 10 },
+        { header: 'PickUp Date', key: 'pickup_date', width: 10 },
+        { header: 'Status', key: 'pickup_stage', width: 10 },
+        { header: 'Code', key: 'code', width: 32 },
+        { header: 'Customer Name', key: 'customer_name', width: 32 },
+        { header: 'Customer Mobile', key: 'customer_mobile', width: 32 },
+        { header: 'Vendor Name', key: 'on_the_go_client_name', width: 32 },
+        { header: 'Vendor Contact', key: 'on_the_go_client_mobile', width: 32 },
+        { header: 'Product Name', key: 'name', width: 10 },
+        { header: 'Items', key: 'items', width: 32 },
+        { header: 'Comment', key: 'comment', width: 32 },
+    ];
+    worksheet.getRows(1).alignment = { horizontal: 'center', vertical: 'center' };
+    for (let i = 0; i <= PICKUP_ARRAY?.length - 1; i++) {
+        let pickup = PICKUP_ARRAY[i];
+        worksheet.addRow({
+            id: pickup?._id,
+            pickup_date: moment(pickup?.pickup_date).format("DD MMM YY"),
+            pickup_stage: pickup?.pickup_stage,
+            code: pickup?.code,
+            customer_name: pickup?.customer_name,
+            customer_mobile: pickup?.customer_mobile,
+            on_the_go_client_name: pickup?.on_the_go_client_name,
+            on_the_go_client_mobile: pickup?.on_the_go_client_mobile,
+            name: pickup?.name,
+            items: pickup?.items,
+            comment: pickup?.comment
+        })
+    };
+    try{
+        const buffer = await workbook.xlsx.writeBuffer();
+        const file_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8';
+        let EXTENSION = '.xlsx';
+        const blob = new Blob([buffer], { type: file_type });
+
+        if(navigator.msSaveBlog){
+            navigator.msSaveBlog(blob, `VENDAR PICK_UPS Excel`+ EXTENSION);
+        }else{
+            const link = document.createElement('a');
+            if (link.download !== undefined){
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `VENDAR PICK_UPS Excel`+ EXTENSION);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+    }catch(error){
+        throw new Error("Could not export your pickups");
+    };
+}
