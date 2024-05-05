@@ -11,18 +11,20 @@ import moment from 'moment';
 // icons
 import { ADD_ICON, CALENDER_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, CLEAR_FILTER_ICON, EXPORT_ICON, FILTER_ICON, FILTER_ICON_CLOSE, IMPORT_ICON, MANAGE_ICON, PICKUPS_ICON, SEARCH_ICON } from '@/components/lib/constants/icons'
 // styling
-import { Avatar, Badge, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, FormControl, FormLabel, HStack, Icon, IconButton, Input, InputGroup, InputLeftElement, Select, Spinner, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, Wrap } from '@chakra-ui/react'
+import { Avatar, Badge, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, FormControl, FormLabel, HStack, Icon, IconButton, Input, InputGroup, InputLeftElement, Select, Spinner, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, Wrap, useToast } from '@chakra-ui/react'
 // api
 // components
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
-import { FETCH_STORE_PICKUP_DATA } from '@/app/api/pickup/route';
+import { FETCH_STORE_PICKUP_DATA, FETCH_STORE_PICKUP_DATA_FOR_EXPORT } from '@/app/api/pickup/route';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 import { TERTIARY_BRAND } from '@/components/lib/constants/theme';
+import { EXPORT_PICKUPS_EXCEL } from '@/components/hooks/export/EXCEL';
 
 function Page() {
     // utils
     const {user} = useContext(UserContext);
     const searchParams = useSearchParams();
+    const toast = useToast();
     // configs
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
@@ -53,6 +55,19 @@ function Page() {
         set_from_date('none');
         set_to_date('none');
         set_specific_date('none');
+    }
+
+    const HANDLE_EXPORT_DATA = async()=>{
+        const ALL_PICKUPS = await FETCH_STORE_PICKUP_DATA_FOR_EXPORT(USER_ID,STORE_ID);
+        toast({ title: 'Exporting PICKUPS', description: `Please wait`, status: 'loading', variant: 'left-accent', position:'top-left',isClosable: true, duration: 1000 });
+        await EXPORT_PICKUPS_EXCEL(ALL_PICKUPS?.data?.data)
+        .then(()=>{
+            toast({ title: 'Success!', description: `PICKUPS exported successfully`, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
+            return;
+        }).catch((err)=>{
+            toast({ title: `${err}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
+            throw new Error('Error')
+        })
     }
 
     const HANDLE_PAGE_CHANGE=(sign)=>{
@@ -92,7 +107,7 @@ function Page() {
                         <InputLeftElement pointerEvents='none'>
                             <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
                         </InputLeftElement>
-                        <Input type='search' placeholder={'Search products'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                        <Input type='search' placeholder={'Search pickups'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
                     </InputGroup>
                     <Link href={`/dashboard/pickups/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
                         <Button bgColor={'#4E2FD7'} color='#ffffff' leftIcon={<ADD_ICON />} >New</Button>
@@ -112,13 +127,16 @@ function Page() {
                 <Flex align='center' justify={'space-between'}>
                     <IconButton aria-label='filter' icon={show_filter_options? <FILTER_ICON_CLOSE/> : <FILTER_ICON />} size='sm' onClick={(()=>{set_show_filter_options(!show_filter_options)})}/>
                     <Flex gap='4' mx='2'>
+                        {/**
+                         * 
                         <Link href={`/dashboard/pickups/new/import?uid=${USER_ID}&store_id=${STORE_ID}`}>
                             <HStack align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
                                 <Icon as={IMPORT_ICON} boxSize={'4'}/>
                                 <Text fontWeight={'bold'} fontSize={'sm'}>import</Text>
                             </HStack>
                         </Link>
-                        <HStack align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
+                         */}
+                        <HStack onClick={HANDLE_EXPORT_DATA} align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
                             <Icon as={EXPORT_ICON} boxSize={'4'}/>
                             <Text fontWeight={'bold'} fontSize={'sm'}>export</Text>
                         </HStack>
@@ -182,14 +200,14 @@ function Page() {
                                     <Tr>
                                         <Th>Customer</Th>
                                         <Th>Pick Up Date</Th>
-                                        <Th>Items</Th>
-                                        <Th>Price</Th>
+                                        <Th>Code</Th>
+                                        <Th>Vendor</Th>
                                         <Th>Status</Th>
                                         <Th>Actions</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {PICKUPS_DATA?.filter((pickup)=>pickup?.customer_name?.toLowerCase().includes(search_query?.toLowerCase())).reverse()?.map((pickup)=>{
+                                    {PICKUPS_DATA?.map((pickup)=>{
                                         return(
                                             <Tr key={pickup?._id} >
                                                 <Td>
@@ -209,10 +227,15 @@ function Page() {
                                                 </Td>
                                                 <Td>
                                                     <Text>
-                                                        {pickup?.items}
+                                                        {pickup?.code}
                                                     </Text>
                                                 </Td>
-                                                <Td>KES {pickup?.price}</Td>
+                                                <Td>
+                                                    <Box>
+                                                        <Text>{pickup?.on_the_go_client_name}</Text>
+                                                        <Text fontSize={'12px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{pickup?.on_the_go_client_mobile}</Text>
+                                                    </Box>
+                                                </Td>
                                                 <Td>
                                                     <Badge 
                                                         fontSize={'sm'}
