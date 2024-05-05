@@ -15,6 +15,7 @@ import { CHEVRON_DOWN_ICON, CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, EMAIL_IC
 import UserTabs from './components/UsersTab';
 import DELETE_STORE_ALERT from '@/components/ui/store/DELETE_STORE_ALERT.js';
 import Link from "next/link";
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 
 function Page() {
@@ -44,15 +45,22 @@ function Page() {
 
     if (data?.data?.error){
         return (
-            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                <Text fontSize={'large'} fontWeight={'bold'} color='gray.300' my='2'>{data?.data?.message}</Text>
-                <VStack spacing='2'>
-                    <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' my='4' w='full' color='#fff' leftIcon={<SPARKS_ICON />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${USER_ID}`)})}>Create Store</Button>
-                    <Link cursor={'pointer'} href={`/dashboard/stores?uid=${USER_ID}`} textDecoration={'1px solid underline'}>Back to Stores</Link>
-                </VStack>
-            </Flex>
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
         )
     }
+
+    // if (data?.data?.error){
+    //     return (
+    //         <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+    //             <Text fontSize={'large'} fontWeight={'bold'} color='gray.300' my='2'>{data?.data?.message}</Text>
+    //             <VStack spacing='2'>
+    //                 <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' my='4' w='full' color='#fff' leftIcon={<SPARKS_ICON />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${USER_ID}`)})}>Create Store</Button>
+    //                 <Link cursor={'pointer'} href={`/dashboard/stores?uid=${USER_ID}`} textDecoration={'1px solid underline'}>Back to Stores</Link>
+    //             </VStack>
+    //         </Flex>
+    //     )
+    // }
+
     return (
         <Box>
             <DELETE_STORE_ALERT isOpen={DELETE_STORE_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STORE_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} STORE_ID={store_id}/>
@@ -136,6 +144,10 @@ function Page() {
                     <HStack spacing='2' my='2' fontSize='md'>
                         <Text fontWeight={'bold'}>Transactions:</Text>
                         <Text>{store?.transactions?.length}</Text>
+                    </HStack>
+                    <HStack spacing='2' my='2' fontSize='md'>
+                        <Text fontWeight={'bold'}>PickUps:</Text>
+                        <Text>{store?.pickups?.length}</Text>
                     </HStack>
                     <HStack spacing='2' my='2' fontSize='md'>
                         <Text fontWeight={'bold'}>Shelves:</Text>
