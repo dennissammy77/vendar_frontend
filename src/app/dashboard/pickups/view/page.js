@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
 // api
-import { FETCH_PICKUP_DATA } from '@/app/api/pickup/route';
+import { FETCH_PICKUP_DATA, UPDATE_STORE_PICKUP } from '@/app/api/pickup/route';
 // styling
 import { Badge, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Divider, Flex, Grid, GridItem, HStack, Icon, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react'
 // component
@@ -41,6 +41,33 @@ function Page() {
             <FAILED_DATA_REQUEST message={data?.data?.message}/>
         )
     }
+
+    const Handle_Approve_PickUp=async()=>{
+        toast({ title: 'Approving pickup', description: `Please wait`, status: 'loading', variant: 'left-accent', position:'top-left',isClosable: true, duration: 1000 });
+        const data = {
+            pickup_status: true,
+            pickup_stage: 'collected'
+        };
+        const FLAG = 'details'
+        try {
+            await UPDATE_STORE_PICKUP(data,STORE_ID,USER_ID,PICKUP_ID,FLAG).then((response)=>{
+              if(response?.data?.error === true){
+                  return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
+              }
+              toast({ title: 'Success!:PickUp approved successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
+              router.back();
+              return ;
+            }).catch((err)=>{
+                return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+            })
+          } catch (error){
+              console.log(error)
+            setError("root", {
+              message: error,
+            });
+            return;
+          }
+    }
     if (isLoading){
         return (
             <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh' w='full'>
@@ -62,7 +89,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/pickups?uid=${USER_ID}&store_id=${STORE_ID}`}>PickUp</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/pickups?uid=${USER_ID}&store_id=${STORE_ID}`}>Pickups</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -71,6 +98,10 @@ function Page() {
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
                 <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
+                    <HStack p='1' px='2' color='#FFFFFF' bg={SECONDARY_BRAND} borderRadius={'full'} onClick={Handle_Approve_PickUp}>
+                        <Text fontWeight={'bold'} fontSize={'md'}>Approve</Text>
+                        <Icon boxSize='4' as={PICKUPS_ICON} cursor='pointer'/>
+                    </HStack>
                     <Link href={`/dashboard/pickups/edit?uid=${USER_ID}&store_id=${STORE_ID}&pickup_id=${PICKUP_ID}`}>
                         <HStack>
                             <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
@@ -116,7 +147,7 @@ function Page() {
                     </Box>
                     <Box>
                         <Text fontWeight={'bold'}>Status</Text>
-                        <Badge colorScheme={PICKUP_DATA?.pickup_status?.pickup_status? 'green': 'orange'}>{PICKUP_DATA?.pickup_status?.pickup_stage}</Badge>
+                        <Badge colorScheme={PICKUP_DATA?.pickup_status? 'green': 'orange'}>{PICKUP_DATA?.pickup_stage}</Badge>
                     </Box>
                 </GridItem>
                 <GridItem boxShadow={'md'} p='2' bg={BASE_BRAND} borderRadius={'md'}>
