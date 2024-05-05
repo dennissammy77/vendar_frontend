@@ -46,6 +46,27 @@ import axios from 'axios';
           });
         return result;
       }
+    export async function FETCH_STORE_PICKUP_DATA_FOR_EXPORT (USER_ID,STORE_ID){
+        let BASE_URL = await RouteHandler();
+        const cookies = new Cookies();
+        const AUTH_TOKEN = cookies.get('user_token1');
+      
+        let CONFIG = {
+          method: 'get',
+          maxBodyLength: Infinity,
+          url: `${BASE_URL}/api/pickup/store/all/export?store_id=${STORE_ID}&user_id=${USER_ID}`,
+          headers: { 
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+          }
+        };
+      
+        const result = await axios.request(CONFIG).then((response) => {
+            return response;
+          }).catch((error) => {
+            return(error)
+          });
+        return result;
+      }
     
     export async function FETCH_PICKUP_DATA (PICKUP_ID){
         let BASE_URL = await RouteHandler();
@@ -112,4 +133,4 @@ import axios from 'axios';
             return (error)
         });
         return response;
-    }
+    } 
