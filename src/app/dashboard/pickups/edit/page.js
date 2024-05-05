@@ -50,7 +50,7 @@ function Page() {
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/pickups/view/?uid=${USER_ID}&store_id=${STORE_ID}&pickup_id=${PICKUP_ID}`}>PickUp</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/pickups/view/?uid=${USER_ID}&store_id=${STORE_ID}&pickup_id=${PICKUP_ID}`}>PickUps</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
