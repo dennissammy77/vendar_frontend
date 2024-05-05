@@ -14,6 +14,7 @@ import { ADD_ICON, CHEVRON_RIGHT_ICON, SEARCH_ICON, STORE_ICON } from '@/compone
 import { FETCH_STORES_BY_OWNER } from '@/app/api/shop/route';
 //components
 import StoreDetails from './components/StoreDetails';
+import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 function Page() {
     // utils
@@ -61,9 +62,7 @@ function Page() {
     
     if (data?.data?.error){
         return (
-            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                <Text fontSize={'large'} fontWeight={'bold'} color='gray.300' my='2'>{data?.data?.message}</Text>
-            </Flex>
+            <FAILED_DATA_REQUEST message={data?.data?.message}/>
         )
     }
 
