@@ -21,7 +21,7 @@ function Page() {
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/pickups?uid=${user?.data?.data?._id}&store_id=${store_id}`}>Product</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/pickups?uid=${user?.data?.data?._id}&store_id=${store_id}`}>PickUps</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
