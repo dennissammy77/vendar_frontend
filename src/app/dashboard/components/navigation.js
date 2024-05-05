@@ -16,6 +16,8 @@ import { IoMdAdd } from "react-icons/io";
 import SELECT_ACTIVE_STORE from "@/components/hooks/SELECT_ACTIVE_STORE";
 
 import Cookies from 'universal-cookie';
+import { ADD_ICON } from "@/components/lib/constants/icons";
+import { PRIMARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
 
 
 export default function NavigationBody({children,navigation}){
@@ -52,27 +54,27 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user} = useContext(UserContext);
   const cookies = new Cookies();
   const router = useRouter();
+  const USER_ID = user?.data?.data?._id;
+  const STORE_ID = cookies.get('active_store');
 
   const HandleLogout =()=>{
     useLogOut();
     if (typeof(window) === undefined) {
-      window.location.href(`/`);
-    }else{
       router.push('/')
+    }else{
+      window.location.href(`/`);
     }
   }
 
-  const active_store = cookies.get('active_store');
-  
   const Handle_select_active_store=(store)=>{
     SELECT_ACTIVE_STORE(store)
-    router.replace(`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store}`) 
+    router.replace(`/dashboard/home?uid=${USER_ID}&store_id=${store}`) 
   }
   return (
     <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <HStack spacing='2' align='center' hideFrom={'md'}>
         <IconButton  variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
-        <LOGO color='#4E2FD7' size='18px'/>
+        <LOGO color={PRIMARY_BRAND} size='18px'/>
       </HStack>
       <HStack spacing={{ base: '0', md: '4' }}>
         {/**
@@ -80,32 +82,17 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
          */}
         {user?.data?.data?.account_type === 'vendor'? null : 
-          <Menu>
-            <MenuButton
+          <Link href={`/dashboard/transactions/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
+            <Button
                 as={Button}
-                bgColor={'#4E2FD7'} 
+                bgColor={PRIMARY_BRAND} 
                 color='#ffffff' 
-                leftIcon={<IoMdAdd />} 
-                //onClick={(()=>{router.push(`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`)})} 
+                leftIcon={<ADD_ICON />}
                 mr='2'
               >
                 New Sale
-            </MenuButton>
-            <MenuList>
-                {user?.data?.data?.store_ref?.map((store)=>{
-                  return(
-                    <MenuItem  
-                      as='a' 
-                      href={`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${store?._id}`} 
-                      icon={<FaStore/>}
-                      key={store?._id}
-                    > 
-                     {store?.name}
-                    </MenuItem>
-                  )
-                })}
-            </MenuList>
-          </Menu>
+            </Button>
+          </Link>
         }
         <Flex alignItems={'center'}>
           <Menu>
@@ -114,7 +101,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 <Avatar size={'sm'} name={user?.data?.data?.name}/>
                 <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
                   <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
-                  <Badge fontSize="xs" color="#ffffff" bg='#4E2FD7'>{user?.data?.data?.account_type}</Badge>
+                  <Badge fontSize="xs" color="#ffffff" bg={PRIMARY_BRAND}>{user?.data?.data?.account_type}</Badge>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
                   {/**
@@ -129,13 +116,12 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 {user?.data?.data?.store_ref?.map((store)=>{
                   return(
                     <MenuItem  
-                      as='a' 
-                      //router.replace({`/dashboard/home?uid=${user?.data?.data?._id}&store_id=${store?._id}`}) 
+                      as='a'
                       icon={<FaStore/>}
                       key={store?._id}
                       onClick={(()=>{Handle_select_active_store(store?._id)})}
-                      bg={active_store === store?._id ? '#E4F0FC' : ''}
-                      color={active_store === store?._id ? '#4E2FD7' : ''}
+                      bg={STORE_ID === store?._id ? PRIMARY_BRAND : ''}
+                      color={STORE_ID === store?._id ? TERTIARY_BRAND : ''}
                     > 
                      {store?.name}
                     </MenuItem>
@@ -144,11 +130,11 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
               </MenuGroup>
               <MenuGroup title='Profile'>
                 <MenuItem  
-                as='a' 
-                href={`/dashboard/settings?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`} 
-                icon={<RiAccountCircleLine/>}
-              > 
-                My Account </MenuItem>
+                  as='a' 
+                  href={`/dashboard/settings?uid=${USER_ID}&store_id=${STORE_ID}`} 
+                  icon={<RiAccountCircleLine/>}
+                > 
+                  My Account </MenuItem>
               </MenuGroup>
               <MenuDivider />
               <MenuGroup title='Help'>
@@ -156,7 +142,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                  * 
                 <MenuItem>FAQs</MenuItem>
                  */}
-                <MenuItem as='a' href={`/dashboard/support?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`}>Support</MenuItem>
+                <MenuItem as='a' href={`/dashboard/support?uid=${USER_ID}&store_id=${STORE_ID}`}>Support</MenuItem>
               </MenuGroup>
               <MenuDivider />
               <MenuItem as='a' onClick={HandleLogout} cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
