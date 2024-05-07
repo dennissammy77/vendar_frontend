@@ -18,7 +18,7 @@ import { MdAddShoppingCart, MdChevronRight, MdOutlineDeleteOutline } from 'react
 import { GrFormEdit } from 'react-icons/gr';
 // components
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
-import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+//import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
