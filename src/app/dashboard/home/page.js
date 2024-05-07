@@ -79,7 +79,10 @@ function Page() {
               <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>No transactions found <br/>start by<br/>creating new sales.</Text>
             </Flex>
           :
-            <BarChartPlot data={STORE_DATA?.transactions}/>
+            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='100%' textAlign={'center'}>
+              <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Transactions Data.</Text>
+              {/**<BarChartPlot data={STORE_DATA?.transactions}/>*/}
+          </Flex>
           }
         </GridItem>
         <GridItem
