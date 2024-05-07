@@ -198,7 +198,7 @@ function Page() {
                     <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4' w='100%'>
                         <TabList my='2'>
                             <Tab>Transactions</Tab>
-                            <Tab>Data</Tab>
+                            {/**<Tab>Data</Tab>*/}
                         </TabList>
                         <Divider/>
                         <TabPanels>
@@ -212,6 +212,8 @@ function Page() {
                                     <Transaction_Section TRANSACTIONS_DATA={PRODUCT_DATA?.transactions} USER_DATA={USER_DATA}/>
                                 }
                             </TabPanel>
+                            {/**
+                             * 
                             <TabPanel>
                                 <Box
                                     bg='#FFFFFF'
@@ -231,6 +233,7 @@ function Page() {
                                     }
                                 </Box>
                             </TabPanel>
+                             */}
                         </TabPanels>
                     </Tabs>
                 </>
