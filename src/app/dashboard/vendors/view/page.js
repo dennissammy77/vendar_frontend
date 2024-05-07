@@ -106,7 +106,10 @@ function Page() {
                 <TabList my='2' overflowX='scroll'>
                     <Tab>Products</Tab>
                     <Tab>Transactions</Tab>
+                    {/**
+                     * 
                     <Tab>Data</Tab>
+                     */}
                 </TabList>
                 <Divider/>
                 <TabPanels>
@@ -130,6 +133,8 @@ function Page() {
                             <Transaction_Section TRANSACTIONS_DATA={TRANSACTIONS_DATA} USER_DATA={USER_DATA}/>
                         }
                     </TabPanel>
+                    {/**
+                     * 
                     <TabPanel>
                         <Box
                             bg='#FFFFFF'
@@ -149,6 +154,7 @@ function Page() {
                             }
                         </Box>
                     </TabPanel>
+                     */}
                 </TabPanels>
             </Tabs>
         </Box>
