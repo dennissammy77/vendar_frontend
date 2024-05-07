@@ -11,7 +11,7 @@ import { FETCH_USER_DATA } from '@/app/api/auth/route';
 
 import { TiUserDelete } from "react-icons/ti";
 import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
-import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+//import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
 import { GiShoppingBag } from 'react-icons/gi';
