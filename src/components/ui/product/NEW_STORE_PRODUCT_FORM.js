@@ -8,6 +8,7 @@ import { CiWarning } from 'react-icons/ci';
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NEW_STORE_PRODUCT } from '@/app/api/product/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 
 export default function NEW_STORE_PRODUCT_FORM() {
@@ -16,7 +17,7 @@ export default function NEW_STORE_PRODUCT_FORM() {
     const EXISTING_STORES = user?.data?.data?.store_ref;
 
     const searchParams = useSearchParams()
-    const query_store_id = searchParams.get('store_id');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
 
     const [STORE_ID,SET_STORE_ID] =useState(query_store_id)

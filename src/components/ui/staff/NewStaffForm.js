@@ -9,6 +9,7 @@ import { CiWarning } from 'react-icons/ci';
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NEW_STORE_STAKEHOLDER_ACCOUNT } from '@/app/api/auth/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 export default function NewStaffForm() {
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -133,12 +134,9 @@ export const NEW_VENDOR_FORM=()=>{
 
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     const {user} = useContext(UserContext);
+    const searchParams = useSearchParams();
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
 
-    const EXISTING_STORES = user?.data?.data?.store_ref;
-    const [select_store,set_select_store]=useState('')
-
-    const searchParams = useSearchParams()
-    const STORE_ID = select_store || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
 
     const schema = yup.object().shape({
@@ -159,7 +157,7 @@ export const NEW_VENDOR_FORM=()=>{
         setError,
         formState: { errors, isSubmitting },
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(schema)
     });
     
     const [show, setShow] = useState(false); //handle state to toggle password
@@ -203,17 +201,6 @@ export const NEW_VENDOR_FORM=()=>{
                 <FormLabel>Mobile</FormLabel>
                 <Input disabled={isSubmitting} {...register('mobile')} type='tel' placeholder='0712345678' variant='filled'/>
                 {errors.mobile && ( <Text fontSize={'sm'} color='red'>{errors.mobile.message}</Text>)}
-            </FormControl>
-            <FormControl isRequired>
-                <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
-                <Select placeholder='Select the store for the vendor' onChange={((e)=>{set_select_store(e.target.value)})}>
-                    {EXISTING_STORES?.map((store)=>{
-                        return(
-                            <option key={store?._id} value={store?._id}>{store?.name}</option>
-                        )
-                    })}
-                </Select>
-                {errors.shop_ref && (<FormErrorMessage>{errors.shop_ref.message}</FormErrorMessage>)}
             </FormControl>
             <FormControl mt='1' isRequired>
                 <FormLabel>Password</FormLabel>

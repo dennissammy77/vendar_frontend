@@ -104,10 +104,10 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
-            <Flex p='4' borderRadius='sm' boxShadow='sm' align='center' justify={'space-between'} color='gray.300' my='4'>
+            <Flex p='4' borderRadius='sm' boxShadow='sm' align='center' justify={'space-between'} color='' my='4'>
                 <Text fontWeight={'bold'}>Ownership management</Text>
                 <Link href={`/dashboard/products/edit/management?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
-                    <Button variant={'ghost'} color='gray.300'>Transfer</Button>
+                    <Button variant={'outline'} color='gray.300'>Transfer</Button>
                 </Link>
             </Flex>
             {errors.root && 

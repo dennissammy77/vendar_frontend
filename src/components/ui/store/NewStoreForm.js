@@ -13,6 +13,7 @@ export default function NewStoreForm() {
     const router = useRouter();
     const toast = useToast();
     const {user} = useContext(UserContext);
+    const USER_ID = user?.data?.data?._id;
     const pathname = usePathname();
     const pathArr = pathname?.split('/');
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -26,7 +27,7 @@ export default function NewStoreForm() {
         shelves: yup.number().min(1).required('Number of shelves is required')
     });
     useEffect(()=>{
-        router.prefetch(`/dashboard/home?uid=${user?.data?.data?._id}`);
+        router.prefetch(`/dashboard/home?uid=${USER_ID}`);
     },[]);
     const {
         register, 
@@ -45,9 +46,9 @@ export default function NewStoreForm() {
                 }
                 toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
                 if(pathArr.some(path => path === 'onboarding')){
-                    router.push(`/dashboard/home?uid=${user?.data?.data?._id}`);
+                    router.push(`/dashboard/home?uid=${USER_ID}`);
                 }
-                router.push(`/dashboard/stores?uid=${user?.data?.data?._id}`);
+                router.push(`/dashboard/stores?uid=${USER_ID}`);
                 return ;
             }).catch((err)=>{
                 return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
