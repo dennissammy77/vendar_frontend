@@ -21,13 +21,13 @@ export default function NewStoreForm() {
     const schema = yup.object().shape({
         name: yup.string().required(),
         description: yup.string().max(200,'200 maximum character length allowed'),
-        mobile: yup.string(),
+        mobile: yup.string().required().min(10).max(10),
         email: yup.string().email().matches(EmailRegex, 'Email address must be of correct format'),
         location: yup.string(),
         shelves: yup.number().min(1).required('Number of shelves is required')
     });
     useEffect(()=>{
-        router.prefetch(`/dashboard/home?uid=${USER_ID}`);
+        router.prefetch(`/dashboard/stores?uid=${USER_ID}`);
     },[]);
     const {
         register, 
@@ -46,9 +46,15 @@ export default function NewStoreForm() {
                 }
                 toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
                 if(pathArr.some(path => path === 'onboarding')){
-                    router.push(`/dashboard/home?uid=${USER_ID}`);
+                    if(typeof(window) === 'undefined'){
+                        router.push(`/dashboard/stores?uid=${USER_ID}`)
+                      }
+                    window.location.href = `/dashboard/stores?uid=${USER_ID}`
                 }
-                router.push(`/dashboard/stores?uid=${USER_ID}`);
+                if(typeof(window) === 'undefined'){
+                    router.push(`/dashboard/stores?uid=${USER_ID}`)
+                }
+                window.location.href = `/dashboard/stores?uid=${USER_ID}`
                 return ;
             }).catch((err)=>{
                 return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });

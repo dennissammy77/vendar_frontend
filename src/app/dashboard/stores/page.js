@@ -15,6 +15,7 @@ import { FETCH_STORES_BY_OWNER } from '@/app/api/shop/route';
 //components
 import StoreDetails from './components/StoreDetails';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 function Page() {
     // utils
@@ -24,7 +25,8 @@ function Page() {
     // config
     const USER_ID = user?.data?.data?._id;
     const [search_query, set_search_query]=useState('');
-    const active_store = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+
+    const active_store = FETCH_ACTIVE_STORE_ID() || user?.data?.data?.store_ref[0]?._id;
     // Functions
     const {data, isLoading} = useQuery({
         queryKey: ['stores_data', {USER_ID}],

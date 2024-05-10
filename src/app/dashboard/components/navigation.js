@@ -13,10 +13,10 @@ import { IoCloseSharp } from "react-icons/io5";
 import Link from "next/link";
 import useLogOut from "@/components/hooks/useLogOut.hook";
 import { IoMdAdd } from "react-icons/io";
-import SELECT_ACTIVE_STORE from "@/components/hooks/SELECT_ACTIVE_STORE";
+import SELECT_ACTIVE_STORE, { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
 
 import Cookies from 'universal-cookie';
-import { ADD_ICON } from "@/components/lib/constants/icons";
+import { ACCOUNT_SETTINGS_ICON, ADD_ICON, MANAGE_ICON } from "@/components/lib/constants/icons";
 import { PRIMARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
 
 
@@ -55,14 +55,14 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const cookies = new Cookies();
   const router = useRouter();
   const USER_ID = user?.data?.data?._id;
-  const STORE_ID = cookies.get('active_store');
+  const STORE_ID = FETCH_ACTIVE_STORE_ID();
 
   const HandleLogout =()=>{
     useLogOut();
     if (typeof(window) === undefined) {
       router.push('/')
     }else{
-      window.location.href(`/`);
+      window.location.href = `/`;
     }
   }
 
@@ -132,7 +132,7 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                 <MenuItem  
                   as='a' 
                   href={`/dashboard/settings?uid=${USER_ID}&store_id=${STORE_ID}`} 
-                  icon={<RiAccountCircleLine/>}
+                  icon={<ACCOUNT_SETTINGS_ICON/>}
                 > 
                   My Account </MenuItem>
               </MenuGroup>

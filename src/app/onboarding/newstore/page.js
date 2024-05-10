@@ -3,13 +3,13 @@ import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Text, Textare
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect } from 'react';
 import LOGO from '@/app/lib/LOGO';
-import { CreateNewStore } from '@/app/api/shop/route';
 import { UserContext } from '@/components/providers/user.context';
 import NewStoreForm from '@/components/ui/store/NewStoreForm';
 
 function Page() {
     const router = useRouter();
     const {user} = useContext(UserContext);
+    const USER_ID = user?.data?.data?._id;
 
     useEffect(()=>{
       router.prefetch(`/dashboard/home?uid=${user?.data?._id}`);
@@ -24,7 +24,21 @@ function Page() {
           <Text fontSize={'sm'} color='gray.400'>Set up your store to start managing clients, <br/>products easily in one place.</Text>
           {/**New Store Form goes here*/}
           <NewStoreForm />
-          <Text fontSize={'sm'} color={'gray.400'} textDecoration={'underline 1px solid #e5e5e5'} cursor='pointer' px='2' _hover={{color:'#4E2FD7',fontWeight:'bold'}} my='2' onClick={(()=>{router.push(`/dashboard/home?uid=${user?.data?.data?._id}`)})}>skip for now</Text>
+          <Text 
+            fontSize={'sm'}
+            color={'gray.400'}
+            textDecoration={'underline 1px solid #e5e5e5'}
+            cursor='pointer'
+            px='2'
+            _hover={{color:'#4E2FD7',fontWeight:'bold'}}
+            my='2'
+            onClick={(()=>{
+              if(typeof(window) === 'undefined'){
+                router.push(`/dashboard/home?uid=${USER_ID}`)
+              }
+              window.location.href = `/dashboard/home?uid=${USER_ID}`
+            })}>
+              skip for now</Text>
       </Box>
     )
 }

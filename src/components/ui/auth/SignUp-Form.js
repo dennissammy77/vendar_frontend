@@ -24,7 +24,7 @@ const SignUpForm=()=>{
   const schema = yup.object().shape({
     name: yup.string().required(),
     email: yup.string().email().required().matches(EmailRegex, 'Email address must be of correct format'),
-    mobile: yup.string().required(),
+    mobile: yup.string().required().min(10).max(10),
     password: yup.string().required().min(6).max(16),
     account_type: yup.string().default('store_admin').required(),
     profile_image_url: yup.string().default('')
@@ -54,7 +54,10 @@ const SignUpForm=()=>{
             return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
           }
           toast({ title: 'Success!:Account created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-          router.push('/onboarding/newstore');
+          if(typeof(window) === 'undefined'){
+            router.push(`/onboarding/newstore`)
+          }
+          window.location.href = `/onboarding/newstore`;
           set_user_handler(response)
           return ;
       }).catch((err)=>{
