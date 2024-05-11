@@ -16,6 +16,7 @@ import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
 import { GiShoppingBag } from 'react-icons/gi';
 import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
+import { CHEVRON_RIGHT_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -42,7 +43,7 @@ function Page() {
         <Box>
             <DELETE_STAKEHOLDER_ACCOUNT_ALERT isOpen={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} USER_DATA={USER_DATA}/>
             <Text fontWeight='bold' fontSize='32px'>Vendor Data</Text>
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
                     <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
