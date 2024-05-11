@@ -11,6 +11,8 @@ import Excel from 'exceljs';
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { MANY_NEW_STORE_PRODUCTS } from '@/app/api/product/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import { CHEVRON_RIGHT_ICON, DISCARD_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
     const router = useRouter();
@@ -18,8 +20,8 @@ function Page() {
     const {user} = useContext(UserContext);
     
     const searchParams = useSearchParams();
-    const USER_ID =  searchParams.get('uid');
-    const store_id = searchParams.get('store_id');
+    const USER_ID =  user?.data?.data?._id || searchParams.get('uid');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const schema = yup.object().shape({
         approval_status: yup.boolean().required(),
     });
@@ -34,7 +36,6 @@ function Page() {
     });
 
     const onSubmit = async (data) => {
-        console.log('data', data);
         const file = data.products[0];
         const wb = new Excel.Workbook();
         const reader = new FileReader();
@@ -56,16 +57,14 @@ function Page() {
                             items: row.values[5],
                             discount: false,
                             discountprice: 0,
-                            store_ref: store_id,
+                            store_ref: STORE_ID,
                             product_image: '',
-                            owner_ref_id: row.values[6]
+                            owner_ref_id: USER_ID
                         }
-                        //console.log(template,rowIndex)
                         if(rowIndex === 1 || rowIndex === 2){
                             return;
                         }
                         tempArr.push(template);
-                        //console.log(tempArr)
                     });
                 });
                 const payload = {
@@ -73,9 +72,8 @@ function Page() {
                     approval_status: data?.approval_status,
                     products: tempArr
                 }
-                console.log(payload)
                 try {
-                    MANY_NEW_STORE_PRODUCTS(payload,store_id,USER_ID).then((response)=>{
+                    MANY_NEW_STORE_PRODUCTS(payload,STORE_ID,USER_ID).then((response)=>{
                       if(response?.data?.error === true){
                           return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
                       }
@@ -98,13 +96,13 @@ function Page() {
   return (
     <Box>
         <Text fontWeight='bold' fontSize='32px'>Import New Products</Text>
-        <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+        <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}&store_id=${store_id}`}>Home</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/products?uid=${user?.data?.data?._id}&store_id=${store_id}`}>Products</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/products?uid=${USER_ID}&store_id=${STORE_ID}`}>Products</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
@@ -115,7 +113,7 @@ function Page() {
             <FormControl my={'4'} isRequired>
                 <FormLabel>Select file</FormLabel>
                 <Input disabled={isSubmitting} type='file' {...register('products')} accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
-                <FormErrorMessage mt="1">{errors.prodcuts?.message}</FormErrorMessage>
+                <FormErrorMessage mt="1">{errors.products?.message}</FormErrorMessage>
             </FormControl>
             <FormControl mt='1' isRequired>
                 <FormLabel>Approve Products</FormLabel>
@@ -131,7 +129,7 @@ function Page() {
                 <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Create products</Button>
             }
         </form>
-        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<VscDiscard />}>Discard</Button>
+        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<DISCARD_ICON />}>Discard</Button>
     </Box>
   )
 }
