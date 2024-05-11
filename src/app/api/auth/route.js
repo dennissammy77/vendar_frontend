@@ -76,7 +76,7 @@ export async function USER_PASSWORD_RESET_TO_NEW (data,EMAIL){
         return result;
     }
 }
-export async function FETCH_STAKEHOLDERS_DATA (STORE_ID,ACCOUNT_TYPE){
+export async function FETCH_STAKEHOLDERS_DATA (STORE_ID,ACCOUNT_TYPE,PAGE,SEARCH_QUERY){
   let BASE_URL = await RouteHandler();
   const cookies = new Cookies();
   const AUTH_TOKEN = cookies.get('user_token1');
@@ -84,7 +84,7 @@ export async function FETCH_STAKEHOLDERS_DATA (STORE_ID,ACCOUNT_TYPE){
   let CONFIG = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `${BASE_URL}/api/user/stakeholders?store_id=${STORE_ID}&account_type=${ACCOUNT_TYPE}`,
+    url: `${BASE_URL}/api/user/stakeholders?store_id=${STORE_ID}&account_type=${ACCOUNT_TYPE}&page=${PAGE}&query=${SEARCH_QUERY}`,
     headers: { 
       'Authorization': `Bearer ${AUTH_TOKEN}`
     }
@@ -107,6 +107,30 @@ export async function NEW_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID){
     method: 'post',
     maxBodyLength: Infinity,
     url: `${BASE_URL}/api/user/stakeholder/new?user_id=${USER_ID}&&store_id=${STORE_ID}`,
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    },
+    data : data
+  };
+  
+  const result = await axios.request(config).then((response) => {
+      return response;
+  }).catch((error) => {
+      return(error)
+  });
+  return result;
+
+}
+export async function MANY_NEW_STORE_STAKEHOLDER_ACCOUNT(data,USER_ID,STORE_ID){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholder/many/new?user_id=${USER_ID}&store_id=${STORE_ID}`,
     headers: { 
       'Content-Type': 'application/json', 
       'Authorization': `Bearer ${AUTH_TOKEN}`
@@ -300,4 +324,26 @@ export async function FetchUsersShop(store_id){
         return(error)
       });
     return result;
+}
+
+export async function FETCH_ALL_STAKEHOLDERS_DATA_FOR_EXPORT (STORE_ID,ACCOUNT_TYPE,USER_ID){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholders/export?user_id=${USER_ID}&store_id=${STORE_ID}&account_type=${ACCOUNT_TYPE}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
 }
