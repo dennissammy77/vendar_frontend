@@ -16,11 +16,13 @@ export default function DELETE_ACCOUNT_ALERT({isOpen, onClose, USER_ID, USER_DAT
                 return toast({ title: 'Error!', description: `${response?.data?.message || response?.response?.data.message}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             }
             toast({ title: 'Success!', description: `${response?.data?.message}`, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-            setTimeout(()=>{
-                onClose();
-                useLogOut();
-                window?.location.href('/')
-            },5000)
+            onClose();
+            useLogOut();
+            if(typeof(window) === 'undefined'){
+                router.push('/')
+            }else{
+                window.location.href = '/';
+            }
             return ;
         }).catch((err)=>{
             return toast({ title: `Error`, description: `Could not delete your account:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
@@ -50,11 +52,13 @@ export default function DELETE_ACCOUNT_ALERT({isOpen, onClose, USER_ID, USER_DAT
                                         <Text fontWeight={'bold'}>{store?.name}</Text>
                                         {store?.staff?.length - 1 > 0 ? <ListItem>{store?.staff?.length - 1} staff</ListItem> : null}
                                         {store?.vendors?.length > 0 ? <ListItem>{store?.vendors?.length} vendors</ListItem> : null}
-                                        {store?.staff?.products> 0 ? <ListItem>{store?.staff?.length} products</ListItem> : null}
+                                        {store?.products?.length > 0 ? <ListItem>{store?.products?.length} products</ListItem> : null}
                                         {store?.transactions?.length> 0 ? <ListItem>{store?.transactions?.length} transactions</ListItem> : null}
+                                        {store?.pickups?.length> 0 ? <ListItem>{store?.pickups?.length} pickups</ListItem> : null}
                                     </OrderedList>
                                 )
                             })}
+                            <ListItem>{USER_DATA?.invoices?.length} invoices</ListItem>
                         </UnorderedList>
                     </AlertDialogBody>
 
