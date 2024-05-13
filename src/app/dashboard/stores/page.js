@@ -16,6 +16,7 @@ import { FETCH_STORES_BY_OWNER } from '@/app/api/shop/route';
 import StoreDetails from './components/StoreDetails';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import Link from 'next/link';
 
 function Page() {
     // utils
@@ -72,7 +73,7 @@ function Page() {
         return (
             <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
                 <Icon as={STORE_ICON} boxSize={'6'}/>
-                <Text>Create a<Text color='#4E2FD7' textDecoration={'1px solid underline'} cursor={'pointer'} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${user?.data?.data?._id}`)})}>New store</Text>to start managing clients, products.</Text>
+                <Text>Create a<Text color='#4E2FD7' textDecoration={'1px solid underline'} cursor={'pointer'} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${USER_ID}`)})}>New store</Text>to start managing clients, products.</Text>
             </Flex>
         )
     }
@@ -89,13 +90,15 @@ function Page() {
                             </InputLeftElement>
                             <Input type='search' placeholder={'Search stores'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
                         </InputGroup>
-                        <Button variant={'filled'} borderRadius={'md'} bg='#4E2FD7' color='#fff' leftIcon={<ADD_ICON />} onClick={(()=>{router.push(`/dashboard/stores/new?uid=${user?.data?.data?._id}`)})}>New</Button>
+                        <Link href={`/dashboard/stores/new?uid=${USER_ID}`}>
+                            <Button variant={'filled'} borderRadius={'md'} bg='#4E2FD7' color='#fff' leftIcon={<ADD_ICON />}>New</Button>
+                        </Link>
                     </Flex>
                 }
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}&store_id=${active_store}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${active_store}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
