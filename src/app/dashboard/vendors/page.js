@@ -15,12 +15,11 @@ import { EXPORT_VENDORS_EXCEL } from '@/components/hooks/export/EXCEL';
 
 
 export default function Page() {
+    // Utils
+    const {user} = useContext(UserContext);
     const router = useRouter();
     const toast = useToast();
-
-    const {user} = useContext(UserContext);
     const searchParams = useSearchParams();
-
     //filter options
     const [search_query, set_search_query]=useState('');
     const [page,set_page] = useState(1);
@@ -81,19 +80,17 @@ export default function Page() {
         <Box>
             <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>
                 <Text fontWeight='bold' fontSize='32px'>Vendors</Text>
-                {user?.data?.data?.account_type === 'vendor'? null :
-                    <Flex align='center' >
-                        <InputGroup>
-                            <InputLeftElement pointerEvents='none'>
-                                <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
-                            </InputLeftElement>
-                            <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
-                        </InputGroup>
-                        <Link href={`/dashboard/vendors/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
-                            <Button bgColor={PRIMARY_BRAND} color='#ffffff' leftIcon={<ADD_ICON />}>New</Button>
-                        </Link>
-                    </Flex>
-                }
+                <Flex align='center' >
+                    <InputGroup>
+                        <InputLeftElement pointerEvents='none'>
+                            <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
+                        </InputLeftElement>
+                        <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                    </InputGroup>
+                    <Link href={`/dashboard/vendors/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
+                        <Button bgColor={PRIMARY_BRAND} color='#ffffff' leftIcon={<ADD_ICON />}>New</Button>
+                    </Link>
+                </Flex>
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
@@ -129,7 +126,7 @@ export default function Page() {
                 <Text fontSize={'xs'} my='2' color='gray.400' pl='2' borderRight={'1px solid'} borderRightColor={TERTIARY_BRAND}>showing {VENDORS_DATA?.length || 0}  of {VENDORS_COUNT? VENDORS_COUNT : 0} items</Text>
             </HStack>
             {VENDORS_DATA?.length === 0? 
-                    <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='60vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                    <Flex border='1px solid' borderColor={TERTIARY_BRAND} borderRadius={'md'} boxShadow={'sm'} p='10' h='60vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
                         <Icon as={PEOPLE_ICON} boxSize={'6'}/>
                         <Text>No vendors found!.</Text>
                     </Flex>
@@ -142,7 +139,7 @@ export default function Page() {
                         </Flex>
                         :
                         <Table variant='simple'>
-                            <Thead bg='#E4F0FC'>
+                            <Thead bg={TERTIARY_BRAND}>
                                 <Tr>
                                     <Th>Name</Th>
                                     <Th>Phone</Th>
@@ -166,14 +163,12 @@ export default function Page() {
                                             <Td>{vendor?.mobile}</Td>
                                             <Td><Badge colorScheme={vendor?.account_status_ref?.suspension_status ? 'orange':'green'}>{vendor?.account_status_ref?.suspension_status ? 'suspended' : 'active'}</Badge></Td>
                                             <Td>
-                                                {USER_ID === vendor?._id ? 
-                                                    null
-                                                    :
-                                                    <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/vendors/view?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${vendor?._id}`)})}>
+                                                <Link href={`/dashboard/vendors/view?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${vendor?._id}`}>
+                                                    <HStack color='gray.600' cursor={'pointer'}pr='1'>
                                                         <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
                                                         <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>
                                                     </HStack>
-                                                }
+                                                </Link>
                                             </Td>
                                         </Tr>
                                     )})
