@@ -14,10 +14,18 @@ export default function Index() {
   const router = useRouter();
   const toast = useToast()
   const {user} = useContext(UserContext);
-  const token = useFetchToken()
+  const token = useFetchToken();
+  useEffect(()=>{
+    router.prefetch('/signin')
+    router.prefetch('/signup')
+  },[])
   const HandleLogout =()=>{
     useLogOut();
-    window?.location.href('/')
+    if(typeof(window) === 'undefined'){
+      router.replace('/');
+    }else{
+      window.location.href ='/'
+    }
   }
 
   return (
