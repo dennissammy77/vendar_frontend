@@ -126,38 +126,38 @@ export default function NEW_TRANSACTION_FORM() {
             <FormControl isRequired>
                 <FormLabel my='2' fontWeight={'bold'}>Product</FormLabel>
                 {SELECTED_PRODUCT?.name?.length > 0 ? 
-                <Flex boxShadow={'sm'} bg={TERTIARY_BRAND} borderRadius={'sm'} justify={'space-between'} align={'center'} p='2'>
-                    <Text fontWeight={'bold'} fontSize={'lg'}>({SELECTED_PRODUCT?.items})-{SELECTED_PRODUCT?.name}</Text>
-                    <Text cursor={'pointer'} fontSize={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT({})})}>change product</Text>
-                </Flex>
-                    :
-                <Box position={'relative'}>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents='none'>
-                            <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
-                        </InputLeftElement>
-                        <Input type='search' placeholder={'Search products'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
-                    </InputGroup>
-                    <Box boxShadow={'md'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
-                        {PRODUCTS_DATA?.length === 0? 
-                                <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
-                                    <Icon as={PRODUCT_ICON} boxSize={'6'}/>
-                                    <Text>No products found!.</Text>
-                                </Flex>
-                            :
-                            <>
-                                {PRODUCTS_DATA?.map((product)=>{
-                                    return(
-                                        <Text key={product?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT(product);set_search_query('')})}>
-                                            ({product?.items})-
-                                            {product?.name}
-                                        </Text>
-                                    )
-                                })}
-                            </>
-                        }
+                    <Flex boxShadow={'sm'} bg={TERTIARY_BRAND} borderRadius={'sm'} justify={'space-between'} align={'center'} p='2'>
+                        <Text fontWeight={'bold'} fontSize={'lg'}>({SELECTED_PRODUCT?.items})-{SELECTED_PRODUCT?.name}</Text>
+                        <Text cursor={'pointer'} fontSize={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT({})})}>change product</Text>
+                    </Flex>
+                        :
+                    <Box position={'relative'}>
+                        <InputGroup>
+                            <InputLeftElement pointerEvents='none'>
+                                <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
+                            </InputLeftElement>
+                            <Input type='search' placeholder={'Search products'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                        </InputGroup>
+                        <Box boxShadow={'md'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
+                            {PRODUCTS_DATA?.length === 0? 
+                                    <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                        <Icon as={PRODUCT_ICON} boxSize={'6'}/>
+                                        <Text>No products found!.</Text>
+                                    </Flex>
+                                :
+                                <>
+                                    {PRODUCTS_DATA?.map((product)=>{
+                                        return(
+                                            <Text key={product?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_PRODUCT(product);set_search_query('')})}>
+                                                ({product?.items})-
+                                                {product?.name}
+                                            </Text>
+                                        )
+                                    })}
+                                </>
+                            }
+                        </Box>
                     </Box>
-                </Box>
                 }
             </FormControl>
             <FormControl>
