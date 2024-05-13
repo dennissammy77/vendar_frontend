@@ -10,6 +10,7 @@ import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NEW_STORE_STAKEHOLDER_ACCOUNT } from '@/app/api/auth/route';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import { WARNING_ICON } from '@/components/lib/constants/icons';
 
 export default function NewStaffForm() {
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -18,7 +19,7 @@ export default function NewStaffForm() {
     const EXISTING_STORES = user?.data?.data?.store_ref;
 
     const searchParams = useSearchParams()
-    const STORE_ID = searchParams.get('store_id');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
 
     const schema = yup.object().shape({
@@ -94,17 +95,6 @@ export default function NewStaffForm() {
                 </Select>
                 {errors.role && (<FormErrorMessage>{errors.role.message}</FormErrorMessage>)}
             </FormControl>
-            <FormControl isRequired>
-                <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
-                <Select {...register("shop_ref")} placeholder='Select the store for the user'>
-                    {EXISTING_STORES?.map((store)=>{
-                        return(
-                            <option key={store?._id} value={store?._id}>{store?.name}</option>
-                        )
-                    })}
-                </Select>
-                {errors.shop_ref && (<FormErrorMessage>{errors.shop_ref.message}</FormErrorMessage>)}
-            </FormControl>
             <FormControl mt='1' isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup size='md'>
@@ -117,7 +107,7 @@ export default function NewStaffForm() {
             </FormControl>
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
-                    <Icon as={CiWarning} boxSize='4'/>
+                    <Icon as={WARNING_ICON} boxSize='4'/>
                     <Text>{errors.root.message}</Text>
                 </HStack>
             }
