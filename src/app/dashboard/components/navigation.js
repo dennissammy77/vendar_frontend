@@ -16,8 +16,9 @@ import { IoMdAdd } from "react-icons/io";
 import SELECT_ACTIVE_STORE, { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
 
 import Cookies from 'universal-cookie';
-import { ACCOUNT_SETTINGS_ICON, ADD_ICON, MANAGE_ICON } from "@/components/lib/constants/icons";
-import { PRIMARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
+import { ACCOUNT_SETTINGS_ICON, ADD_ICON, CHEVRON_DOWN_ICON, MANAGE_ICON } from "@/components/lib/constants/icons";
+import { BASE_BRAND, PRIMARY_BRAND, SECONDARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
+import { UPDATE_USER_ACCOUNT } from "@/app/api/auth/route";
 
 
 export default function NavigationBody({children,navigation}){
@@ -51,10 +52,11 @@ export default function NavigationBody({children,navigation}){
 };
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
-  const {user} = useContext(UserContext);
+  const {user,set_user_handler} = useContext(UserContext);
   const cookies = new Cookies();
   const router = useRouter();
   const USER_ID = user?.data?.data?._id;
+  const USER_DATA = user?.data?.data;
   const STORE_ID = FETCH_ACTIVE_STORE_ID();
 
   const HandleLogout =()=>{
@@ -66,21 +68,24 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
     }
   }
 
-  const Handle_select_active_store=(store)=>{
+  const Handle_select_active_store=async(store)=>{
     SELECT_ACTIVE_STORE(store)
+    const data = {
+      name:               USER_DATA?.name,
+      mobile:             USER_DATA?.mobile,
+      active_store_ref:   store
+    }
+    await UPDATE_USER_ACCOUNT(data,USER_ID)
+    set_user_handler(store);
     router.replace(`/dashboard/home?uid=${USER_ID}&store_id=${store}`) 
   }
   return (
-    <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" alignItems="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
+    <Flex ml={{ base: 0, md: 60 }} px={{ base: 4, md: 4 }} height="20" align="center" justifyContent={{ base: 'space-between', md: 'flex-end'}} {...rest} bg='white' boxShadow={'md'}>
       <HStack spacing='2' align='center' hideFrom={'md'}>
         <IconButton  variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
         <LOGO color={PRIMARY_BRAND} size='18px'/>
       </HStack>
       <HStack spacing={{ base: '0', md: '4' }}>
-        {/**
-         * 
-        <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FaBell />} />
-         */}
         {user?.data?.data?.account_type === 'vendor'? null : 
           <Link href={`/dashboard/transactions/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
             <Button
@@ -94,63 +99,68 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
             </Button>
           </Link>
         }
-        <Flex alignItems={'center'}>
-          <Menu>
-            <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
-              <HStack>
-                <Avatar size={'sm'} name={user?.data?.data?.name}/>
-                <VStack display={{ base: 'none', md: 'flex' }} alignItems="flex-start" spacing="1px" ml="2">
-                  <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
-                  <Badge fontSize="xs" color="#ffffff" bg={PRIMARY_BRAND}>{user?.data?.data?.account_type}</Badge>
-                </VStack>
-                <Box display={{ base: 'none', md: 'flex' }}>
-                  {/**
-                   * 
-                  <FiChevronDown />
-                   */}
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList>
-              <MenuGroup title='Store(s)'>
-                {user?.data?.data?.store_ref?.map((store)=>{
-                  return(
-                    <MenuItem  
-                      as='a'
-                      icon={<FaStore/>}
-                      key={store?._id}
-                      onClick={(()=>{Handle_select_active_store(store?._id)})}
-                      bg={STORE_ID === store?._id ? PRIMARY_BRAND : ''}
-                      color={STORE_ID === store?._id ? TERTIARY_BRAND : ''}
-                    > 
-                     {store?.name}
-                    </MenuItem>
-                  )
-                })}
-              </MenuGroup>
-              <MenuGroup title='Profile'>
-                <MenuItem  
-                  as='a' 
-                  href={`/dashboard/settings?uid=${USER_ID}&store_id=${STORE_ID}`} 
-                  icon={<ACCOUNT_SETTINGS_ICON/>}
-                > 
-                  My Account </MenuItem>
-              </MenuGroup>
-              <MenuDivider />
-              <MenuGroup title='Help'>
+        <Menu>
+          <MenuButton py={2} transition="all 0.3s" >
+            <HStack>
+              <Avatar size={'sm'} name={user?.data?.data?.name}/>
+              <Box hideBelow='md' ml="2">
+                <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
+                <HStack spacing='2'>
+                  <Text fontSize="xs" w='100px' overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{user?.data?.data?.active_store_ref?.name || '-'}</Text>
+                  <Icon as={CHEVRON_DOWN_ICON} boxSize={'3'}/>
+                </HStack>
                 {/**
                  * 
-                <MenuItem>FAQs</MenuItem>
-                 */}
-                <MenuItem as='a' href={`/dashboard/support?uid=${USER_ID}&store_id=${STORE_ID}`}>Support</MenuItem>
-              </MenuGroup>
-              <MenuDivider />
-              <MenuItem as='a' onClick={HandleLogout} cursor={'pointer'} color='#4E2FD7' fontWeight={'bold'} icon={<HiOutlineLogout/>}>
-                Log out  
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
+                <Badge fontSize="xs" color="#ffffff" bg={PRIMARY_BRAND}>{user?.data?.data?.account_type}</Badge>
+                  */}
+              </Box>
+            </HStack>
+          </MenuButton>
+          <MenuList>
+            <MenuGroup title='Store(s)'>
+              {user?.data?.data?.store_ref?.map((store)=>{
+                return(
+                  <MenuItem  
+                    as='a'
+                    icon={<FaStore/>}
+                    key={store?._id}
+                    onClick={(()=>{Handle_select_active_store(store?._id)})}
+                    _hover={{bgColor:TERTIARY_BRAND}}
+                    bg={user?.data?.data?.active_store_ref?._id === store?._id ? PRIMARY_BRAND : BASE_BRAND}
+                    color={user?.data?.data?.active_store_ref?._id === store?._id ? BASE_BRAND : SECONDARY_BRAND}
+                    cursor={'pointer'}
+                    w='full'
+                    overflow='hidden' 
+                    textOverflow={'ellipsis'}
+                    whiteSpace='nowrap'
+                  > 
+                    {store?.name}
+                  </MenuItem>
+                )
+              })}
+            </MenuGroup>
+            <MenuGroup title='Profile'>
+              <MenuItem  
+                as='a' 
+                href={`/dashboard/settings?uid=${USER_ID}&store_id=${STORE_ID}`} 
+                icon={<ACCOUNT_SETTINGS_ICON/>}
+              > 
+                My Account </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Help'>
+              {/**
+               * 
+              <MenuItem>FAQs</MenuItem>
+                */}
+              <MenuItem as='a' href={`/dashboard/support?uid=${USER_ID}&store_id=${STORE_ID}`}>Support</MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuItem as='a' onClick={HandleLogout} cursor={'pointer'} color={PRIMARY_BRAND} fontWeight={'bold'} icon={<HiOutlineLogout/>}>
+              Log out  
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </HStack>
     </Flex>
   )
