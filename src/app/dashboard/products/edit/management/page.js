@@ -1,7 +1,7 @@
 'use client'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Divider, FormControl, FormErrorMessage, FormLabel, ListItem, OrderedList, Select, Text, UnorderedList, useToast } from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Icon, Input, InputGroup, InputLeftElement, ListItem, OrderedList, Select, Spinner, Text, UnorderedList, useToast } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { useContext, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_STAKEHOLDERS_DATA } from '@/app/api/auth/route';
@@ -12,31 +12,39 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup";
 import { MdChevronRight } from 'react-icons/md';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { UserContext } from '@/components/providers/user.context';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import { BASE_BRAND, TERTIARY_BRAND } from '@/components/lib/constants/theme';
+import { PEOPLE_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
-    
+    // Utils
+    const {user} = useContext(UserContext);
     const router = useRouter();
     const toast = useToast();
-    const searchParams = useSearchParams()
-    const USER_ID = searchParams.get('uid');
+    const searchParams = useSearchParams();
+    // filter options
+    const [search_query, set_search_query]=useState('');
+    const [page,set_page] = useState(1);
+    // config
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
+    const USER_ID = user?.data?.data?._id || searchParams.get('uid');
     const PRODUCT_ID = searchParams.get('product_id');
-    const STORE_ID = searchParams.get('store_id');
-
     const ACCOUNT_TYPE = 'vendor';
-
+    // States
+    const [SELECTED_VENDOR,SET_SELECTED_VENDOR]=useState('');
+    // Functions
     const {data:FETCHED_PRODUCT_DATA} = useQuery({
         queryKey: ['product data', {PRODUCT_ID}],
         queryFn: () => FETCH_PRODUCT_DATA(PRODUCT_ID)
     });
 
-    const PRODUCT_DATA =FETCHED_PRODUCT_DATA?.data?.data
-
-
     const {data, isLoading} = useQuery({
-        queryKey: ['stakeholders', {STORE_ID}],
-        queryFn: () => FETCH_STAKEHOLDERS_DATA(STORE_ID,ACCOUNT_TYPE)
+        queryKey: ['stakeholders', {STORE_ID,page,search_query}],
+        queryFn: () => FETCH_STAKEHOLDERS_DATA(STORE_ID,ACCOUNT_TYPE,page,search_query)
     });
-
+        
+    const PRODUCT_DATA =FETCHED_PRODUCT_DATA?.data?.data
     const VENDORS_DATA = data?.data?.data;
 
     const schema = yup.object().shape({
@@ -54,7 +62,6 @@ function Page() {
 
     const onSubmit = async(data) => {
         const ACCOUNT_ID = data?.vendor;
-        alert(ACCOUNT_ID)
         try {
           await MOVE_STORE_PRODUCT_TO_STAKEHOLDER (STORE_ID,USER_ID,ACCOUNT_ID,PRODUCT_ID).then((response)=>{
             if(response?.data?.error === true){
@@ -73,6 +80,16 @@ function Page() {
           return;
         }
     }
+
+    if (isLoading){
+        return(
+            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+                <Spinner />
+                <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting up...</Text>
+            </Flex>
+        )
+    }
+
     if (data?.data?.error){
         return (
             <FAILED_DATA_REQUEST message={data?.data?.message}/>
@@ -122,22 +139,52 @@ function Page() {
                 </OrderedList>
             </Box>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <FormControl mt='1' isRequired>
-                    <FormLabel fontSize={'xl'} fontWeight={'bold'}>Transfer Ownership</FormLabel>
-                    <Divider />
-                    <Select placeholder='Select the Vendor' {...register('vendor')} isDisabled={isSubmitting}>
-                        {VENDORS_DATA?.map((vendor)=>{
-                            return(
-                                <option value={vendor?._id}>{vendor?.name}</option>
-                            )
-                        })}
-                    </Select>
-                    {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
+                <FormControl isRequired>
+                    <FormLabel fontSize={'xl'} fontWeight={'bold'}>Transfer product ownership to Vendor</FormLabel>
+                    {SELECTED_VENDOR?.name?.length > 0 ? 
+                        <Flex boxShadow={'sm'} bg={TERTIARY_BRAND} borderRadius={'sm'} justify={'space-between'} align={'center'} p='2'>
+                            <Text fontWeight={'bold'} fontSize={'lg'}>{SELECTED_VENDOR?.name}</Text>
+                            <Text cursor={'pointer'} fontSize={'sm'} onClick={(()=>{SET_SELECTED_VENDOR({})})}>change vendor</Text>
+                        </Flex>
+                            :
+                        <Box position={'relative'}>
+                            <InputGroup>
+                                <InputLeftElement pointerEvents='none'>
+                                    <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
+                                </InputLeftElement>
+                                <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                            </InputGroup>
+                            <Box boxShadow={'md'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
+                                {VENDORS_DATA?.map((vendor)=>{
+                                    return(
+                                        <Text key={vendor?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_VENDOR(vendor);set_search_query('')})}>
+                                            {vendor?.name}
+                                        </Text>
+                                    )
+                                })}
+                                {/**
+                                 * 
+                                <>
+                                {VENDORS_DATA?.length === 0? 
+                                        <Flex border='1px solid' borderColor={TERTIARY_BRAND} borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                            <Icon as={PEOPLE_ICON} boxSize={'6'}/>
+                                            <Text>No vendors found!.</Text>
+                                        </Flex>
+                                    :
+                                    <>
+                                        
+                                    </>
+                                }
+                                </>
+                                 */}
+                            </Box>
+                        </Box>
+                    }
                 </FormControl>
                 {isSubmitting?
-                    <Button isLoading loadingText='saving your product' variant='ghost' borderRadius={'md'} w='full'/>
+                    <Button isLoading loadingText='Transferring your product' variant='ghost' borderRadius={'md'} w='full'/>
                 :
-                    <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Update Product</Button>
+                    <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Transfer Product</Button>
                 }
             </form>
         </Box>
