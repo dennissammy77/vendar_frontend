@@ -55,12 +55,12 @@ const LoginForm=()=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
           set_isLoggedIn(true)
           if (typeof(window) === 'undefined') {
-            router.replace(`/dashboard/stores?uid=${USER_ID}&store_id=${STORE_ID}`);
+            router.replace(`/dashboard/stores`);
           }else{
-            window.location.href =`/dashboard/stores?uid=${USER_ID}&store_id=${STORE_ID}`;
+            window.location.href =`/dashboard/stores`;
           }
           set_user_handler(response?.data.token);
-          SELECT_ACTIVE_STORE(STORE_ID)
+          SELECT_ACTIVE_STORE(response?.data?.active_store_ref);
           return ;
       }).catch((err)=>{
           return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
