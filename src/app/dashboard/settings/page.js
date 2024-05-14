@@ -27,8 +27,8 @@ function Page() {
 
     const USER_DATA = data?.data?.data;
 
-	//const prodbaseurl = process.env.NEXT_PUBLIC_PROD_BASEURL;
-	const prodbaseurl = process.env.NEXT_PUBLIC_DEV_BASEURL;
+	const prodbaseurl = process.env.NEXT_PUBLIC_PROD_BASEURL;
+	//const prodbaseurl = process.env.NEXT_PUBLIC_DEV_BASEURL;
 
     return (
         <Box>
