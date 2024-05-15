@@ -14,13 +14,9 @@ import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 export default function NEW_STORE_PRODUCT_FORM() {
     const {user} = useContext(UserContext);
 
-    const EXISTING_STORES = user?.data?.data?.store_ref;
-
     const searchParams = useSearchParams()
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
-
-    // const [STORE_ID,SET_STORE_ID] =useState(query_store_id)
 
     const schema = yup.object().shape({
         name: yup.string().required(),
@@ -100,19 +96,6 @@ export default function NEW_STORE_PRODUCT_FORM() {
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
-            {/**
-             * 
-            <FormControl isRequired>
-                <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
-                <Select placeholder='Select the store' onChange={((e)=>{SET_STORE_ID(e.target.value)})}>
-                    {EXISTING_STORES?.map((store)=>{
-                        return(
-                            <option value={store?._id}>{store?.name}</option>
-                        )
-                    })}
-                </Select>
-            </FormControl>
-             */}
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
                     <Icon as={CiWarning} boxSize='4'/>
