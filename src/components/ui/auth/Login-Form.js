@@ -16,14 +16,12 @@ import { useRouter } from 'next/navigation';
 import { UserContext } from '@/components/providers/user.context';
 import { CiWarning } from 'react-icons/ci';
 import { SignInApi } from '@/app/api/auth/route';
-import SELECT_ACTIVE_STORE, { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import SELECT_ACTIVE_STORE from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 const LoginForm=()=>{
   const router = useRouter();
   const toast = useToast();
   const {user,set_user_handler} = useContext(UserContext);
-  const USER_ID = user?.data?.data?._id;
-  const STORE_ID = FETCH_ACTIVE_STORE_ID() || user?.data?.data?.store_ref[0]?._id;
 
 
   const [show, setShow] = useState(false); //handle state to toggle password
