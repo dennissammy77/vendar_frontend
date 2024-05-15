@@ -15,6 +15,7 @@ import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Spinner
 import { PEOPLE_ICON, PRODUCT_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 // api
 import { FETCH_STORE_DATA } from '@/app/api/shop/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 
 
@@ -25,9 +26,7 @@ function Page() {
   const USER_DATA = user?.data?.data;
   const USER_ID = user?.data?.data?._id;
 
-  const cookies = new Cookies();
-
-  const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+  const STORE_ID = FETCH_ACTIVE_STORE_ID() || USER_DATA?.store_ref[0]?._id;
 
   const {data, isLoading} = useQuery({
       queryKey: ['store_data', {STORE_ID, USER_ID}],
