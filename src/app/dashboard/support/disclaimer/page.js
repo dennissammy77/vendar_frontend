@@ -1,5 +1,6 @@
 'use client'
 
+import { CHEVRON_RIGHT_ICON } from '@/components/lib/constants/icons';
 import { DISCLAIMER } from '@/components/lib/html/template';
 import { UserContext } from '@/components/providers/user.context';
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react'
@@ -8,16 +9,17 @@ import { MdChevronRight } from 'react-icons/md'
 
 function Page() {
   const {user} = useContext(UserContext);
+  const USER_ID = user?.data?.data?._id
 
   return (
     <Box p='6'>
-      <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='2'>
+      <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
           <BreadcrumbItem>
-              <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+              <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem>
-              <BreadcrumbLink href={`/dashboard/support/?uid=${user?.data?.data?._id}`}>Support</BreadcrumbLink>
+              <BreadcrumbLink href={`/dashboard/support?uid=${USER_ID}`}>Support</BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
