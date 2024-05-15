@@ -12,7 +12,7 @@ function Page() {
     const USER_ID = user?.data?.data?._id;
 
     useEffect(()=>{
-      router.prefetch(`/dashboard/home?uid=${user?.data?._id}`);
+      router.prefetch(`/dashboard/home?uid=${USER_ID}`);
     },[]);
 
     return (
