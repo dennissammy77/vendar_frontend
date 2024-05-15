@@ -28,6 +28,8 @@ function Page() {
     // configs
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
+    const USER_DATA = user?.data?.data;
+
 
     // filter options
     const [search_query, set_search_query]=useState('');
