@@ -92,7 +92,7 @@ function Page() {
         <Text fontWeight='bold' fontSize='32px'>Import New Vendors</Text>
         <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>

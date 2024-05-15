@@ -45,11 +45,11 @@ function Page() {
             <Text fontWeight='bold' fontSize='32px'>Vendor Data</Text>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/vendors?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>vendors</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/vendors?uid=${USER_ID}&store_id=${STORE_ID}`}>vendors</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>

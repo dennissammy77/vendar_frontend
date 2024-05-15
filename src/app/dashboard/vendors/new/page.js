@@ -1,4 +1,5 @@
 'use client'
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import { UserContext } from '@/components/providers/user.context';
 import { NEW_VENDOR_FORM } from '@/components/ui/staff/NewStaffForm'
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text } from '@chakra-ui/react'
@@ -11,18 +12,19 @@ function Page() {
   const router = useRouter();
   const {user} = useContext(UserContext);
 
-  const searchParams = useSearchParams()
-  const store_id = searchParams.get('store_id');
+  const searchParams = useSearchParams();
+  const USER_ID = user?.data?.data?._id;
+  const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
   return (
     <Box>
         <Text fontWeight='bold' fontSize='32px'>New Vendor</Text>
         <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} my='2'>
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/vendors?uid=${user?.data?.data?._id}&store_id=${store_id}`}>Vendors</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/vendors?uid=${USER_ID}&store_id=${STORE_ID}`}>Vendors</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
