@@ -12,21 +12,16 @@ import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, Gr
 // api
 import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
 // icons
-import { IoMdSettings } from 'react-icons/io';
-import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
-import { MdAddShoppingCart, MdChevronRight, MdOutlineDeleteOutline } from 'react-icons/md'
-import { GrFormEdit } from 'react-icons/gr';
+import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 // components
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
 //import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
-import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 
 function Page() {
     // utils
     const {user} = useContext(UserContext);
-    const router = useRouter();
     const toast = useToast()
     // config
     const USER_ID = user?.data?.data?._id;
@@ -83,7 +78,7 @@ function Page() {
                         <Text>
                             This product is pending approval. This is because the product has recently been added or has recently been restocked.
                         </Text>
-                        {user?.data?.data?.account_type === 'vendor'?
+                        {USER_DATA?.account_type === 'vendor'?
                             null
                         :
 							<>
@@ -114,11 +109,11 @@ function Page() {
             }
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='4'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/products?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>Products</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/products?uid=${USER_ID}&store_id=${STORE_ID}`}>Products</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
