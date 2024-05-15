@@ -15,8 +15,6 @@ import { WARNING_ICON } from '@/components/lib/constants/icons';
 export default function NewStaffForm() {
     const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     const {user} = useContext(UserContext);
-    
-    const EXISTING_STORES = user?.data?.data?.store_ref;
 
     const searchParams = useSearchParams()
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
