@@ -16,7 +16,7 @@ import { IoMdAdd } from "react-icons/io";
 import SELECT_ACTIVE_STORE, { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
 
 import Cookies from 'universal-cookie';
-import { ACCOUNT_SETTINGS_ICON, ADD_ICON, CHEVRON_DOWN_ICON, MANAGE_ICON } from "@/components/lib/constants/icons";
+import { ACCOUNT_SETTINGS_ICON, ADD_ICON, CHEVRON_DOWN_ICON, MANAGE_ICON, NOTIFICATIONS_ICON } from "@/components/lib/constants/icons";
 import { BASE_BRAND, PRIMARY_BRAND, SECONDARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
 import { UPDATE_USER_ACCOUNT } from "@/app/api/auth/route";
 
@@ -53,7 +53,6 @@ export default function NavigationBody({children,navigation}){
 
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user,set_user_handler} = useContext(UserContext);
-  const cookies = new Cookies();
   const router = useRouter();
   const USER_ID = user?.data?.data?._id;
   const USER_DATA = user?.data?.data;
@@ -85,40 +84,24 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
         <IconButton  variant="outline" aria-label="open menu" icon={<IoMenu />} onClick={(()=>{onToggle()})} />
         <LOGO color={PRIMARY_BRAND} size='18px'/>
       </HStack>
-      <HStack spacing={{ base: '0', md: '4' }}>
-        {user?.data?.data?.account_type === 'vendor'? null : 
-          <Link href={`/dashboard/transactions/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
-            <Button
-                as={Button}
-                bgColor={PRIMARY_BRAND} 
-                color='#ffffff' 
-                leftIcon={<ADD_ICON />}
-                mr='2'
-              >
-                New Sale
-            </Button>
-          </Link>
-        }
+      <HStack spacing={{ base: '1', md: '4' }}>
+        <IconButton  variant="outline" aria-label="open notifications" icon={<NOTIFICATIONS_ICON />} onClick={(()=>{onToggle()})} />
         <Menu>
           <MenuButton py={2} transition="all 0.3s" >
             <HStack>
-              <Avatar size={'sm'} name={user?.data?.data?.name}/>
+              <Avatar size={'sm'} name={USER_DATA?.name}/>
               <Box hideBelow='md' ml="2">
-                <Text fontSize="md">{user?.data?.data?.name || '-'}</Text>
+                <Text fontSize="md">{USER_DATA?.name || '-'}</Text>
                 <HStack spacing='2'>
-                  <Text fontSize="xs" w='100px' overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{user?.data?.data?.active_store_ref?.name || '-'}</Text>
+                  <Text fontSize="xs" w='100px' overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{USER_DATA?.active_store_ref?.name || '-'}</Text>
                   <Icon as={CHEVRON_DOWN_ICON} boxSize={'3'}/>
                 </HStack>
-                {/**
-                 * 
-                <Badge fontSize="xs" color="#ffffff" bg={PRIMARY_BRAND}>{user?.data?.data?.account_type}</Badge>
-                  */}
               </Box>
             </HStack>
           </MenuButton>
           <MenuList>
             <MenuGroup title='Store(s)'>
-              {user?.data?.data?.store_ref?.map((store)=>{
+              {USER_DATA?.store_ref?.map((store)=>{
                 return(
                   <MenuItem  
                     as='a'
@@ -126,8 +109,8 @@ const TopNav = ({ onOpen,onToggle, ...rest }) => {
                     key={store?._id}
                     onClick={(()=>{Handle_select_active_store(store?._id)})}
                     _hover={{bgColor:TERTIARY_BRAND}}
-                    bg={user?.data?.data?.active_store_ref?._id === store?._id ? PRIMARY_BRAND : BASE_BRAND}
-                    color={user?.data?.data?.active_store_ref?._id === store?._id ? BASE_BRAND : SECONDARY_BRAND}
+                    bg={USER_DATA?.active_store_ref?._id === store?._id ? PRIMARY_BRAND : BASE_BRAND}
+                    color={USER_DATA?.active_store_ref?._id === store?._id ? BASE_BRAND : SECONDARY_BRAND}
                     cursor={'pointer'}
                     w='full'
                     overflow='hidden' 
@@ -179,35 +162,48 @@ const NavItem = (props) => {
   };
 
 const SidebarContent = ({onClose,navigation,display,width}) => {
-  const {user} = useContext(UserContext)
+  const {user} = useContext(UserContext);
+  const USER_ID = user?.data?.data?._id;
+  const USER_DATA = user?.data?.data;
   const pathname = usePathname();
   const pathArr = pathname?.split('/');
-  const router = useRouter();
 
-  const cookies = new Cookies();
-
-  const active_store = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+  const active_store = FETCH_ACTIVE_STORE_ID();
   return(
     <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'md'} w={width} display={display}>
       <Flex px='4' py='5' align='center' justify='space-between'>
         <LOGO color='#4E2FD7' size='24px'/>
         <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoCloseSharp />} onClick={(()=>{onClose()})} />
       </Flex>
+      <NavItem
+        bg={PRIMARY_BRAND}
+        color={BASE_BRAND}
+        icon={ADD_ICON}
+        borderRadius='md'
+        route={'/dashboard/transactions/new'}
+        user_id={USER_ID}
+        store_id={active_store}
+        onClick={(()=>{
+          onClose()
+        })}
+      >
+        New Sale
+      </NavItem>
       {navigation?.map((item)=>{
         return(
           <NavItem 
             key={item?.id}
             bg={pathArr[2] === item?.title?.toLowerCase() ? '#E4F0FC' : '#FAFAFA'} 
             color={pathArr[2] === item?.title?.toLowerCase() ? '#4E2FD7' : '#9298AC'} 
-            borderRadius={pathArr[2] ==- item?.title?.toLowerCase()? 'md' : '5'} 
+            borderRadius={pathArr[2] === item?.title?.toLowerCase()? 'md' : '5'}
             icon={item?.icon}
             route={item?.route}
-            user_id={user?.data?.data?._id}
+            user_id={USER_DATA?._id}
             store_id={active_store}
             onClick={(()=>{
               onClose()
             })}
-            display={user?.data?.data?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' || item?.title.toLowerCase() === 'home' ) ? 'none' : ''}
+            display={USER_DATA?.account_type === 'vendor' && (item?.title.toLowerCase() === 'staff' || item?.title.toLowerCase() === 'vendors' || item?.title.toLowerCase() === 'home' ) ? 'none' : ''}
           >
             {item.title}
           </NavItem>
