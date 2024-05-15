@@ -103,14 +103,14 @@ export default function Page() {
                         </InputLeftElement>
                         <Input type='search' placeholder={'Search transactions'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
                     </InputGroup>
-                    <Link href={`/dashboard/transactions/new?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>
+                    <Link href={`/dashboard/transactions/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
                         <Button bgColor={PRIMARY_BRAND} color='#ffffff' leftIcon={<ADD_ICON />}>New</Button>
                     </Link>
                 </Flex>
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
@@ -206,7 +206,7 @@ export default function Page() {
                                                 <Td><Text fontSize={'sm'}>{transaction?.vendor?.name}</Text></Td>
                                                 <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
                                                 <Td>
-                                                    <Link href={`/dashboard/transactions/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&transaction_id=${transaction?._id}`}>
+                                                    <Link href={`/dashboard/transactions/view?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${transaction?._id}`}>
                                                         <HStack color='gray.600' cursor={'pointer'} pr='1'>
                                                             <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
                                                             <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>
