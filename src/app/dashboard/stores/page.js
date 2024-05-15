@@ -7,7 +7,6 @@ import { Badge, Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, G
 import { useRouter } from 'next/navigation';
 import { UserContext } from '@/components/providers/user.context';
 import { useQuery } from '@tanstack/react-query';
-import Cookies from 'universal-cookie';
 // icons
 import { ADD_ICON, CHEVRON_RIGHT_ICON, SEARCH_ICON, STORE_ICON } from '@/components/lib/constants/icons';
 // api
@@ -22,18 +21,18 @@ function Page() {
     // utils
     const {user} = useContext(UserContext);
     const router = useRouter();
-    const cookies = new Cookies();
     // config
     const USER_ID = user?.data?.data?._id;
+    const USER_DATA = user?.data?.data;
     const [search_query, set_search_query]=useState('');
 
-    const active_store = FETCH_ACTIVE_STORE_ID() || user?.data?.data?.store_ref[0]?._id;
+    const active_store = FETCH_ACTIVE_STORE_ID() || USER_DATA?.store_ref[0]?._id;
     // Functions
     const {data, isLoading} = useQuery({
         queryKey: ['stores_data', {USER_ID}],
         queryFn: async () => {
             let ACCOUNT_ID;
-            switch (user?.data?.data?.account_type) {
+            switch (USER_DATA?.account_type) {
                 case 'owner':
                     ACCOUNT_ID = USER_ID;
                     await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
@@ -52,7 +51,8 @@ function Page() {
         }
     });
     // DATA
-    const stores = data?.data?.data || user?.data?.data?.store_ref;
+    const stores = data?.data?.data;
+    console.log(stores)
 
     if (isLoading){
         return (
@@ -82,7 +82,7 @@ function Page() {
         <Box>
             <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>
                 <Text fontWeight='bold' fontSize='32px'>Stores</Text>
-                {user?.data?.data?.account_type === 'vendor'? null : 
+                {USER_DATA?.account_type === 'vendor'? null : 
                     <Flex align='center' >
                         <InputGroup>
                             <InputLeftElement pointerEvents='none'>
@@ -98,7 +98,7 @@ function Page() {
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${active_store}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}&store_id=${active_store}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>

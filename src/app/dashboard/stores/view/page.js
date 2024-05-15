@@ -70,7 +70,7 @@ function Page() {
                     <Menu>
                         <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
                         <MenuList>
-                            <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>Edit</MenuItem>
+                            <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${USER_ID}&store_id=${store?._id}`)})}>Edit</MenuItem>
                             <MenuItem icon={<DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_STORE_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
                         </MenuList>
                     </Menu>
@@ -78,11 +78,11 @@ function Page() {
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/stores/?uid=${user?.data?.data?._id}`}>Stores</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/stores?uid=${USER_ID}`}>Stores</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>

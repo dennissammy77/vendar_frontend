@@ -3,13 +3,12 @@ import { UserContext } from '@/components/providers/user.context';
 import EditStoreForm from '@/components/ui/store/EditStoreForm'
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import React, { useContext } from 'react'
-import { MdChevronRight } from 'react-icons/md';
-import { VscDiscard } from 'react-icons/vsc';
+import React, { useContext } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_STORE_DATA } from '@/app/api/shop/route';
+import { CHEVRON_RIGHT_ICON, DISCARD_ICON } from '@/components/lib/constants/icons';
 
 export default  function Page() {
     const {user} = useContext(UserContext);
@@ -27,13 +26,13 @@ export default  function Page() {
   return (
     <Box>
         <Text fontWeight='bold' fontSize='32px'>Edit Store</Text>
-        <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+        <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem>
-                <BreadcrumbLink href={`/dashboard/stores/?uid=${user?.data?.data?._id}`}>Stores</BreadcrumbLink>
+                <BreadcrumbLink href={`/dashboard/stores?uid=${USER_ID}`}>Stores</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
@@ -47,7 +46,7 @@ export default  function Page() {
                 store_data={data}
             />
         }
-        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<VscDiscard />}>Discard</Button>
+        <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<DISCARD_ICON />}>Discard</Button>
     </Box>
   )
 }
