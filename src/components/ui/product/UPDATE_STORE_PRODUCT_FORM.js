@@ -20,6 +20,7 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
         name: yup.string().required(),
         description: yup.string().required(),
         price: yup.number().required(),
+        buying_price: yup.number().required(),
         category: yup.string().required(),
         items: yup.number().required(),
         discount: yup.boolean(),
@@ -41,6 +42,7 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
             name: props?.PRODUCT_DATA?.name,
             description: props?.PRODUCT_DATA?.description,
             price: props?.PRODUCT_DATA?.price,
+            buying_price: props?.PRODUCT_DATA?.buying_price,
             category: props?.PRODUCT_DATA?.category,
             items: props?.PRODUCT_DATA?.items,
             discount: props?.PRODUCT_DATA?.discount,
@@ -87,6 +89,11 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
                 <FormLabel>Price</FormLabel>
                 <Input disabled={isSubmitting} {...register('price')} type='number' placeholder='200' variant='filled'/>
                 {errors.price && ( <Text fontSize={'sm'} color='red'>{errors.price.message}</Text>)}
+            </FormControl>
+            <FormControl mt='1' isRequired>
+                <FormLabel>Buying Price</FormLabel>
+                <Input disabled={isSubmitting} {...register('buying_price')} type='number' placeholder='200' variant='filled'/>
+                {errors.buying_price && ( <Text fontSize={'sm'} color='red'>{errors.buying_price.message}</Text>)}
             </FormControl>
             <FormControl mt='1' isRequired>
                 <FormLabel>Items</FormLabel>
