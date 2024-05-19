@@ -347,3 +347,25 @@ export async function FETCH_ALL_STAKEHOLDERS_DATA_FOR_EXPORT (STORE_ID,ACCOUNT_T
     });
   return result;
 }
+
+export async function FETCH_VENDOR_STAKEHOLDER_DETAILS (USER_ID){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholder/vendor?user_id=${USER_ID}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
+}
