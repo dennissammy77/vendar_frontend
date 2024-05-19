@@ -3,7 +3,8 @@ import { Button, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialo
 import { useRouter } from 'next/navigation';
 import { DELETE_STORE_PRODUCT } from '@/app/api/product/route';
 
-export default function DELETE_PRODUCT_ALERT({isOpen, onClose, USER_ID, PRODUCT_ID, PRODUCT_DATA}) {
+export default function DELETE_PRODUCT_ALERT({isOpen, onClose, USER_ID, PRODUCT_DATA}) {
+    const PRODUCT_ID = PRODUCT_DATA?._id;
     const toast = useToast();
     const router = useRouter();
     const [isSubmitting,set_isSubmitting]=useState(false)
@@ -42,17 +43,6 @@ export default function DELETE_PRODUCT_ALERT({isOpen, onClose, USER_ID, PRODUCT_
                         Are you sure? You can't undo this action afterwards.You will lose your product and the following information:
                         <UnorderedList>
                             <Text fontWeight={'bold'} fontSize={'lg'}>{PRODUCT_DATA?.transactions?.length} sales</Text>
-                            {PRODUCT_DATA?.transactions?.map((transaction)=>{
-                                return(
-                                    <ListItem>
-                                        <Text fontWeight='bold'>Total: </Text>
-                                        KES {transaction?.payment_total} 
-                                        <Badge colorScheme={transaction?.payment ? 'green':'orange'} ml='2'>
-                                            {transaction?.status}
-                                        </Badge>
-                                    </ListItem>
-                                )
-                            })}
                         </UnorderedList>
                     </AlertDialogBody>
 
