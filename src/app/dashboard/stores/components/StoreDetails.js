@@ -22,7 +22,6 @@ export default function StoreDetails({store,active_store}){
                 <HStack>
                     <Text fontSize={{base:'lg',md:'x-large'}} fontWeight={'bold'} my='2'>{store?.name}</Text>
                     <HStack>
-                        <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
                         {active_store === store?._id ? <Badge fontSize="xs" colorScheme={'purple'}>active</Badge> : null }
                     </HStack>
                 </HStack>

@@ -28,31 +28,32 @@ function Page() {
 
     const active_store = FETCH_ACTIVE_STORE_ID() || USER_DATA?.store_ref[0]?._id;
     // Functions
-    const {data, isLoading} = useQuery({
-        queryKey: ['stores_data', {USER_ID}],
-        queryFn: async () => {
-            let ACCOUNT_ID;
-            switch (USER_DATA?.account_type) {
-                case 'owner':
-                    ACCOUNT_ID = USER_ID;
-                    await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
-                    break;
-                case 'manager':
-                    ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
-                    await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
-                    break;
-                case 'supervisor':
-                    ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
-                    await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
-                    break;
-                default:
-                    return null;
-            }
-        }
+    const {data: STORES_DATA, isLoading} = useQuery({
+        queryKey: ['USER_STORES', {USER_ID}],
+        queryFn: () => FETCH_STORES_BY_OWNER(USER_ID),
+        enabled: USER_ID !== undefined
+        // queryFn: async () => {
+        //     let ACCOUNT_ID;
+        //     await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+        //     switch (USER_DATA?.store_admin_account_ref?.role) {
+        //         case 'owner':
+        //             ACCOUNT_ID = USER_ID;
+        //             break;
+        //         case 'manager':
+        //             ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
+        //             await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+        //             break;
+        //         case 'supervisor':
+        //             ACCOUNT_ID = user.data?.data?.store_ref[1]?.owner_ref_id;
+        //             await FETCH_STORES_BY_OWNER(ACCOUNT_ID)
+        //             break;
+        //         default:
+        //             return null;
+        //     }
+        // }
     });
     // DATA
-    const stores = data?.data?.data;
-    console.log(stores)
+    const stores = STORES_DATA?.data?.data;
 
     if (isLoading){
         return (
@@ -63,7 +64,7 @@ function Page() {
           )
       }
     
-    if (data?.data?.error){
+    if (STORES_DATA?.data?.error){
         return (
             <FAILED_DATA_REQUEST message={data?.data?.message}/>
         )
@@ -107,7 +108,7 @@ function Page() {
             </Breadcrumb>
             {stores?.filter((store)=>store?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((store,index)=>{
                 return(
-                    <StoreDetails store={store} active_store={active_store}/>
+                    <StoreDetails store={store} active_store={active_store} key={store?._id}/>
                 )
             })}
         </Box>
