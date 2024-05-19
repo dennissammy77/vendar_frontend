@@ -232,9 +232,9 @@ export default function Page() {
                                                 <Td>
                                                     <Badge 
                                                         fontSize={'sm'}
-                                                        colorScheme={product?.product_status?.approval_status ? 'green':'gray'}
+                                                        colorScheme={product?.product_status_ref?.approval_status ? 'green':'gray'}
                                                     >
-                                                        {product?.product_status?.approval_status ? 'Approved':'pending'}
+                                                        {product?.product_status_ref?.approval_status ? 'Approved':'pending'}
                                                     </Badge>
                                                 </Td>
                                                 <Td>

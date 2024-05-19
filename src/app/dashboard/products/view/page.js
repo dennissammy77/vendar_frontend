@@ -8,15 +8,18 @@ import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import Link from 'next/link';
 // styling
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, Spinner, HStack, useDisclosure, Alert, AlertIcon, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Avatar, StepStatus, position, useToast, Menu, MenuButton, MenuList, MenuItem} from '@chakra-ui/react'
 // api
 import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
 // icons
-import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
+import { CHEVRON_DOWN_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 // components
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
 //import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import BarChartPlot, { PRODUCT_DATA_TRACKER } from '@/components/ui/analytics/bar.dash-analytics.ui';
+import { FETCH_ALL_STORE_TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS } from '@/app/api/transaction/route';
 
 
 function Page() {
@@ -30,12 +33,21 @@ function Page() {
     const PRODUCT_ID = searchParams.get('product_id');
     const STORE_ID = searchParams.get('store_id');
 	const [loading_status,set_loading_status]=useState(false)
+	const [tag,set_tag]=useState('analysis')
+	const [week,set_week]=useState(moment().week())
     const DELETE_PRODUCT_ALERT_DISCLOSURE = useDisclosure();
     // Functions
     const {data, isLoading} = useQuery({
         queryKey: ['product data', {PRODUCT_ID,loading_status}],
         queryFn: () => FETCH_PRODUCT_DATA(PRODUCT_ID)
     });
+    const {data: Transactions_data, isLoading: AnalyticsLoading } = useQuery({
+        queryKey: ['transactions data', {PRODUCT_ID,tag,week}],
+        queryFn: () => FETCH_ALL_STORE_TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS(USER_ID,STORE_ID,PRODUCT_ID,week,tag)
+    });
+
+    const TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS = Transactions_data?.data?.data;
+    const TRANSACTION_DETAILS_DATA_FOR_PRODUCT_ANALYTICS = Transactions_data?.data?.details;
 	const HANDLE_APPROVE_PRODUCT = async()=>{
 		set_loading_status(true);
 		const data = {
@@ -59,6 +71,24 @@ function Page() {
             return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
 		}
 	};
+
+    const HANDLE_WEEK_CHANGE=(sign)=>{
+        if (week === 1 && sign === '-'){
+            set_week(1)
+            return;
+        }
+        switch (sign) {
+            case '+':
+                set_week(week + 1)
+                break;
+            case '-':
+                set_week(week - 1)
+                break;
+            default:
+                set_week(1)
+                break;
+        }
+      }
     // DATA
     const PRODUCT_DATA = data?.data?.data;
     if (data?.data?.error){
@@ -69,8 +99,19 @@ function Page() {
 
     return (
         <Box>
-            <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_ID={PRODUCT_ID} PRODUCT_DATA={PRODUCT_DATA}/>
-            <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
+            <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_DATA={PRODUCT_DATA}/>
+            <Flex align='center' justifyContent={'space-between'}>
+                <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
+                    <MenuList>
+                        <MenuItem icon={<SHOPPING_CART_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>Restock</MenuItem>
+                        <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>Edit</MenuItem>
+                        <MenuItem icon={<DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_PRODUCT_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
+                    </MenuList>
+                </Menu>
+            </Flex>
+            
             {PRODUCT_DATA?.product_status?.approval_status === false && (
                 <Alert status='info'>
                     <AlertIcon />
@@ -128,24 +169,6 @@ function Page() {
                 :
                 <>
                     <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                        <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                            <Link href={`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
-                                <HStack p='1' px='2' color='#FFFFFF' bg='#05232e' borderRadius={'full'}>
-                                    <Text fontWeight={'bold'} fontSize={'md'}>Restock</Text>
-                                    <Icon boxSize='4' as={SHOPPING_CART_ICON} cursor='pointer'/>
-                                </HStack>
-                            </Link>
-                            <Link href={`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
-                                <HStack>
-                                    <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                                    <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
-                                </HStack>
-                            </Link>
-                            <HStack onClick={DELETE_PRODUCT_ALERT_DISCLOSURE?.onOpen}>
-                                <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                                <Icon boxSize='6' as={DELETE_ICON} cursor='pointer'/>
-                            </HStack>
-                        </Flex>
                         <Grid
                             templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
                             templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}}
@@ -159,7 +182,11 @@ function Page() {
                                 </Box>
                                 <Box my='2'>
                                     <Text fontWeight={'bold'}>Price</Text>
-                                    <Text fontWeight={''}>{PRODUCT_DATA?.price}</Text>
+                                    <Text fontWeight={''}>KES {PRODUCT_DATA?.price}</Text>
+                                </Box>
+                                <Box my='2'>
+                                    <Text fontWeight={'bold'}>Buying Price</Text>
+                                    <Text fontWeight={''}>KES {PRODUCT_DATA?.buying_price}</Text>
                                 </Box>
                                 <Box my='2'>
                                     <Text fontWeight={'bold'}>Category</Text>
@@ -190,47 +217,51 @@ function Page() {
                         <Text fontWeight={'bold'} my='2'>Description</Text>
                         <Text>{PRODUCT_DATA?.description}</Text>
                     </Box>
-                    <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4' w='100%'>
-                        <TabList my='2'>
-                            <Tab>Transactions</Tab>
-                            {/**<Tab>Data</Tab>*/}
-                        </TabList>
-                        <Divider/>
-                        <TabPanels>
-                            <TabPanel>
-                                {PRODUCT_DATA?.transactions?.length === 0? 
+                    {AnalyticsLoading? 
+                        <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+                            <Spinner />
+                            <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Fetching product details</Text>
+                        </Flex>
+                        :
+                        <>
+                            <Box bg='#FFFFFF' p='4' boxShadow={'md'} fontSize={'12px'} mt='2'>
+                                <Flex justify={'space-between'}>
+                                    <Text fontSize={'24px'}>Summary</Text>
+                                    <HStack align='center' spacing='2' color='gray.600'>
+                                        <Icon as={CHEVRON_LEFT_ICON} boxSize={'5'} cursor='pointer' onClick={(()=>HANDLE_WEEK_CHANGE('-'))}/>
+                                        <Text fontSize={'sm'}>week {week}</Text>
+                                        <Icon as={CHEVRON_RIGHT_ICON} boxSize={'5'} cursor='pointer' onClick={(()=>HANDLE_WEEK_CHANGE('+'))}/>
+                                    </HStack>
+                                </Flex>
+                            </Box>
+                            <Box bg='#FFFFFF' p='4' boxShadow={'md'} fontSize={'12px'} mt='2'>
+                                <Text fontSize={'20px'}>Analytics</Text>
+                            </Box>
+                            <Box bg='#FFFFFF' p='1' boxShadow={'md'} fontSize={'12px'} h='500px' >
+                                {TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS?.length === 0? 
                                     <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
                                         <Icon as={TRANSACTION_ICON} boxSize={'6'}/>
-                                        <Text>This product does not have any transactions at the moment.</Text>
+                                        <Text>No transactions found.</Text>
                                     </Flex>
                                     :
-                                    <Transaction_Section TRANSACTIONS_DATA={PRODUCT_DATA?.transactions} USER_DATA={USER_DATA}/>
+                                    <PRODUCT_DATA_TRACKER data={TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS}/>
                                 }
-                            </TabPanel>
-                            {/**
-                             * 
-                            <TabPanel>
-                                <Box
-                                    bg='#FFFFFF'
-                                    p='4'
-                                    borderRadius={20}
-                                    boxShadow={'md'}
-                                    fontSize={'12px'}
-                                    h='300px'
-                                >
-                                    {PRODUCT_DATA?.transactions?.length === 0? 
-                                        <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
-                                            <Icon as={TRANSACTION_ICON} boxSize={'6'}/>
-                                            <Text>This product does not have any transactions at the moment.</Text>
-                                        </Flex>
-                                        :
-                                        <BarChartPlot data={PRODUCT_DATA?.transactions}/>
-                                    }
-                                </Box>
-                            </TabPanel>
-                             */}
-                        </TabPanels>
-                    </Tabs>
+                            </Box>
+                            <Box bg='#FFFFFF' p='4' boxShadow={'md'} fontSize={'12px'} mt='2'>
+                                <Text fontSize={'20px'}>Sales</Text>
+                            </Box>
+                            <Box bg='#FFFFFF' p='4' boxShadow={'md'} fontSize={'12px'}>
+                                {TRANSACTION_DETAILS_DATA_FOR_PRODUCT_ANALYTICS?.length === 0? 
+                                    <Flex border='1px solid' borderColor='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='10' h='100%' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                                        <Icon as={TRANSACTION_ICON} boxSize={'6'}/>
+                                        <Text>No transactions found.</Text>
+                                    </Flex>
+                                    :
+                                    <Transaction_Section TRANSACTIONS_DATA={TRANSACTION_DETAILS_DATA_FOR_PRODUCT_ANALYTICS} USER_DATA={USER_DATA}/>
+                                }
+                            </Box>
+                        </>
+                    }
                 </>
 
             }
@@ -241,15 +272,16 @@ function Page() {
 export default Page;
 
 const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
-    const router = useRouter();
+    const STORE_ID = FETCH_ACTIVE_STORE_ID()
     return(
-        <TableContainer boxShadow={'md'}>
+        <TableContainer>
             <Table variant='simple'>
                 <Thead bg='#E4F0FC'>
                     <Tr>
-                        <Th>Product</Th>
                         <Th>Date</Th>
+                        <Th>Items</Th>
                         <Th>Amount</Th>
+                        <Th>Method</Th>
                         <Th>Status</Th>
                         <Th>Actions</Th>
                     </Tr>
@@ -259,27 +291,22 @@ const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
                         return(
                             <Tr key={transaction?._id} >
                                 <Td>
-                                    <HStack>
-                                        <Avatar size={'sm'} src='' name={transaction?.product_ref?.name}/>
-                                        <Box>
-                                            <Text fontSize={'12px'}>{transaction?.product_ref?.name}</Text>
-                                            <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{transaction?._id}</Text>
-                                        </Box>
-                                    </HStack>
-                                </Td>
-                                <Td>
                                     <Box>
-                                        <Text fontWeight={''}>{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
+                                        <Text fontWeight={''}>{moment(transaction?.createdAt).format("ddd")}-{moment(transaction?.createdAt).format("DD MMM YY")}</Text>
                                         <Text fontSize={'sm'} color='gray.400'>{moment(transaction?.createdAt).format("h:mm a")}</Text>
                                     </Box>
                                 </Td>
-                                <Td>KES {transaction?.payment_total}</Td>
+                                <Td>{transaction?.items}</Td>
+                                <Td>KES {transaction?.sales}</Td>
+                                <Td>{transaction?.payment_method}</Td>
                                 <Td><Badge colorScheme={transaction?.payment? 'green':'orange'}>{transaction?.status}</Badge></Td>
                                 <Td>
-                                    <HStack color='gray.600' cursor={'pointer'}pr='1' onClick={(()=>{router.push(`/dashboard/transactions/view?uid=${USER_DATA?._id}&store_id=${USER_DATA?.store_ref[0]?._id}&transaction_id=${transaction?._id}`)})}>
-                                        <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
-                                        <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>
-                                    </HStack>
+                                    <Link href={`/dashboard/transactions/view?uid=${USER_DATA?._id}&store_id=${STORE_ID}&transaction_id=${transaction?._id}`}>
+                                        <HStack color='gray.600' cursor={'pointer'} pr='1'>
+                                            <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
+                                            <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>
+                                        </HStack>
+                                    </Link>
                                 </Td>
                             </Tr>
                         )})
