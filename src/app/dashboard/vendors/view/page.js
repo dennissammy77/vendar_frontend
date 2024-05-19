@@ -1,13 +1,13 @@
 'use client'
 import React, { useContext, useState } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, Avatar, Progress} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, Avatar, Progress, Menu, MenuButton, MenuList, MenuItem} from '@chakra-ui/react'
 import { MdChevronRight, MdClose, MdDone, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { FETCH_USER_DATA } from '@/app/api/auth/route';
+import { FETCH_VENDOR_STAKEHOLDER_DETAILS } from '@/app/api/auth/route';
 
 import { TiUserDelete } from "react-icons/ti";
 import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
@@ -16,7 +16,8 @@ import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
 import { GiShoppingBag } from 'react-icons/gi';
 import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
-import { CHEVRON_RIGHT_ICON } from '@/components/lib/constants/icons';
+import { CHEVRON_DOWN_ICON, CHEVRON_RIGHT_ICON, EDIT_ICON, USER_DELETE_ICON } from '@/components/lib/constants/icons';
+import { FETCH_STORE_PRODUCTS_BY_VENDOR } from '@/app/api/product/route';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -29,11 +30,16 @@ function Page() {
     
     const {data, isLoading} = useQuery({
         queryKey: ['account_id', {ACCOUNT_ID}],
-        queryFn: () => FETCH_USER_DATA(ACCOUNT_ID)
+        queryFn: () => FETCH_VENDOR_STAKEHOLDER_DETAILS(ACCOUNT_ID)
+    });
+
+    const {data:PRODUCTS_RESULT} = useQuery({
+        queryKey: ['vendor_products', {ACCOUNT_ID}],
+        queryFn: () => FETCH_STORE_PRODUCTS_BY_VENDOR(ACCOUNT_ID,STORE_ID)
     });
 
     const USER_DATA = data?.data?.data;
-    const PRODUCTS_DATA = USER_DATA?.store_ref[0]?.products;
+    const PRODUCTS_DATA = PRODUCTS_RESULT?.data?.data;
     const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions?.filter((transaction)=>transaction?.vendor === USER_DATA?._id);
 
     const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
@@ -42,7 +48,20 @@ function Page() {
     return (
         <Box>
             <DELETE_STAKEHOLDER_ACCOUNT_ALERT isOpen={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} USER_DATA={USER_DATA}/>
-            <Text fontWeight='bold' fontSize='32px'>Vendor Data</Text>
+            <Flex justify={'space-between'} align={{base:'',lg:'center'}} flexDirection={{base:'column',lg:'row'}}>
+                {/**
+                 * Products tag & management goes here
+                 * Search field, New product and product imports
+                 */}
+                <Text fontWeight='bold' fontSize='32px'>Vendor Data</Text>
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
+                    <MenuList>
+                        <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/vendors/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`}>Edit</MenuItem>
+                        <MenuItem icon={<USER_DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
+                    </MenuList>
+                </Menu>
+            </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
                     <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
@@ -57,16 +76,6 @@ function Page() {
                 </BreadcrumbItem>
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack onClick={(()=>{router.push(`/dashboard/vendors/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`)})}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                        <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
-                    </HStack>
-                    <HStack onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                        <Icon boxSize='6' as={TiUserDelete} cursor='pointer'/>
-                    </HStack>
-                </Flex>
                 <Grid
                     templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
                     templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}}
