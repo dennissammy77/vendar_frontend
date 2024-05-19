@@ -48,6 +48,29 @@ export async function FETCH_ALL_STORE_TRANSACTION_DATA_FOR_EXPORT(USER_ID,STORE_
     return response;
     
 }
+export async function FETCH_ALL_STORE_TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS(USER_ID,STORE_ID,PRODUCT_ID,WEEK,TAG){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}/api/transaction/product/all/analytics?store_id=${STORE_ID}&user_id=${USER_ID}&product_id=${PRODUCT_ID}&week=${WEEK}&tag=${TAG}`,
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+        },
+    };
+
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+    
+}
 
 export async function FETCH_TRANSACTION_DATA(transaction_id){
     let BASE_URL = await RouteHandler();
