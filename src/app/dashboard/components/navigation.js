@@ -1,5 +1,5 @@
 'use client'
-import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure, MenuGroup } from "@chakra-ui/react";
+import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure, MenuGroup, Progress } from "@chakra-ui/react";
 import { useContext } from "react";
 import { usePathname, useRouter  } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
@@ -14,11 +14,11 @@ import Link from "next/link";
 import useLogOut from "@/components/hooks/useLogOut.hook";
 import { IoMdAdd } from "react-icons/io";
 import SELECT_ACTIVE_STORE, { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
-
-import Cookies from 'universal-cookie';
-import { ACCOUNT_SETTINGS_ICON, ADD_ICON, CHEVRON_DOWN_ICON, MANAGE_ICON, NOTIFICATIONS_ICON } from "@/components/lib/constants/icons";
+import { ACCOUNT_SETTINGS_ICON, ADD_ICON, CHEVRON_DOWN_ICON, NOTIFICATIONS_ICON } from "@/components/lib/constants/icons";
 import { BASE_BRAND, PRIMARY_BRAND, SECONDARY_BRAND, TERTIARY_BRAND } from "@/components/lib/constants/theme";
 import { UPDATE_USER_ACCOUNT } from "@/app/api/auth/route";
+import styles from './styles.module.css'
+import moment from "moment";
 
 
 export default function NavigationBody({children,navigation}){
@@ -169,8 +169,13 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
   const pathArr = pathname?.split('/');
 
   const active_store = FETCH_ACTIVE_STORE_ID();
+  function daysRemaining() {
+    var eventdate = moment(USER_DATA?.subscription_ref?.expiry_date);
+    //var renewed_date = moment(USER_DATA?.subscription_ref?.renewal_date);
+    return eventdate.diff(moment(), 'days');
+}
   return(
-    <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'md'} w={width} display={display}>
+    <Box as="nav" pos="fixed" top="0" left="0" zIndex="sticky" h="full" pb="10" overflowX="hidden" overflowY="auto" bg="white" bordercolor="inherit" boxShadow={'md'} w={width} display={display} className={styles.navbody}>
       <Flex px='4' py='5' align='center' justify='space-between'>
         <LOGO color='#4E2FD7' size='24px'/>
         <IconButton display={{ base: 'flex', md: 'none' }} variant="outline" aria-label="open menu" icon={<IoCloseSharp />} onClick={(()=>{onClose()})} />
@@ -209,5 +214,11 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
           </NavItem>
         )
       })}
+      <Flex align="center" justify={'center'} flexDirection={'column'} mx='3' my='2' px="4" pl="4" py="3" cursor="pointer" bg='gray.300' borderRadius={5} boxShadow='sm' transition=".3s ease" gap='2'>
+        <Text fontSize={'md'}>Current Plan</Text>
+        <Badge colorScheme={'purple'}>{USER_DATA?.subscription_ref?.plan}</Badge>
+        <Text fontSize={'xs'}>{daysRemaining()} days left</Text>
+        <Button bg={SECONDARY_BRAND} color={BASE_BRAND}>Upgrade Plan</Button>
+      </Flex>
     </Box>
   )};
