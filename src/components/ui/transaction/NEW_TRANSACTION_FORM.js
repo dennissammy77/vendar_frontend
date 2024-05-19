@@ -107,9 +107,7 @@ export default function NEW_TRANSACTION_FORM() {
                 return toast({ title: `Error!:${response?.data?.message}`, description: ``, status: 'warning', variant:'left-accent', position: 'top-left', isClosable: true });
             }
             toast({ title: 'Success!:Transaction created successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
-            setTimeout(()=>{
-                router.back()
-            },2000)
+            router.back();
             return ;
           }).catch((err)=>{
               return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
