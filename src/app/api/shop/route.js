@@ -64,12 +64,12 @@ export async function FETCH_STORES_BY_OWNER(USER_ID){
         },
     };
 
-    const response = await axios.request(config).then((response) => {
+    const result = await axios.request(config).then((response) => {
         return response;
     }).catch((error) => {
         return (error)
     });
-    return response;
+    return result;
 }
 
 export async function UPDATE_STORE_DATA(data,store_id,user_id,flag){
