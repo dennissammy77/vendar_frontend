@@ -21,12 +21,14 @@ export default function NEW_STORE_PRODUCT_FORM() {
     const schema = yup.object().shape({
         name: yup.string().required(),
         description: yup.string().required(),
+        buying_price: yup.number().required(),
         price: yup.number().required(),
         category: yup.string().required(),
         items: yup.number().required(),
         discount: yup.boolean(),
         discountprice: yup.number(),
         product_image: yup.string(),
+        approval_status: yup.boolean().required(),
     });
  
     const toast = useToast();
@@ -81,6 +83,11 @@ export default function NEW_STORE_PRODUCT_FORM() {
                 {errors.price && ( <Text fontSize={'sm'} color='red'>{errors.price.message}</Text>)}
             </FormControl>
             <FormControl mt='1' isRequired>
+                <FormLabel>Buying Price</FormLabel>
+                <Input disabled={isSubmitting} {...register('buying_price')} type='number' placeholder='200' variant='filled'/>
+                {errors.buying_price && ( <Text fontSize={'sm'} color='red'>{errors.buying_price.message}</Text>)}
+            </FormControl>
+            <FormControl mt='1' isRequired>
                 <FormLabel>Items</FormLabel>
                 <Input disabled={isSubmitting} {...register('items')} type='number' placeholder='number of items' variant='filled'/>
                 {errors.items && ( <Text fontSize={'sm'} color='red'>{errors.items.message}</Text>)}
@@ -93,8 +100,17 @@ export default function NEW_STORE_PRODUCT_FORM() {
                     <option value='stationary'>Stationary</option>
                     <option value='food&beverages'>Food&Beverages</option>
                     <option value='gifts'>Gifts</option>
+                    <option value='other'>Other</option>
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
+            </FormControl>
+            <FormControl mt='1' isRequired>
+                <FormLabel>Approve Products</FormLabel>
+                <Select disabled={isSubmitting} {...register('approval_status')}>
+                    <option value={true}>Yes, I want this product to be approved</option>
+                    <option value={false}>No, Do not approve product</option>
+                </Select>
+                {errors.approval_status && ( <Text fontSize={'sm'} color='red'>{errors.approval_status.message}</Text>)}
             </FormControl>
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
