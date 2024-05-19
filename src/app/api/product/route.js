@@ -137,6 +137,27 @@ export async function FETCH_ALL_STORE_PRODUCT_DATA_FOR_EXPORT (USER_ID,STORE_ID)
       });
     return result;
   }
+export async function FETCH_STORE_PRODUCTS_BY_VENDOR (USER_ID,STORE_ID){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+  
+    let CONFIG = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/api/product/store/all/vendor?store_id=${STORE_ID}&user_id=${USER_ID}`,
+      headers: { 
+        'Authorization': `Bearer ${AUTH_TOKEN}`
+      }
+    };
+  
+    const result = await axios.request(CONFIG).then((response) => {
+        return response;
+      }).catch((error) => {
+        return(error)
+      });
+    return result;
+  }
 export async function FETCH_ALL_STORE_PRODUCT_DATA_FOR_SEARCH (USER_ID,STORE_ID,SEARCH_QUERY){
     let BASE_URL = await RouteHandler();
     const cookies = new Cookies();
