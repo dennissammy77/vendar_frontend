@@ -96,6 +96,30 @@ export async function FETCH_TRANSACTION_DATA(transaction_id){
     
 }
 
+export async function FETCH_VENDOR_TRANSACTIONS_DATA(USER_ID,STORE_ID,WEEK){
+    let BASE_URL = await RouteHandler();
+    const cookies = new Cookies();
+    const AUTH_TOKEN = cookies.get('user_token1');
+
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}/api/transaction/vendor/all?user_id=${USER_ID}&store_id=${STORE_ID}&week=${WEEK}`,
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': `Bearer ${AUTH_TOKEN}`
+        },
+    };
+
+    const response = await axios.request(config).then((response) => {
+        return response;
+    }).catch((error) => {
+        return (error)
+    });
+    return response;
+    
+}
+
 export async function NEW_STORE_TRANSACTION(data,USER_ID, PRODUCT_ID, STORE_ID){
     let BASE_URL = await RouteHandler();
     const cookies = new Cookies();
