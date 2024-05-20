@@ -13,6 +13,7 @@ import { TiUserDelete } from "react-icons/ti";
 import { BsBoxSeam } from "react-icons/bs";
 import { VscDiscard } from "react-icons/vsc";
 import { BsBell } from "react-icons/bs";
+import { BiTransferAlt } from "react-icons/bi";
 
 export const FILTER_ICON = (props)=> <MdFilterAlt {...props}/>
 export const FILTER_ICON_CLOSE = (props)=> <MdFilterAltOff {...props}/>
@@ -56,3 +57,4 @@ export const WARNING_ICON = (props)=> <CiWarning {...props}/>
 export const LEFT_ARROW_ICON = (props)=> <FaLongArrowAltLeft {...props}/>
 export const RELOAD_ICON = (props)=> <IoReload {...props}/>
 export const NOTIFICATIONS_ICON = (props)=> <BsBell {...props}/>
+export const TRANSFER_ICON = (props) => <BiTransferAlt {...props}/>
