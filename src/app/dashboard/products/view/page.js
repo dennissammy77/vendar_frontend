@@ -12,7 +12,7 @@ import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, Gr
 // api
 import { FETCH_PRODUCT_DATA, UPDATE_STORE_PRODUCT } from '@/app/api/product/route';
 // icons
-import { CHEVRON_DOWN_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
+import { CHEVRON_DOWN_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON, MANAGE_ICON, SHOPPING_CART_ICON, TRANSACTION_ICON, TRANSFER_ICON } from '@/components/lib/constants/icons';
 // components
 import DELETE_PRODUCT_ALERT from '@/components/ui/product/DELETE_PRODUCT_ALERT';
 //import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
@@ -43,7 +43,8 @@ function Page() {
     });
     const {data: Transactions_data, isLoading: AnalyticsLoading } = useQuery({
         queryKey: ['transactions data', {PRODUCT_ID,tag,week}],
-        queryFn: () => FETCH_ALL_STORE_TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS(USER_ID,STORE_ID,PRODUCT_ID,week,tag)
+        queryFn: () => FETCH_ALL_STORE_TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS(USER_ID,STORE_ID,PRODUCT_ID,week,tag),
+		enabled: USER_ID !== undefined && STORE_ID !== undefined
     });
 
     const TRANSACTION_DATA_FOR_PRODUCT_ANALYTICS = Transactions_data?.data?.data;
@@ -101,11 +102,12 @@ function Page() {
         <Box>
             <DELETE_PRODUCT_ALERT isOpen={DELETE_PRODUCT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PRODUCT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PRODUCT_DATA={PRODUCT_DATA}/>
             <Flex align='center' justifyContent={'space-between'}>
-                <Text fontWeight='bold' fontSize='32px'>Product Data</Text>
+                <Text fontWeight='bold' fontSize='24px'>Product Data</Text>
                 <Menu>
                     <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
                     <MenuList>
                         <MenuItem icon={<SHOPPING_CART_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/products/edit/restock?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>Restock</MenuItem>
+						<MenuItem icon={<TRANSFER_ICON style={{fontSize: '16px'}}/>} as='a' href={`/dashboard/products/edit/management?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>Transfer</MenuItem>
                         <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/products/edit?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>Edit</MenuItem>
                         <MenuItem icon={<DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_PRODUCT_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
                     </MenuList>

@@ -15,7 +15,7 @@ import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 import { UserContext } from '@/components/providers/user.context';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import { BASE_BRAND, TERTIARY_BRAND } from '@/components/lib/constants/theme';
-import { PEOPLE_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
+import { DISCARD_ICON, PEOPLE_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
     // Utils
@@ -81,14 +81,14 @@ function Page() {
         }
     }
 
-    if (isLoading){
-        return(
-            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
-                <Spinner />
-                <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting up...</Text>
-            </Flex>
-        )
-    }
+//    if (isLoading){
+//      return(
+//            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+//                <Spinner />
+//                <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting up...</Text>
+//           </Flex>
+//        )
+//    }
 
     if (data?.data?.error){
         return (
@@ -152,31 +152,34 @@ function Page() {
                                 <InputLeftElement pointerEvents='none'>
                                     <Icon as={SEARCH_ICON} color='gray.500' ml='2'/>
                                 </InputLeftElement>
-                                <Input type='search' placeholder={'Search vendors'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
+                                <Input type='search' placeholder={'Search vendors by name'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
                             </InputGroup>
-                            <Box boxShadow={'md'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
-                                {VENDORS_DATA?.map((vendor)=>{
-                                    return(
-                                        <Text key={vendor?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_VENDOR(vendor);set_search_query('')})}>
-                                            {vendor?.name}
-                                        </Text>
-                                    )
-                                })}
-                                {/**
-                                 * 
-                                <>
-                                {VENDORS_DATA?.length === 0? 
-                                        <Flex border='1px solid' borderColor={TERTIARY_BRAND} borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
+                            <Box boxShadow={'sm'} p='4' borderRadius={'md'} bg={BASE_BRAND} display={search_query?.length > 0 ? '' : 'none'} position={'absolute'} top={50} left={0} zIndex={200} w='full'>
+								{isLoading?
+									<Flex flexDirection={'column'} justifyContent={'center'} align='center' h='60vh'>
+											<Spinner />
+											<Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Setting up...</Text>
+									</Flex>
+								:
+									<>
+										{VENDORS_DATA?.length === 0? 
+											<Flex border='1px solid' borderRadius={'md'} boxShadow={'sm'} p='10' h='40vh' justify={'center'} alignItems={'center'} textAlign={'center'} color='gray.300' fontWeight={'bold'} flexDirection={'column'} w='100%' my='4'>
                                             <Icon as={PEOPLE_ICON} boxSize={'6'}/>
                                             <Text>No vendors found!.</Text>
-                                        </Flex>
-                                    :
-                                    <>
-                                        
-                                    </>
-                                }
-                                </>
-                                 */}
+											</Flex>
+										:
+											<>
+												{VENDORS_DATA?.map((vendor)=>{
+													return(
+														<Text key={vendor?._id} boxShadow={'sm'} bg={TERTIARY_BRAND} cursor='pointer' my='2' p='2' borderRadius={'sm'} onClick={(()=>{SET_SELECTED_VENDOR(vendor);set_search_query('')})}>
+															{vendor?.name}
+													</Text>
+													)
+												})}
+											</>
+										}
+									</>
+								} 
                             </Box>
                         </Box>
                     }
@@ -186,6 +189,7 @@ function Page() {
                 :
                     <Button type='submit' variant={'filled'} borderRadius={'md'} bg='#05232e' mt='2' w='full' color='#fff' onClick={handleSubmit}>Transfer Product</Button>
                 }
+				<Button variant='ghost' borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<DISCARD_ICON/>}>Discard</Button>
             </form>
         </Box>
     )
