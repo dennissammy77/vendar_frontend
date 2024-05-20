@@ -1,7 +1,7 @@
 'use client'
 import { Avatar, Badge, Box, Button, Divider, Drawer, DrawerContent, DrawerOverlay, Flex, HStack, Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, VStack, useDisclosure, MenuGroup, Progress } from "@chakra-ui/react";
 import { useContext } from "react";
-import { usePathname, useRouter  } from "next/navigation";
+import { usePathname, useRouter,useSearchParams  } from "next/navigation";
 import { UserContext } from "@/components/providers/user.context";
 
 import { IoMenu } from "react-icons/io5";
@@ -54,7 +54,8 @@ export default function NavigationBody({children,navigation}){
 const TopNav = ({ onOpen,onToggle, ...rest }) => {
   const {user,set_user_handler} = useContext(UserContext);
   const router = useRouter();
-  const USER_ID = user?.data?.data?._id;
+const searchParams = useSearchParams()
+  const USER_ID = user?.data?.data?._id || searchParams.get('uid');
   const USER_DATA = user?.data?.data;
   const STORE_ID = FETCH_ACTIVE_STORE_ID();
 
