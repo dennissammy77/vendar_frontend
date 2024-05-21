@@ -1,14 +1,7 @@
 'use client'
-import { Box, Text, useToast } from '@chakra-ui/react'
-import React, { useContext, useEffect, Suspense  } from 'react'
+import { Box, } from '@chakra-ui/react'
+import React,{ Suspense  } from 'react'
 import NavigationBody from './components/navigation'
-import { IoPeopleOutline, IoStorefrontOutline } from "react-icons/io5";
-import { UserContext } from '@/components/providers/user.context';
-import { useRouter } from 'next/navigation';
-import { MdOutlineAdminPanelSettings, MdOutlineManageAccounts, MdSupportAgent } from 'react-icons/md';
-import { GiShoppingBag } from "react-icons/gi";
-import { LiaMoneyBillWaveSolid } from "react-icons/lia";
-import { CiGrid42 } from 'react-icons/ci';
 import LOADING from './loading';
 import { ACCOUNT_SETTINGS_ICON, HOME_ICON, PEOPLE_ICON, PICKUPS_ICON, PRODUCT_ICON, STAFF_ICON, STORE_ICON, SUPPORT_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 
