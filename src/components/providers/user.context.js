@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useContext, useEffect, useState } from 'react';
 import useFetchToken from '../hooks/useFetchToken.hook';
 import { FETCH_USER_DATA } from '@/app/api/auth/route';
