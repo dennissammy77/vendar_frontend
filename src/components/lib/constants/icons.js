@@ -14,6 +14,7 @@ import { BsBoxSeam } from "react-icons/bs";
 import { VscDiscard } from "react-icons/vsc";
 import { BsBell } from "react-icons/bs";
 import { BiTransferAlt } from "react-icons/bi";
+import { GoPersonAdd } from "react-icons/go";
 
 export const FILTER_ICON = (props)=> <MdFilterAlt {...props}/>
 export const FILTER_ICON_CLOSE = (props)=> <MdFilterAltOff {...props}/>
@@ -58,3 +59,4 @@ export const LEFT_ARROW_ICON = (props)=> <FaLongArrowAltLeft {...props}/>
 export const RELOAD_ICON = (props)=> <IoReload {...props}/>
 export const NOTIFICATIONS_ICON = (props)=> <BsBell {...props}/>
 export const TRANSFER_ICON = (props) => <BiTransferAlt {...props}/>
+export const PERSON_ADD_ICON = (props) => <GoPersonAdd {...props}/>
