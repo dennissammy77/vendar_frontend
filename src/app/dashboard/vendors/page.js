@@ -6,7 +6,7 @@ import React, { useContext, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_ALL_STAKEHOLDERS_DATA_FOR_EXPORT, FETCH_STAKEHOLDERS_DATA } from '@/app/api/auth/route';
 import { UserContext } from '@/components/providers/user.context';
-import { ADD_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, EXPORT_ICON, FILTER_ICON, FILTER_ICON_CLOSE, IMPORT_ICON, MANAGE_ICON, PEOPLE_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
+import { ADD_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, EXPORT_ICON, FILTER_ICON, FILTER_ICON_CLOSE, IMPORT_ICON, MANAGE_ICON, PEOPLE_ICON, PERSON_ADD_ICON, SEARCH_ICON } from '@/components/lib/constants/icons';
 import { PRIMARY_BRAND, TERTIARY_BRAND } from '@/components/lib/constants/theme';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import Link from 'next/link';
@@ -104,6 +104,12 @@ export default function Page() {
             <Box my='2' boxShadow={'md'} p='2'>
                 <Flex align='center' justify={'flex-end'}>
                     <Flex gap='4' mx='2'>
+                        <Link href={`/dashboard/vendors/requests?uid=${USER_ID}&store_id=${STORE_ID}`}>
+                            <HStack align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
+                                <Icon as={PERSON_ADD_ICON} boxSize={'4'}/>
+                                <Text fontWeight={'bold'} fontSize={'sm'}>requests</Text>
+                            </HStack>
+                        </Link>
                         <Link href={`/dashboard/vendors/new/import?uid=${USER_ID}&store_id=${STORE_ID}`}>
                             <HStack align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
                                 <Icon as={IMPORT_ICON} boxSize={'4'}/>
@@ -142,8 +148,8 @@ export default function Page() {
                             <Thead bg={TERTIARY_BRAND}>
                                 <Tr>
                                     <Th>Name</Th>
+                                    <Th>Email</Th>
                                     <Th>Phone</Th>
-                                    <Th>Status</Th>
                                     <Th>Actions</Th>
                                 </Tr>
                             </Thead>
@@ -160,9 +166,8 @@ export default function Page() {
                                                     </Box>
                                                 </HStack>
                                             </Td>
-                                            <Td>{vendor?.mobile}</Td>
-                                            <Td><Badge colorScheme={vendor?.account_status_ref?.suspension_status ? 'orange':'green'}>{vendor?.account_status_ref?.suspension_status ? 'suspended' : 'active'}</Badge></Td>
-                                            <Td>
+                                            <Td>{vendor?.email}</Td>
+                                            <Td>{vendor?.mobile}</Td><Td>
                                                 <Link href={`/dashboard/vendors/view?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${vendor?._id}`}>
                                                     <HStack color='gray.600' cursor={'pointer'}pr='1'>
                                                         <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
