@@ -67,7 +67,7 @@ function Page() {
                 toast({ title: 'Success!: Product updated successfully', description: ``, status: 'success', variant: 'left-accent', position:'top-left',isClosable: true });
             })
             set_loading_status(false);
-    }catch(error){
+        }catch(error){
             set_loading_status(false);
             return toast({ title: `${error}`, description:``, status:'error', variant: 'left-accent', position: 'top-left', isClosable: true })
 		}
