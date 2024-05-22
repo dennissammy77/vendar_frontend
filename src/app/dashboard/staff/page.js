@@ -114,6 +114,7 @@ export default function Page() {
                             <Thead bg={TERTIARY_BRAND}>
                                 <Tr>
                                     <Th>Name</Th>
+                                    <Th>email</Th>
                                     <Th>Phone</Th>
                                     <Th>Role</Th>
                                     <Th>Status</Th>
@@ -133,11 +134,12 @@ export default function Page() {
                                                     </Box>
                                                 </HStack>
                                             </Td>
+                                            <Td>{staff?.email}</Td>
                                             <Td>{staff?.mobile}</Td>
                                             <Td>{staff?.store_admin_account_ref?.role}</Td>
                                             <Td><Badge colorScheme={staff?.account_status_ref?.suspension_status ? 'orange':'green'}>{staff?.account_status_ref?.suspension_status ? 'suspended' : 'active'}</Badge></Td>
                                             <Td>
-                                                {staff?.store_admin_account_ref.role === 'owner'? 
+                                                {staff?.store_admin_account_ref?.role === 'owner'? 
                                                     null
                                                     :
                                                     <Link href={`/dashboard/staff/view?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${staff?._id}`}>
