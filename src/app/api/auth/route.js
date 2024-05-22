@@ -369,3 +369,45 @@ export async function FETCH_VENDOR_STAKEHOLDER_DETAILS (USER_ID){
     });
   return result;
 }
+export async function MANAGE_STORE_VENDOR_REQUESTS (USER_ID,STORE_ID,ACCOUNT_ID,FLAG){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'put',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholder/vendor/requests/manage?user_id=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}&flag=${FLAG}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
+}
+export async function FETCH_VENDOR_REQUEST_STAKEHOLDER_DETAILS (USER_ID,STORE_ID){
+  let BASE_URL = await RouteHandler();
+  const cookies = new Cookies();
+  const AUTH_TOKEN = cookies.get('user_token1');
+
+  let CONFIG = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: `${BASE_URL}/api/user/stakeholder/vendor/requests?user_id=${USER_ID}&store_id=${STORE_ID}`,
+    headers: { 
+      'Authorization': `Bearer ${AUTH_TOKEN}`
+    }
+  };
+
+  const result = await axios.request(CONFIG).then((response) => {
+      return response;
+    }).catch((error) => {
+      return(error)
+    });
+  return result;
+}
