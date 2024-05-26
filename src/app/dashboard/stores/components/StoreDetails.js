@@ -20,7 +20,7 @@ export default function StoreDetails({store,active_store}){
         <Box bg='#E4F0FC' borderRadius={'md'} boxShadow={'sm'} p='4' my='2'>
             <Flex justify={'space-between'}>
                 <HStack>
-                    <Text fontSize={{base:'lg',md:'x-large'}} fontWeight={'bold'} my='2'>{store?.name}</Text>
+                    <Text fontSize={{base:'lg',md:'x-large'}} fontWeight={'bold'} my='2' w={{base:'100px',md:'300px'}} overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{store?.name}</Text>
                     <HStack>
                         {active_store === store?._id ? <Badge fontSize="xs" colorScheme={'purple'}>active</Badge> : null }
                     </HStack>
