@@ -92,7 +92,7 @@ const searchParams = useSearchParams()
             <HStack>
               <Avatar size={'sm'} name={USER_DATA?.name}/>
               <Box hideBelow='md' ml="2">
-                <Text fontSize="md">{USER_DATA?.name || '-'}</Text>
+                <Text fontSize="md" w='100px' overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{USER_DATA?.name || '-'}</Text>
                 <HStack spacing='2'>
                   <Text fontSize="xs" w='100px' overflow='hidden' textOverflow={'ellipsis'} whiteSpace='nowrap'>{USER_DATA?.active_store_ref?.name || '-'}</Text>
                   <Icon as={CHEVRON_DOWN_ICON} boxSize={'3'}/>
