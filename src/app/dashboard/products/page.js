@@ -67,6 +67,14 @@ export default function Page() {
     }
 
     const HANDLE_PAGE_CHANGE=(sign)=>{
+        if(PRODUCTS_COUNT <= 10){
+            set_page(1);
+            return
+        }
+        if ((page * 10) > PRODUCTS_COUNT && sign === '+'){
+            set_page(page);
+            return
+        }
         if (page === 1 && sign === '-'){
             set_page(1)
             return;
