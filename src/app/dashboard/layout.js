@@ -36,12 +36,12 @@ const navigation = [
         title:  'Products',
         route: '/dashboard/products'
     },
-    {
-        id: '4',
-        icon: PICKUPS_ICON,
-        title:  'PickUps',
-        route: '/dashboard/pickups'
-    },
+    // {
+    //     id: '4',
+    //     icon: PICKUPS_ICON,
+    //     title:  'PickUps',
+    //     route: '/dashboard/pickups'
+    // },
     {
         id: '5',
         icon: STAFF_ICON,
