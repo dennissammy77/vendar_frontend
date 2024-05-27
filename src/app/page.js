@@ -10,6 +10,7 @@ import Link from "next/link";
 import Features from "./(Home)/Features/page";
 import useFetchToken from "@/components/hooks/useFetchToken.hook";
 import { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
+import {SignInButton, SignedIn, SignedOut, UserButton, useUser} from "@clerk/nextjs";
 
 export default function Index() {
   const router = useRouter();
@@ -31,6 +32,8 @@ export default function Index() {
     }
   }
 
+	const user_auth = useUser();
+	console.log(user_auth)
   return (
     <Box>
       <Flex justify={'space-between'} align={'center'} py='4' px={{sm:5,md:'20'}} bg='#ffffff' position={'fixed'} top='0' left='0' w='100%' zIndex='1000'>
@@ -44,7 +47,15 @@ export default function Index() {
             </HStack>
              */}
           </HStack>
-          {!token?
+		  <HStack>
+			<Text>{user_auth.user?.fullName ?? "Guest"}</Text>
+			<SignedOut><SignInButton/></SignedOut>
+			<SignedIn><UserButton afterSignOutUrl="/"/></SignedIn>
+		  </HStack>
+		  {/**
+			<>
+
+			{!token?
             <HStack align='center' spacing='2' fontWeight={'regular'}>
               <Link href={`/signin`} >
                 <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'}>SignIn</Text>
@@ -71,6 +82,8 @@ export default function Index() {
               </Link>
             </Flex>
           }
+		  </>
+			**/}
       </Flex>
       <Home/>
       <Features/>
