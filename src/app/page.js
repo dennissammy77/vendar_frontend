@@ -10,7 +10,7 @@ import Link from "next/link";
 import Features from "./(Home)/Features/page";
 import useFetchToken from "@/components/hooks/useFetchToken.hook";
 import { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
-import {SignInButton, SignedIn, SignedOut, UserButton, useUser} from "@clerk/nextjs";
+import {SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser} from "@clerk/nextjs";
 
 export default function Index() {
   const router = useRouter();
@@ -48,9 +48,21 @@ export default function Index() {
              */}
           </HStack>
 		  <HStack>
-			<Text>{user_auth.user?.fullName ?? "Guest"}</Text>
-			<SignedOut><SignInButton/></SignedOut>
-			<SignedIn><UserButton afterSignOutUrl="/"/></SignedIn>
+			<SignedOut>
+        <SignInButton mode="modal"/>
+        <SignUpButton mode="modal" forceRedirectUrl="/onboarding/newstore" signInFallbackRedirectUrl="/dashboard/home">
+            <Button size={'sm'} variant="solid" bgColor='#4E2FD7' color='#fff' display="inline-flex" alignItems="center" justifyContent="center" w={{ base: "full", sm: "auto", }} mr='1' cursor="pointer"> 
+                Get Started
+                <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor" hideBelow={'sm'}>
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </Icon>
+            </Button>
+        </SignUpButton>
+      </SignedOut>
+			<SignedIn>
+			  <Text>{user_auth.user?.fullName ?? "Guest"}</Text>
+        <UserButton afterSignOutUrl="/"/>
+      </SignedIn>
 		  </HStack>
 		  {/**
 			<>
