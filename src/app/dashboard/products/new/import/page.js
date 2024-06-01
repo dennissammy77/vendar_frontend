@@ -10,7 +10,7 @@ import * as yup from "yup"
 import { MANY_NEW_STORE_PRODUCTS } from '@/app/api/product/route';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import { CHEVRON_RIGHT_ICON, DELETE_ICON, DISCARD_ICON, DONE_ICON } from '@/components/lib/constants/icons';
-import IMPORT_MANY_PRODUCTS_FROM_EXCEL from '@/components/hooks/import/EXCEL_IMPORT.js';
+//import IMPORT_MANY_PRODUCTS_FROM_EXCEL from '@/components/hooks/import/EXCEL_IMPORT.js';
 import { BASE_BRAND, PRIMARY_BRAND, SECONDARY_BRAND, TERTIARY_BRAND } from '@/components/lib/constants/theme';
 import Excel from 'exceljs';
 
