@@ -4,8 +4,7 @@ import React, { useContext } from 'react';
 // util
 import moment from 'moment';
 import { UserContext } from '@/components/providers/user.context';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Cookies from 'universal-cookie';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 // component
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
