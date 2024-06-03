@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext } from 'react'
+import React, { Suspense, useContext } from 'react'
 // utils
 import { useQuery } from '@tanstack/react-query';
 import { UserContext } from '@/components/providers/user.context';
@@ -18,6 +18,7 @@ import { BASE_BRAND, SECONDARY_BRAND } from '@/components/lib/constants/theme';
 import moment from 'moment';
 import DELETE_PICKUP_ALERT from '@/components/ui/pickups/DELETE_PICKUP_ALERT';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import LOADING from '../../loading';
 
 function Page() {
     // util
@@ -80,123 +81,125 @@ function Page() {
     const PICKUP_DATA = data?.data?.data;
 
     return (
-        <Box>
-            <DELETE_PICKUP_ALERT isOpen={DELETE_PICKUP_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PICKUP_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PICKUP_ID={PICKUP_ID}/>
-            <Text fontWeight='bold' fontSize='32px'>PickUp Data</Text>
-            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='4'>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
-                </BreadcrumbItem>
+        <Suspense fallback={<LOADING/>}>
+            <Box>
+                <DELETE_PICKUP_ALERT isOpen={DELETE_PICKUP_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_PICKUP_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} PICKUP_ID={PICKUP_ID}/>
+                <Text fontWeight='bold' fontSize='32px'>PickUp Data</Text>
+                <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='4'>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
+                    </BreadcrumbItem>
 
-                <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/pickups?uid=${USER_ID}&store_id=${STORE_ID}`}>Pickups</BreadcrumbLink>
-                </BreadcrumbItem>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href={`/dashboard/pickups?uid=${USER_ID}&store_id=${STORE_ID}`}>Pickups</BreadcrumbLink>
+                    </BreadcrumbItem>
 
-                <BreadcrumbItem>
-                    <BreadcrumbLink isCurrentPage>{PICKUP_DATA?.name}</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
-            <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack p='1' px='2' color='#FFFFFF' bg={SECONDARY_BRAND} borderRadius={'full'} onClick={Handle_Approve_PickUp}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Approve</Text>
-                        <Icon boxSize='4' as={PICKUPS_ICON} cursor='pointer'/>
-                    </HStack>
-                    <Link href={`/dashboard/pickups/edit?uid=${USER_ID}&store_id=${STORE_ID}&pickup_id=${PICKUP_ID}`}>
-                        <HStack>
-                            <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                            <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink isCurrentPage>{PICKUP_DATA?.name}</BreadcrumbLink>
+                    </BreadcrumbItem>
+                </Breadcrumb>
+                <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
+                    <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
+                        <HStack p='1' px='2' color='#FFFFFF' bg={SECONDARY_BRAND} borderRadius={'full'} onClick={Handle_Approve_PickUp}>
+                            <Text fontWeight={'bold'} fontSize={'md'}>Approve</Text>
+                            <Icon boxSize='4' as={PICKUPS_ICON} cursor='pointer'/>
                         </HStack>
-                    </Link>
-                    <HStack onClick={DELETE_PICKUP_ALERT_DISCLOSURE?.onOpen}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                        <Icon boxSize='6' as={DELETE_ICON} cursor='pointer'/>
-                    </HStack>
-                </Flex>
+                        <Link href={`/dashboard/pickups/edit?uid=${USER_ID}&store_id=${STORE_ID}&pickup_id=${PICKUP_ID}`}>
+                            <HStack>
+                                <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
+                                <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
+                            </HStack>
+                        </Link>
+                        <HStack onClick={DELETE_PICKUP_ALERT_DISCLOSURE?.onOpen}>
+                            <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
+                            <Icon boxSize='6' as={DELETE_ICON} cursor='pointer'/>
+                        </HStack>
+                    </Flex>
+                </Box>
+                <Grid templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}} templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}} gap={4} my='2' >
+                    <GridItem boxShadow={'md'} p='2' bg={BASE_BRAND} borderRadius={'md'}>
+                        <Box>
+                            <Text fontWeight={'bold'}>Name</Text>
+                            <Text fontWeight={''}>{PICKUP_DATA?.name}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Price</Text>
+                            <Text fontWeight={''}>{PICKUP_DATA?.price}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Items</Text>
+                            <Text fontWeight={''}>{PICKUP_DATA?.price}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Code</Text>
+                            <Text fontWeight={''}>{PICKUP_DATA?.code}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Comment</Text>
+                            <Text fontWeight={''}>{PICKUP_DATA?.comment}</Text>
+                        </Box>
+                        <HStack align='center' my='2'>
+                            <Icon as={PICKUPS_ICON} boxSize={'4'} />
+                            <Text fontWeight={'bold'}>Pick Up Details</Text>
+                        </HStack>
+                        <Divider/>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Date</Text>
+                            <Text fontWeight={''}>{moment(PICKUP_DATA?.pickup_date).format("DD MMM YY")}</Text>
+                        </Box>
+                        <Box>
+                            <Text fontWeight={'bold'}>Status</Text>
+                            <Badge colorScheme={PICKUP_DATA?.pickup_status? 'green': 'orange'}>{PICKUP_DATA?.pickup_stage}</Badge>
+                        </Box>
+                    </GridItem>
+                    <GridItem boxShadow={'md'} p='2' bg={BASE_BRAND} borderRadius={'md'}>
+                        <HStack align='center' my='2'>
+                            <Icon as={PERSON_ICON} boxSize={'4'} />
+                            <Text fontWeight={'bold'}>Customer Details</Text>
+                        </HStack>
+                        <Divider/>
+                        <Box>
+                            <Text fontWeight={'bold'}>Name</Text>
+                            <Text >{PICKUP_DATA?.customer_name}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Mobile</Text>
+                            <Text fontWeight={''} my='2'>{PICKUP_DATA?.customer_mobile}</Text>
+                        </Box>
+                        <HStack align='center' my='2'>
+                            <Icon as={MONEY_COINS_ICON} boxSize={'4'} />
+                            <Text fontWeight={'bold'}>Payment Details</Text>
+                        </HStack>
+                        <Divider/>
+                        <Box>
+                            <Text fontWeight={'bold'}>Status</Text>
+                            <Badge colorScheme={PICKUP_DATA?.payment_status? 'green': 'orange'}>{PICKUP_DATA?.payment_status? 'paid': 'pending'}</Badge>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Method</Text>
+                            <Text fontWeight={''} my='2'>{PICKUP_DATA?.payment_method}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Code</Text>
+                            <Text fontWeight={''} my='2'>{PICKUP_DATA?.payment_code}</Text>
+                        </Box>
+                        <HStack align='center' my='2'>
+                            <Icon as={PERSON_ICON} boxSize={'4'} />
+                            <Text fontWeight={'bold'}>Vendor Details</Text>
+                        </HStack>
+                        <Divider/>
+                        <Box>
+                            <Text fontWeight={'bold'}>Name</Text>
+                            <Text>{PICKUP_DATA?.on_the_go_client_name}</Text>
+                        </Box>
+                        <Box my='2'>
+                            <Text fontWeight={'bold'}>Mobile</Text>
+                            <Text fontWeight={''} my='2'>{PICKUP_DATA?.on_the_go_client_mobile}</Text>
+                        </Box>
+                    </GridItem>
+                </Grid>
             </Box>
-            <Grid templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}} templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}} gap={4} my='2' >
-                <GridItem boxShadow={'md'} p='2' bg={BASE_BRAND} borderRadius={'md'}>
-                    <Box>
-                        <Text fontWeight={'bold'}>Name</Text>
-                        <Text fontWeight={''}>{PICKUP_DATA?.name}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Price</Text>
-                        <Text fontWeight={''}>{PICKUP_DATA?.price}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Items</Text>
-                        <Text fontWeight={''}>{PICKUP_DATA?.price}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Code</Text>
-                        <Text fontWeight={''}>{PICKUP_DATA?.code}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Comment</Text>
-                        <Text fontWeight={''}>{PICKUP_DATA?.comment}</Text>
-                    </Box>
-                    <HStack align='center' my='2'>
-                        <Icon as={PICKUPS_ICON} boxSize={'4'} />
-                        <Text fontWeight={'bold'}>Pick Up Details</Text>
-                    </HStack>
-                    <Divider/>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Date</Text>
-                        <Text fontWeight={''}>{moment(PICKUP_DATA?.pickup_date).format("DD MMM YY")}</Text>
-                    </Box>
-                    <Box>
-                        <Text fontWeight={'bold'}>Status</Text>
-                        <Badge colorScheme={PICKUP_DATA?.pickup_status? 'green': 'orange'}>{PICKUP_DATA?.pickup_stage}</Badge>
-                    </Box>
-                </GridItem>
-                <GridItem boxShadow={'md'} p='2' bg={BASE_BRAND} borderRadius={'md'}>
-                    <HStack align='center' my='2'>
-                        <Icon as={PERSON_ICON} boxSize={'4'} />
-                        <Text fontWeight={'bold'}>Customer Details</Text>
-                    </HStack>
-                    <Divider/>
-                    <Box>
-                        <Text fontWeight={'bold'}>Name</Text>
-                        <Text >{PICKUP_DATA?.customer_name}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Mobile</Text>
-                        <Text fontWeight={''} my='2'>{PICKUP_DATA?.customer_mobile}</Text>
-                    </Box>
-                    <HStack align='center' my='2'>
-                        <Icon as={MONEY_COINS_ICON} boxSize={'4'} />
-                        <Text fontWeight={'bold'}>Payment Details</Text>
-                    </HStack>
-                    <Divider/>
-                    <Box>
-                        <Text fontWeight={'bold'}>Status</Text>
-                        <Badge colorScheme={PICKUP_DATA?.payment_status? 'green': 'orange'}>{PICKUP_DATA?.payment_status? 'paid': 'pending'}</Badge>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Method</Text>
-                        <Text fontWeight={''} my='2'>{PICKUP_DATA?.payment_method}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Code</Text>
-                        <Text fontWeight={''} my='2'>{PICKUP_DATA?.payment_code}</Text>
-                    </Box>
-                    <HStack align='center' my='2'>
-                        <Icon as={PERSON_ICON} boxSize={'4'} />
-                        <Text fontWeight={'bold'}>Vendor Details</Text>
-                    </HStack>
-                    <Divider/>
-                    <Box>
-                        <Text fontWeight={'bold'}>Name</Text>
-                        <Text>{PICKUP_DATA?.on_the_go_client_name}</Text>
-                    </Box>
-                    <Box my='2'>
-                        <Text fontWeight={'bold'}>Mobile</Text>
-                        <Text fontWeight={''} my='2'>{PICKUP_DATA?.on_the_go_client_mobile}</Text>
-                    </Box>
-                </GridItem>
-            </Grid>
-        </Box>
+        </Suspense>
     )
 }
 
