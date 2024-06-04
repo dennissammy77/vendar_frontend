@@ -39,10 +39,10 @@ export default function Index() {
       <Flex justify={'space-between'} align={'center'} py='4' px={{sm:5,md:'20'}} bg='#ffffff' position={'fixed'} top='0' left='0' w='100%' zIndex='1000'>
           <HStack align='center' mx='4' spacing='4'>
             <LOGO color='#4E2FD7' size='32px'/>
+            <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Features</Text>
             {/**
              * 
             <HStack hideBelow={'sm'} display={'none'}>
-              <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Features</Text>
               <Text cursor={'pointer'} _hover={{fontWeight:'bold'}} transition={'.3s ease-in-out'} >Pricing</Text>
             </HStack>
              */}
