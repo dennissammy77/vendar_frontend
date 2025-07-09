@@ -21,7 +21,7 @@ function Page() {
             <LOGO color='#4E2FD7' size='32px'/>
           </Flex>
           <Text fontWeight={'bold'} fontSize={'xl'}>New Store</Text>
-          <Text fontSize={'sm'} color='gray.400'>Set up your store to start managing clients, <br/>products easily in one place.</Text>
+          <Text fontSize={'sm'} color='gray.400'>Set up your store to start managing <br/>products, orders, staff easily in one place.</Text>
           {/**New Store Form goes here*/}
           <NewStoreForm />
           <Text 

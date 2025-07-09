@@ -24,7 +24,6 @@ export default function NewStoreForm() {
         mobile: yup.string().required().min(10).max(10),
         email: yup.string().email().matches(EmailRegex, 'Email address must be of correct format'),
         location: yup.string(),
-        shelves: yup.number().min(1).required('Number of shelves is required')
     });
     useEffect(()=>{
         router.prefetch(`/dashboard/stores?uid=${USER_ID}`);
@@ -57,7 +56,7 @@ export default function NewStoreForm() {
                 window.location.href = `/dashboard/stores?uid=${USER_ID}`
                 return ;
             }).catch((err)=>{
-                return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
+				return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
             })
         }catch(err){
             return toast({ title: `Error`, description: `Could not create your store:${err}`, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
@@ -67,12 +66,12 @@ export default function NewStoreForm() {
     <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl mt='1' isRequired my='2'>
             <FormLabel>Store Name</FormLabel>
-            <Input disabled={isSubmitting} {...register('name')} type='text' placeholder='Johns Shelf' variant='filled'/>
+            <Input disabled={isSubmitting} {...register('name')} type='text' placeholder='Thrift by Sally' variant='filled'/>
             {errors.name && ( <Text fontSize={'sm'} color='red'>{errors.name.message}</Text>)}
         </FormControl>
         <FormControl mt='1'>
             <FormLabel>Store email</FormLabel>
-            <Input disabled={isSubmitting} {...register('email')} type='email' placeholder='johnstore@store.com' variant='filled'/>
+            <Input disabled={isSubmitting} {...register('email')} type='email' placeholder='thriftbysally@store.com' variant='filled'/>
             {errors.email && ( <Text fontSize={'sm'} color='red'>{errors.email.message}</Text>)}
         </FormControl>
         <FormControl mt='1'>
@@ -85,13 +84,8 @@ export default function NewStoreForm() {
             <Input disabled={isSubmitting} {...register('location')} type='text' placeholder='Moi Avenue, Nairobi' variant='filled'/>
             {errors.location && ( <Text fontSize={'sm'} color='red'>{errors.location.message}</Text>)}
         </FormControl>
-        <FormControl mt='1' my='2'>
-            <FormLabel>Number of shelves</FormLabel>
-            <Input disabled={isSubmitting} {...register('shelves')} type='number' placeholder='eg: 10' variant='filled'/>
-            {errors.shelves && ( <Text fontSize={'sm'} color='red'>{errors.shelves.message}</Text>)}
-        </FormControl>
-        <FormControl mt='1' my='2'>
-            <FormLabel>About the store</FormLabel>
+		<FormControl mt='1' my='2'>
+            <FormLabel>Tell us abit about your store</FormLabel>
             <Textarea h='100px' disabled={isSubmitting} {...register('description')} type='text' placeholder='Tell us a bit about your store' variant='filled'/>
             {errors.description && ( <Text fontSize={'sm'} color='red'>{errors.description.message}</Text>)}
         </FormControl>

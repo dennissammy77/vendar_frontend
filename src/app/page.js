@@ -10,6 +10,7 @@ import Link from "next/link";
 import Features from "./(Home)/Features/page";
 import useFetchToken from "@/components/hooks/useFetchToken.hook";
 import { FETCH_ACTIVE_STORE_ID } from "@/components/hooks/SELECT_ACTIVE_STORE";
+import Script from 'next/script';
 
 export default function Index() {
   const router = useRouter();
@@ -33,6 +34,29 @@ export default function Index() {
   
   return (
     <Box>
+		<Script
+      id="facebook-logs"
+      src="https://connect.facebook.net/en_US/sdk.js"
+      onReady={() => {
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '8399748010054329',
+              cookie     : true,
+              xfbml      : true,
+              version    : 'v20.0'
+            })
+            FB.AppEvents.logPageView();
+          };
+    
+          (function(d, s, id){
+            let js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+        }}
+		/>
       <Flex justify={'space-between'} align={'center'} py='4' px={{sm:5,md:'20'}} bg='#ffffff' position={'fixed'} top='0' left='0' w='100%' zIndex='1000'>
           <HStack align='center' mx='4' spacing='4'>
             <LOGO color='#4E2FD7' size='32px'/>
