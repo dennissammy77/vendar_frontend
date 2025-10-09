@@ -168,6 +168,7 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
   const USER_DATA = user?.data?.data;
   const pathname = usePathname();
   const pathArr = pathname?.split('/');
+  const router = useRouter()
 
   const active_store = FETCH_ACTIVE_STORE_ID();
   function daysRemaining() {
@@ -220,7 +221,14 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
           <Text fontSize={'md'}>Current Plan</Text>
           <Badge colorScheme={'purple'}>{USER_DATA?.subscription_ref?.plan}</Badge>
           <Text fontSize={'xs'}>{daysRemaining()} days left</Text>
-          <Button bg={SECONDARY_BRAND} color={BASE_BRAND}>Upgrade Plan</Button>
+          <Button 
+            bg={SECONDARY_BRAND} 
+            color={BASE_BRAND}
+            onClick={() => router.push('/subscription')}
+            size="sm"
+          >
+            {USER_DATA?.subscription_ref?.plan === 'pro' ? 'Manage Plan' : 'Upgrade Plan'}
+          </Button>
         </Flex>
       )}
     </Box>
