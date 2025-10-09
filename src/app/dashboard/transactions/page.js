@@ -83,7 +83,7 @@ export default function Page() {
         })
     }
 
-    const TRANSACTION_DATA = data?.data?.data;
+    const TRANSACTION_DATA = user?.data?.data?.account_type === 'vendor' ? data?.data?.data?.filter((t)=> t.vendor._id == USER_ID): data?.data?.data;
     const TRANSACTION_DATA_COUNT = data?.data?.count;
 
     if (data?.data?.error){

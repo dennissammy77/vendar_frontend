@@ -13,6 +13,7 @@ import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 export default function NEW_STORE_PRODUCT_FORM() {
     const {user} = useContext(UserContext);
+    const USER_DATA = user?.data?.data;
 
     const searchParams = useSearchParams()
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
@@ -28,7 +29,7 @@ export default function NEW_STORE_PRODUCT_FORM() {
         discount: yup.boolean(),
         discountprice: yup.number(),
         product_image: yup.string(),
-        approval_status: yup.boolean().required(),
+        approval_status: yup.boolean().required().default(false),
     });
  
     const toast = useToast();
@@ -104,14 +105,16 @@ export default function NEW_STORE_PRODUCT_FORM() {
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
-            <FormControl mt='1' isRequired>
-                <FormLabel>Approve Products</FormLabel>
-                <Select disabled={isSubmitting} {...register('approval_status')}>
-                    <option value={true}>Yes, I want this product to be approved</option>
-                    <option value={false}>No, Do not approve product</option>
-                </Select>
-                {errors.approval_status && ( <Text fontSize={'sm'} color='red'>{errors.approval_status.message}</Text>)}
-            </FormControl>
+            {USER_DATA.account_type !== 'vendor' && (
+                <FormControl mt='1' isRequired>
+                    <FormLabel>Approve Products</FormLabel>
+                    <Select disabled={isSubmitting} {...register('approval_status')}>
+                        <option value={true}>Yes, I want this product to be approved</option>
+                        <option value={false}>No, Do not approve product</option>
+                    </Select>
+                    {errors.approval_status && ( <Text fontSize={'sm'} color='red'>{errors.approval_status.message}</Text>)}
+                </FormControl>
+            )}
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
                     <Icon as={CiWarning} boxSize='4'/>

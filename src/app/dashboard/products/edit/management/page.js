@@ -57,11 +57,11 @@ function Page() {
         setError,
         formState: { errors, isSubmitting },
     } = useForm({
-        resolver: yupResolver(schema),
+        // resolver: yupResolver(schema),
     });
 
-    const onSubmit = async(data) => {
-        const ACCOUNT_ID = data?.vendor;
+    const onSubmit = async() => {
+        const ACCOUNT_ID = SELECTED_VENDOR?._id;
         try {
           await MOVE_STORE_PRODUCT_TO_STAKEHOLDER (STORE_ID,USER_ID,ACCOUNT_ID,PRODUCT_ID).then((response)=>{
             if(response?.data?.error === true){
@@ -143,7 +143,7 @@ function Page() {
                     <FormLabel fontSize={'xl'} fontWeight={'bold'}>Transfer product ownership to Vendor</FormLabel>
                     {SELECTED_VENDOR?.name?.length > 0 ? 
                         <Flex boxShadow={'sm'} bg={TERTIARY_BRAND} borderRadius={'sm'} justify={'space-between'} align={'center'} p='2'>
-                            <Text fontWeight={'bold'} fontSize={'lg'}>{SELECTED_VENDOR?.name}</Text>
+                            <Text fontWeight={'bold'} fontSize={'lg'}>{SELECTED_VENDOR?.name}-{SELECTED_VENDOR?.email}-{SELECTED_VENDOR?.mobile}</Text>
                             <Text cursor={'pointer'} fontSize={'sm'} onClick={(()=>{SET_SELECTED_VENDOR({})})}>change vendor</Text>
                         </Flex>
                             :

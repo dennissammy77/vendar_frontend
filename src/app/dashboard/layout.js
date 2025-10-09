@@ -22,19 +22,22 @@ const navigation = [
         id:     '1',
         title:  'Home',
         icon: HOME_ICON,
-        route:  '/dashboard/home'
+        route:  '/dashboard/home',
+        permission: ['store_admin','super_admin']
     },
     {
         id: '2',
         title:  'Stores',
         icon: STORE_ICON,
-        route:  '/dashboard/stores'
+        route:  '/dashboard/stores',
+        permission: ['store_admin','super_admin','vendor']
     },
     {
         id: '3',
         icon: PRODUCT_ICON,
         title:  'Products',
-        route: '/dashboard/products'
+        route: '/dashboard/products',
+        permission: ['store_admin','super_admin','vendor']
     },
     // {
     //     id: '4',
@@ -46,30 +49,35 @@ const navigation = [
         id: '5',
         icon: STAFF_ICON,
         title:  'Staff',
-        route: '/dashboard/staff'
+        route: '/dashboard/staff',
+        permission: ['store_admin','super_admin']
     },
     {
         id: '6',
         icon: PEOPLE_ICON,
         title:  'Vendors',
-        route: '/dashboard/vendors'
+        route: '/dashboard/vendors',
+        permission: ['store_admin','super_admin']
     },
     {
         id: '7',
         icon: TRANSACTION_ICON,
         title:  'Transactions',
-        route: '/dashboard/transactions'
+        route: '/dashboard/transactions',
+        permission: ['store_admin','super_admin','vendor']
     },
     {
         id: '8',
         icon: ACCOUNT_SETTINGS_ICON,
         title:  'Settings',
-        route: '/dashboard/settings'
+        route: '/dashboard/settings',
+        permission: ['store_admin','super_admin','vendor']
     },
     {
         id: '9',
         title:  'Support',
         icon: SUPPORT_ICON,
-        route: '/dashboard/support'
+        route: '/dashboard/support',
+        permission: ['store_admin','super_admin','vendor']
     },
 ]

@@ -195,7 +195,7 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
       >
         New Sale
       </NavItem>
-      {navigation?.map((item)=>{
+      {navigation?.filter((item)=>item?.permission?.includes(USER_DATA?.account_type))?.map((item)=>{
         return(
           <NavItem 
             key={item?.id}
@@ -215,11 +215,13 @@ const SidebarContent = ({onClose,navigation,display,width}) => {
           </NavItem>
         )
       })}
-      <Flex align="center" justify={'center'} flexDirection={'column'} mx='3' my='2' px="4" pl="4" py="3" cursor="pointer" bg='gray.300' borderRadius={5} boxShadow='sm' transition=".3s ease" gap='2'>
-        <Text fontSize={'md'}>Current Plan</Text>
-        <Badge colorScheme={'purple'}>{USER_DATA?.subscription_ref?.plan}</Badge>
-        <Text fontSize={'xs'}>{daysRemaining()} days left</Text>
-        <Button bg={SECONDARY_BRAND} color={BASE_BRAND}>Upgrade Plan</Button>
-      </Flex>
+      {USER_DATA?.account_type !== 'vendor' && (
+        <Flex align="center" justify={'center'} flexDirection={'column'} mx='3' my='2' px="4" pl="4" py="3" cursor="pointer" bg='gray.300' borderRadius={5} boxShadow='sm' transition=".3s ease" gap='2'>
+          <Text fontSize={'md'}>Current Plan</Text>
+          <Badge colorScheme={'purple'}>{USER_DATA?.subscription_ref?.plan}</Badge>
+          <Text fontSize={'xs'}>{daysRemaining()} days left</Text>
+          <Button bg={SECONDARY_BRAND} color={BASE_BRAND}>Upgrade Plan</Button>
+        </Flex>
+      )}
     </Box>
   )};
