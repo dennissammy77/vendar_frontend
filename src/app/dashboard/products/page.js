@@ -21,7 +21,6 @@ import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
 
 export default function Page() {
     // util
-    const router = useRouter();
     const {user} = useContext(UserContext);
     const searchParams = useSearchParams();
     const toast = useToast();
@@ -35,6 +34,7 @@ export default function Page() {
     // configs
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
+
     // Functions
     const {data, isLoading} = useQuery({
         queryKey: ['store_products', {STORE_ID,USER_ID,search_query,stock_filter,from_date,to_date,page}],
@@ -67,6 +67,14 @@ export default function Page() {
     }
 
     const HANDLE_PAGE_CHANGE=(sign)=>{
+        if(PRODUCTS_COUNT <= 10){
+            set_page(1);
+            return
+        }
+        if ((page * 10) > PRODUCTS_COUNT && sign === '+'){
+            set_page(page);
+            return
+        }
         if (page === 1 && sign === '-'){
             set_page(1)
             return;
@@ -108,14 +116,14 @@ export default function Page() {
                         </InputLeftElement>
                         <Input type='search' placeholder={'Search products'} mx='2' onChange={((e)=>{set_search_query(e.target.value)})}/>
                     </InputGroup>
-                    <Link href={`/dashboard/products/new?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>
+                    <Link href={`/dashboard/products/new?uid=${USER_ID}&store_id=${STORE_ID}`}>
                         <Button bgColor={PRIMARY_BRAND} color='#ffffff' leftIcon={<ADD_ICON />}>New</Button>
                     </Link>
                 </Flex>
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
@@ -126,7 +134,7 @@ export default function Page() {
                 <Flex align='center' justify={'space-between'}>
                     <IconButton aria-label='filter' icon={show_filter_options? <FILTER_ICON_CLOSE/> : <FILTER_ICON />} size='sm' onClick={(()=>{set_show_filter_options(!show_filter_options)})}/>
                     <Flex gap='4' mx='2'>
-                        <Link href={`/dashboard/products/new/import?uid=${user?.data?.data?._id}&&store_id=${STORE_ID}`}>
+                        <Link href={`/dashboard/products/new/import?uid=${USER_ID}&store_id=${STORE_ID}`}>
                             <HStack align='center' _hover={{bg:'gray.100'}} p='2' borderRadius={'5'} transition={'.3s ease-out'}>
                                 <Icon as={IMPORT_ICON} boxSize={'4'}/>
                                 <Text fontWeight={'bold'} fontSize={'sm'}>import</Text>
@@ -142,7 +150,7 @@ export default function Page() {
                     <Flex spacing='2' my='2' p='2' gap='2' flexDirection={{base:'column',md:'row'}} w={{base:'full',md:''}} align='center'>
                         <FormControl>
                             <FormLabel fontSize={'sm'}>Stock</FormLabel>
-                            <Select variant='outline' _placeholder={{ top: -10, color: 'gray.500' }} onChange={((e)=>{set_stock_filter(e.target.value)})}>
+                            <Select variant='outline' onChange={((e)=>{set_stock_filter(e.target.value)})}>
                                 <option value='' selected disabled hidden>Stock</option>
                                 <option value='none'>All</option>
                                 <option value='in_stock'>In stock</option>
@@ -200,13 +208,13 @@ export default function Page() {
                                 </Tr>
                             </Thead>
                                 <Tbody>
-                                    {PRODUCTS_DATA?.filter((product)=>product?.name?.toLowerCase().includes(search_query?.toLowerCase()))?.map((product)=>{
+                                    {PRODUCTS_DATA?.map((product)=>{
                                         return(
                                             <Tr key={product?._id} >
                                                 <Td>
                                                     <HStack>
                                                         <Avatar size={'sm'} src='' name={product?.name}/>
-                                                        <Link href={`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`}>
+                                                        <Link href={`/dashboard/products/view?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${product?._id}`}>
                                                             <Box transition={'.3s ease-in-out'} _hover={{bg:TERTIARY_BRAND}}>
                                                                 <Text>{product?.name}</Text>
                                                                 <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{product?.category}</Text>
@@ -232,13 +240,13 @@ export default function Page() {
                                                 <Td>
                                                     <Badge 
                                                         fontSize={'sm'}
-                                                        colorScheme={product?.product_status?.approval_status ? 'green':'gray'}
+                                                        colorScheme={product?.product_status_ref?.approval_status ? 'green':'gray'}
                                                     >
-                                                        {product?.product_status?.approval_status ? 'Approved':'pending'}
+                                                        {product?.product_status_ref?.approval_status ? 'Approved':'pending'}
                                                     </Badge>
                                                 </Td>
                                                 <Td>
-                                                    <Link href={`/dashboard/products/view?uid=${user?.data?.data?._id}&store_id=${STORE_ID}&product_id=${product?._id}`}>
+                                                    <Link href={`/dashboard/products/view?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${product?._id}`}>
                                                         <HStack color='gray.600' cursor={'pointer'} pr='1'>
                                                             <Text fontSize={'xs'} fontWeight={'bold'}>manage</Text>
                                                             <Icon boxSize='4' as={MANAGE_ICON } cursor='pointer'/>

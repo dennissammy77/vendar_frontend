@@ -19,8 +19,7 @@ export default function NEW_STORE_PICKUP_FORM() {
     const searchParams = useSearchParams()
     const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     // config
-
-
+    
     const SCHEMA = yup.object().shape({
         name: yup.string().required("Name of the item is required"),
         price: yup.number().min(0).required('Price details for the item is required'),

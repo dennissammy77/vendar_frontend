@@ -8,18 +8,27 @@ import Link from 'next/link';
 import { CHEVRON_RIGHT_ICON, CLOSE_ICON, DONE_ICON, EDIT_ICON, STAFF_ICON } from '@/components/lib/constants/icons';
 import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 import { PRIMARY_BRAND } from '@/components/lib/constants/theme';
+import { useQuery } from '@tanstack/react-query';
+import { FETCH_USER_DATA } from '@/app/api/auth/route';
 
 function Page() {
     const {user} = useContext(UserContext);
-    const USER_DATA = user?.data?.data;
-    const USER_ID = user?.data?.data?._id;
-    const searchParams = useSearchParams();
-    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const USER_ID = user?.data?.data?._id;
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const DELETE_ACCOUNT_ALERT_DISCLOSURE = useDisclosure();
 
-	//const prodbaseurl = process.env.NEXT_PUBLIC_PROD_BASEURL;
-	const prodbaseurl = process.env.NEXT_PUBLIC_DEV_BASEURL;
+    const {data, isLoading} = useQuery({
+        queryKey: ['account_id', {USER_ID}],
+        queryFn: () => FETCH_USER_DATA(USER_ID)
+    });
+
+    const USER_DATA = data?.data?.data;
+
+	const prodbaseurl = process.env.NEXT_PUBLIC_PROD_BASEURL;
+	//const prodbaseurl = process.env.NEXT_PUBLIC_DEV_BASEURL;
 
     return (
         <Box>
@@ -27,7 +36,7 @@ function Page() {
             <Text fontWeight='bold' fontSize='32px'>Personal Settings</Text>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>

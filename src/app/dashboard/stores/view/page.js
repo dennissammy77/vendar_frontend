@@ -16,6 +16,7 @@ import UserTabs from './components/UsersTab';
 import DELETE_STORE_ALERT from '@/components/ui/store/DELETE_STORE_ALERT.js';
 import Link from "next/link";
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 
 function Page() {
@@ -26,12 +27,12 @@ function Page() {
     const router = useRouter();
 
     const searchParams = useSearchParams()
-    const store_id = searchParams.get('store_id');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = searchParams.get('uid');
 
     const {data, isLoading} = useQuery({
-        queryKey: ['store_data', {store_id}],
-        queryFn: () => FETCH_STORE_DATA(store_id,USER_ID)
+        queryKey: ['store_data', {STORE_ID}],
+        queryFn: () => FETCH_STORE_DATA(STORE_ID,USER_ID)
     })
     const store = data?.data?.data;
     if(isLoading){
@@ -63,14 +64,14 @@ function Page() {
 
     return (
         <Box>
-            <DELETE_STORE_ALERT isOpen={DELETE_STORE_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STORE_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} STORE_ID={store_id}/>
+            <DELETE_STORE_ALERT isOpen={DELETE_STORE_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STORE_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} STORE_ID={STORE_ID}/>
             <Flex align='center' justifyContent={'space-between'}>
                 <Text fontWeight='bold' fontSize='32px'>Store Details</Text>
                 {user?.data?.data?.account_type === 'vendor'? null : 
                     <Menu>
                         <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
                         <MenuList>
-                            <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${user?.data?.data?._id}&&store_id=${store?._id}`)})}>Edit</MenuItem>
+                            <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} onClick={(()=>{router.push(`/dashboard/stores/edit?uid=${USER_ID}&store_id=${store?._id}`)})}>Edit</MenuItem>
                             <MenuItem icon={<DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_STORE_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
                         </MenuList>
                     </Menu>
@@ -78,11 +79,11 @@ function Page() {
             </Flex>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />} my='2'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/stores/?uid=${user?.data?.data?._id}`}>Stores</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/stores?uid=${USER_ID}`}>Stores</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem isCurrentPage>
@@ -93,7 +94,7 @@ function Page() {
                 <Flex justify={'space-between'}>
                     <HStack>
                         <Text fontSize={'x-large'} fontWeight={'bold'} my='2'>{store?.name}</Text>
-                        <Badge fontSize="xs" colorScheme={store?.payment_plan === 'free'? 'orange' : 'green'}>{store?.payment_plan}</Badge>
+                        {STORE_ID === store?._id ? <Badge fontSize="xs" colorScheme={'purple'}>active</Badge> : null }
                     </HStack>
                 </Flex>
                 <Text my='2'>{store?.description}</Text>

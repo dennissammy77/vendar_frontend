@@ -11,6 +11,8 @@ import { useQuery } from '@tanstack/react-query';
 import { FETCH_TRANSACTION_DATA } from '@/app/api/transaction/route';
 import DELETE_TRANSACTION_ALERT from '@/components/ui/transaction/DELETE_TRANSACTION_ALERT';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
+import { CHEVRON_RIGHT_ICON, DELETE_ICON, EDIT_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -20,7 +22,9 @@ function Page() {
 
     const searchParams = useSearchParams();
     const TRANSACTION_ID = searchParams.get('transaction_id');
-    const STORE_ID = searchParams.get('store_id');
+    
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
+
     
     const {data, isLoading} = useQuery({
         queryKey: ['transaction_id', {TRANSACTION_ID}],
@@ -39,13 +43,13 @@ function Page() {
         <Box>
             <DELETE_TRANSACTION_ALERT isOpen={DELETE_TRANSACTION_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_TRANSACTION_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} TRANSACTION_ID={TRANSACTION_ID} STORE_ID={STORE_ID}/>
             <Text fontWeight='bold' fontSize='32px'>Transaction Data</Text>
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/transactions?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>transactions</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/transactions?uid=${USER_ID}&store_id=${STORE_ID}`}>transactions</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -56,11 +60,11 @@ function Page() {
                 <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'} boxShadow={'md'} my='2' p='4' borderRadius={'sm'}>
                     <HStack onClick={(()=>{router.push(`/dashboard/transactions/edit?uid=${USER_ID}&store_id=${STORE_ID}&transaction_id=${TRANSACTION_ID}`)})}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                        <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
+                        <Icon boxSize='6' as={EDIT_ICON} cursor='pointer'/>
                     </HStack>
                     <HStack onClick={DELETE_TRANSACTION_ALERT_DISCLOSURE?.onOpen}>
                         <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                        <Icon boxSize='6' as={MdOutlineDeleteOutline} cursor='pointer'/>
+                        <Icon boxSize='6' as={DELETE_ICON} cursor='pointer'/>
                     </HStack>
                 </Flex>
                 <Grid

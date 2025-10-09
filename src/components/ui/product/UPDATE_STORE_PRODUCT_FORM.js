@@ -20,6 +20,7 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
         name: yup.string().required(),
         description: yup.string().required(),
         price: yup.number().required(),
+        buying_price: yup.number().required(),
         category: yup.string().required(),
         items: yup.number().required(),
         discount: yup.boolean(),
@@ -41,6 +42,7 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
             name: props?.PRODUCT_DATA?.name,
             description: props?.PRODUCT_DATA?.description,
             price: props?.PRODUCT_DATA?.price,
+            buying_price: props?.PRODUCT_DATA?.buying_price,
             category: props?.PRODUCT_DATA?.category,
             items: props?.PRODUCT_DATA?.items,
             discount: props?.PRODUCT_DATA?.discount,
@@ -89,6 +91,11 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
                 {errors.price && ( <Text fontSize={'sm'} color='red'>{errors.price.message}</Text>)}
             </FormControl>
             <FormControl mt='1' isRequired>
+                <FormLabel>Buying Price</FormLabel>
+                <Input disabled={isSubmitting} {...register('buying_price')} type='number' placeholder='200' variant='filled'/>
+                {errors.buying_price && ( <Text fontSize={'sm'} color='red'>{errors.buying_price.message}</Text>)}
+            </FormControl>
+            <FormControl mt='1' isRequired>
                 <FormLabel>Items</FormLabel>
                 <Input disabled={isSubmitting} {...register('items')} type='number' placeholder='number of items' variant='filled'/>
                 {errors.items && ( <Text fontSize={'sm'} color='red'>{errors.items.message}</Text>)}
@@ -104,10 +111,10 @@ export default function UPDATE_STORE_PRODUCT_FORM(props) {
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
-            <Flex p='4' borderRadius='sm' boxShadow='sm' align='center' justify={'space-between'} color='gray.300' my='4'>
+            <Flex p='4' borderRadius='sm' boxShadow='sm' align='center' justify={'space-between'} color='' my='4'>
                 <Text fontWeight={'bold'}>Ownership management</Text>
                 <Link href={`/dashboard/products/edit/management?uid=${USER_ID}&store_id=${STORE_ID}&product_id=${PRODUCT_ID}`}>
-                    <Button variant={'ghost'} color='gray.300'>Transfer</Button>
+                    <Button variant={'outline'} color='gray.300'>Transfer</Button>
                 </Link>
             </Flex>
             {errors.root && 

@@ -245,3 +245,67 @@ export const EXPORT_PICKUPS_EXCEL=async (PICKUP_ARRAY)=>{
         throw new Error("Could not export your pickups");
     };
 }
+export const EXPORT_VENDORS_EXCEL=async (VENDORS_ARRAY)=>{
+    if (VENDORS_ARRAY?.length === 0){
+        throw new Error('No vendors found to export');
+    }
+    const workbook = new Excel.Workbook();
+    const worksheet = workbook.addWorksheet(`VENDAR vendors`, {views:[{state: 'frozen', xSplit: 1, ySplit:1}]});
+    let date = new Date()
+    workbook.creator = 'VENDAR';
+    workbook.created = date;
+    workbook.modified = date;
+    workbook.views = [
+        {
+          x: 0, y: 0, width: 10000, height: 20000,
+          firstSheet: 0, activeTab: 1, visibility: 'visible'
+        }
+    ]
+    worksheet.columns = [
+        { header: 'Name', key: 'name', width: 32 },
+        { header: 'Mobile', key: 'mobile', width: 32 },
+        { header: 'ID', key: 'id', width: 32 },
+        { header: 'Email', key: 'email', width: 32 },
+        { header: 'Products', key: 'products', width: 32 },
+        { header: 'Transactions', key: 'transactions', width: 32 },
+        { header: 'PickUps', key: 'pickups', width: 32 },
+        { header: 'Joined In', key: 'date', width: 32 }
+    ];
+    worksheet.getRows(1).alignment = { horizontal: 'center', vertical: 'center' };
+    for (let i = 0; i <= VENDORS_ARRAY?.length - 1; i++) {
+        let vendor = VENDORS_ARRAY[i];
+        worksheet.addRow({
+            name: vendor?.name,
+            mobile: vendor?.mobile,
+            id: vendor?._id,
+            email: vendor?.email,
+            products: vendor?.vendor_account_ref?.products?.length,
+            transactions: vendor?.vendor_account_ref?.transactions?.length,
+            pickups: vendor?.vendor_account_ref?.pickups?.length,
+            date: moment(vendor?.createdAt).format("DD MMM YY"),
+        })
+    };
+    try{
+        const buffer = await workbook.xlsx.writeBuffer();
+        const file_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8';
+        let EXTENSION = '.xlsx';
+        const blob = new Blob([buffer], { type: file_type });
+
+        if(navigator.msSaveBlog){
+            navigator.msSaveBlog(blob, `VENDAR VENDORS Excel`+ EXTENSION);
+        }else{
+            const link = document.createElement('a');
+            if (link.download !== undefined){
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `VENDAR VENDORS Excel`+ EXTENSION);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+    }catch(error){
+        throw new Error("Could not export your vendors");
+    };
+}

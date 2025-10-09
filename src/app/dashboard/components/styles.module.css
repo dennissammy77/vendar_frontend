@@ -1,0 +1,22 @@
+.navbody {
+    
+}
+.navbody::-webkit-scrollbar {
+   width: 3px;
+   border-radius: 20px
+}
+
+ /* Track */
+.navbody::-webkit-scrollbar-track {
+    background: #E4F0FC;
+}
+
+/* Handle */
+.navbody::-webkit-scrollbar-thumb {
+    background: #FFF;
+}
+
+/* Handle on hover */
+.navbody::-webkit-scrollbar-thumb:hover {
+    background: #4E2FD7;
+}

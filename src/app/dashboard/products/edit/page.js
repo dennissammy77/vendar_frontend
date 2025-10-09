@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FETCH_PRODUCT_DATA } from '@/app/api/product/route';
 import UPDATE_STORE_PRODUCT_FORM from '@/components/ui/product/UPDATE_STORE_PRODUCT_FORM';
 import FAILED_DATA_REQUEST from '@/components/ui/handlers/failed.data.error';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -17,7 +18,7 @@ function Page() {
     const searchParams = useSearchParams()
     const USER_ID = searchParams.get('uid');
     const PRODUCT_ID = searchParams.get('product_id');
-    const STORE_ID = searchParams.get('store_id');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     
     const {data, isLoading} = useQuery({
         queryKey: ['product data', {PRODUCT_ID}],

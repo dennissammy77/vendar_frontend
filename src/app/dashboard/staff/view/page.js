@@ -14,7 +14,6 @@ import Link from 'next/link';
 function Page() {
     const {user} = useContext(UserContext);
     const USER_ID = user?.data?.data?._id;
-    const router = useRouter();
 
     const searchParams = useSearchParams();
     const ACCOUNT_ID = searchParams.get('account_id');
@@ -53,11 +52,11 @@ function Page() {
             <Text fontWeight='bold' fontSize='32px'>Staff Data</Text>
             <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}&store_id=${STORE_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/staff?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>staff</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/staff?uid=${USER_ID}&store_id=${STORE_ID}`}>staff</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>

@@ -62,7 +62,7 @@ function Page() {
         return;
       }
   }
-  if (data?.data?.error){
+  if (FETCHED_PRODUCT_DATA?.data?.error){
       return (
           <FAILED_DATA_REQUEST message={data?.data?.message}/>
       )

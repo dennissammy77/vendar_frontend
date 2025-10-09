@@ -17,14 +17,12 @@ import { UserContext } from '@/components/providers/user.context';
 import { CiWarning } from 'react-icons/ci';
 import { SignInApi } from '@/app/api/auth/route';
 import SELECT_ACTIVE_STORE from '@/components/hooks/SELECT_ACTIVE_STORE';
-import Cookies from 'universal-cookie';
-
 
 const LoginForm=()=>{
   const router = useRouter();
-  const cookies = new Cookies();
   const toast = useToast();
-  const {user,set_user_handler} = useContext(UserContext)
+  const {user,set_user_handler} = useContext(UserContext);
+
 
   const [show, setShow] = useState(false); //handle state to toggle password
 	const handleClick = () => setShow(!show); //handle state to toggle view of password 
@@ -54,13 +52,13 @@ const LoginForm=()=>{
       await SignInApi(data).then((response)=>{
           toast({ title: 'Success!:Sign In successfully', description: ``, status: 'success', variant:'left-accent', position: 'top-left', isClosable: true });
           set_isLoggedIn(true)
-          if (typeof(window) === undefined) {
-            window.location.href(`/dashboard/stores?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
+          if (typeof(window) === 'undefined') {
+            router.replace(`/dashboard/stores`);
           }else{
-            router.replace(`/dashboard/stores?uid=${user?.data?.data?._id}&store_id=${user?.data?.data?.store_ref[0]?._id}`);
+            window.location.href =`/dashboard/stores`;
           }
           set_user_handler(response?.data.token);
-          SELECT_ACTIVE_STORE(cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id)
+          SELECT_ACTIVE_STORE(response?.data?.active_store_ref);
           return ;
       }).catch((err)=>{
           return toast({ title: `${err}`, description: ``, status: 'error', variant:'left-accent', position: 'top-left', isClosable: true });
@@ -74,11 +72,7 @@ const LoginForm=()=>{
   }
 
   return (
-    <CardWrapper
-      headerLabel='Welcome back'
-      backButtonLabel='Dont have an account?'
-      backButtonHref={'/signup'}
-    >
+    <CardWrapper headerLabel='Welcome back' backButtonLabel='Dont have an account?' backButtonHref={'/signup'} >
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl mt='1' isRequired>
           <FormLabel>Email</FormLabel>

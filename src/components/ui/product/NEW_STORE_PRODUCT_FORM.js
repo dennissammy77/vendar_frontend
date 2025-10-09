@@ -8,28 +8,28 @@ import { CiWarning } from 'react-icons/ci';
 import { UserContext } from '@/components/providers/user.context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NEW_STORE_PRODUCT } from '@/app/api/product/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 
 export default function NEW_STORE_PRODUCT_FORM() {
     const {user} = useContext(UserContext);
-
-    const EXISTING_STORES = user?.data?.data?.store_ref;
+    const USER_DATA = user?.data?.data;
 
     const searchParams = useSearchParams()
-    const query_store_id = searchParams.get('store_id');
+    const STORE_ID = FETCH_ACTIVE_STORE_ID() || searchParams.get('store_id');
     const USER_ID = user?.data?.data?._id;
-
-    const [STORE_ID,SET_STORE_ID] =useState(query_store_id)
 
     const schema = yup.object().shape({
         name: yup.string().required(),
         description: yup.string().required(),
+        buying_price: yup.number().required(),
         price: yup.number().required(),
         category: yup.string().required(),
         items: yup.number().required(),
         discount: yup.boolean(),
         discountprice: yup.number(),
         product_image: yup.string(),
+        approval_status: yup.boolean().required().default(false),
     });
  
     const toast = useToast();
@@ -84,6 +84,11 @@ export default function NEW_STORE_PRODUCT_FORM() {
                 {errors.price && ( <Text fontSize={'sm'} color='red'>{errors.price.message}</Text>)}
             </FormControl>
             <FormControl mt='1' isRequired>
+                <FormLabel>Buying Price</FormLabel>
+                <Input disabled={isSubmitting} {...register('buying_price')} type='number' placeholder='200' variant='filled'/>
+                {errors.buying_price && ( <Text fontSize={'sm'} color='red'>{errors.buying_price.message}</Text>)}
+            </FormControl>
+            <FormControl mt='1' isRequired>
                 <FormLabel>Items</FormLabel>
                 <Input disabled={isSubmitting} {...register('items')} type='number' placeholder='number of items' variant='filled'/>
                 {errors.items && ( <Text fontSize={'sm'} color='red'>{errors.items.message}</Text>)}
@@ -96,19 +101,20 @@ export default function NEW_STORE_PRODUCT_FORM() {
                     <option value='stationary'>Stationary</option>
                     <option value='food&beverages'>Food&Beverages</option>
                     <option value='gifts'>Gifts</option>
+                    <option value='other'>Other</option>
                 </Select>
                 {errors.category && (<FormErrorMessage>{errors.category.message}</FormErrorMessage>)}
             </FormControl>
-            <FormControl isRequired>
-                <FormLabel my='2' fontWeight={'bold'}>Store</FormLabel>
-                <Select placeholder='Select the store' onChange={((e)=>{SET_STORE_ID(e.target.value)})}>
-                    {EXISTING_STORES?.map((store)=>{
-                        return(
-                            <option value={store?._id}>{store?.name}</option>
-                        )
-                    })}
-                </Select>
-            </FormControl>
+            {USER_DATA.account_type !== 'vendor' && (
+                <FormControl mt='1' isRequired>
+                    <FormLabel>Approve Products</FormLabel>
+                    <Select disabled={isSubmitting} {...register('approval_status')}>
+                        <option value={true}>Yes, I want this product to be approved</option>
+                        <option value={false}>No, Do not approve product</option>
+                    </Select>
+                    {errors.approval_status && ( <Text fontSize={'sm'} color='red'>{errors.approval_status.message}</Text>)}
+                </FormControl>
+            )}
             {errors.root && 
                 <HStack color='red.400' bg='red.200' borderRadius={'md'} p='2' mt='2' align={'center'}>
                     <Icon as={CiWarning} boxSize='4'/>

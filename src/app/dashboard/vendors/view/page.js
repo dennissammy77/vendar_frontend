@@ -1,21 +1,24 @@
 'use client'
 import React, { useContext, useState } from 'react'
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, Avatar, Progress} from '@chakra-ui/react'
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Text, Grid, GridItem, Badge, Flex, Icon, TableContainer, Table, Thead, Tr, Th, Tbody, Td, HStack, useDisclosure, Tabs, TabList, Tab, Divider, TabPanels, TabPanel, Avatar, Progress, Menu, MenuButton, MenuList, MenuItem} from '@chakra-ui/react'
 import { MdChevronRight, MdClose, MdDone, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { UserContext } from '@/components/providers/user.context';
 import { GrFormEdit } from 'react-icons/gr';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
-import { FETCH_USER_DATA } from '@/app/api/auth/route';
+import { FETCH_VENDOR_STAKEHOLDER_DETAILS } from '@/app/api/auth/route';
 
 import { TiUserDelete } from "react-icons/ti";
 import DELETE_STAKEHOLDER_ACCOUNT_ALERT from '@/components/ui/user/DELETE_STAKEHOLDER_ACCOUNT_ALERT';
-import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
+//import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
 import moment from 'moment';
 import { IoMdSettings } from 'react-icons/io';
 import { GiShoppingBag } from 'react-icons/gi';
 import { LiaMoneyBillWaveSolid } from 'react-icons/lia';
+import { CHEVRON_DOWN_ICON, CHEVRON_LEFT_ICON, CHEVRON_RIGHT_ICON, EDIT_ICON, USER_DELETE_ICON } from '@/components/lib/constants/icons';
+import { FETCH_STORE_PRODUCTS_BY_VENDOR } from '@/app/api/product/route';
+import { FETCH_VENDOR_TRANSACTIONS_DATA } from '@/app/api/transaction/route';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -25,15 +28,47 @@ function Page() {
     const searchParams = useSearchParams();
     const ACCOUNT_ID = searchParams.get('account_id');
     const STORE_ID = searchParams.get('store_id');
+	const [week,set_week]=useState(moment().week())
+
     
     const {data, isLoading} = useQuery({
         queryKey: ['account_id', {ACCOUNT_ID}],
-        queryFn: () => FETCH_USER_DATA(ACCOUNT_ID)
+        queryFn: () => FETCH_VENDOR_STAKEHOLDER_DETAILS(ACCOUNT_ID)
+    });
+
+    const {data:PRODUCTS_RESULT} = useQuery({
+        queryKey: ['vendor_products', {ACCOUNT_ID}],
+        queryFn: () => FETCH_STORE_PRODUCTS_BY_VENDOR(ACCOUNT_ID,STORE_ID)
+    });
+
+    const {data:TRANSACTION_RESULT} = useQuery({
+        queryKey: ['vendor_transactions', {ACCOUNT_ID,week}],
+        queryFn: () => FETCH_VENDOR_TRANSACTIONS_DATA(ACCOUNT_ID,STORE_ID,week)
     });
 
     const USER_DATA = data?.data?.data;
-    const PRODUCTS_DATA = USER_DATA?.store_ref[0]?.products;
-    const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions?.filter((transaction)=>transaction?.vendor === USER_DATA?._id);
+    const PRODUCTS_DATA = PRODUCTS_RESULT?.data?.data;
+    const TRANSACTIONS_DATA = TRANSACTION_RESULT?.data?.data;
+
+    const HANDLE_WEEK_CHANGE=(sign)=>{
+        if (week === 1 && sign === '-'){
+            set_week(1)
+            return;
+        }
+        switch (sign) {
+            case '+':
+                set_week(week + 1)
+                break;
+            case '-':
+                set_week(week - 1)
+                break;
+            default:
+                set_week(1)
+                break;
+        }
+      }
+
+    // const TRANSACTIONS_DATA = USER_DATA?.store_ref[0]?.transactions?.filter((transaction)=>transaction?.vendor === USER_DATA?._id);
 
     const DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE = useDisclosure()
 
@@ -41,14 +76,27 @@ function Page() {
     return (
         <Box>
             <DELETE_STAKEHOLDER_ACCOUNT_ALERT isOpen={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.isOpen} onClose={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onClose} USER_ID={USER_ID} USER_DATA={USER_DATA}/>
-            <Text fontWeight='bold' fontSize='32px'>Vendor Data</Text>
-            <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />}>
+            <Flex justify={'space-between'} align={{base:'',lg:'center'}} my='2'>
+                {/**
+                 * Products tag & management goes here
+                 * Search field, New product and product imports
+                 */}
+                <Text fontWeight='bold' fontSize={{base:'24px',md:'32px'}}>Vendor Data</Text>
+                <Menu>
+                    <MenuButton as={Button} rightIcon={<CHEVRON_DOWN_ICON />} bgColor={'#4E2FD7'} color='#ffffff'> Action </MenuButton>
+                    <MenuList>
+                        <MenuItem icon={<EDIT_ICON style={{fontSize:'16px'}}/>} as='a' href={`/dashboard/vendors/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`}>Edit</MenuItem>
+                        <MenuItem icon={<USER_DELETE_ICON style={{fontSize:'16px'}}/>} onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>Delete</MenuItem>
+                    </MenuList>
+                </Menu>
+            </Flex>
+            <Breadcrumb spacing='8px' separator={<CHEVRON_RIGHT_ICON color='gray.500' />}>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/vendors?uid=${user?.data?.data?._id}&store_id=${STORE_ID}`}>vendors</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/vendors?uid=${USER_ID}&store_id=${STORE_ID}`}>vendors</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -56,16 +104,6 @@ function Page() {
                 </BreadcrumbItem>
             </Breadcrumb>
             <Box boxShadow={'md'} my='4' p='4' borderRadius={'md'}>
-                <Flex justify={'flex-end'} align='center' color='gray.600' gap='2' cursor={'pointer'}>
-                    <HStack onClick={(()=>{router.push(`/dashboard/vendors/edit?uid=${USER_ID}&store_id=${STORE_ID}&account_id=${ACCOUNT_ID}`)})}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Edit</Text>
-                        <Icon boxSize='6' as={GrFormEdit} cursor='pointer'/>
-                    </HStack>
-                    <HStack onClick={DELETE_STAKEHOLDER_ACCOUNT_ALERT_DISCLOSURE?.onOpen}>
-                        <Text fontWeight={'bold'} fontSize={'md'}>Delete</Text>
-                        <Icon boxSize='6' as={TiUserDelete} cursor='pointer'/>
-                    </HStack>
-                </Flex>
                 <Grid
                     templateRows={{base:'repeat(2, 1fr)',md:'repeat(1, 1fr)'}}
                     templateColumns={{base:'repeat(1, 1fr)',md:'repeat(2, 1fr)'}}
@@ -102,11 +140,24 @@ function Page() {
                     </GridItem>
                 </Grid>
             </Box>
+            <Box bg='#FFFFFF' p='4' boxShadow={'md'} fontSize={'12px'} mt='2'>
+                <Flex justify={'space-between'}>
+                    <Text fontSize={'24px'}>Summary</Text>
+                    <HStack align='center' spacing='2' color='gray.600'>
+                        <Icon as={CHEVRON_LEFT_ICON} boxSize={'5'} cursor='pointer' onClick={(()=>HANDLE_WEEK_CHANGE('-'))}/>
+                        <Text fontSize={'sm'}>week {week}</Text>
+                        <Icon as={CHEVRON_RIGHT_ICON} boxSize={'5'} cursor='pointer' onClick={(()=>HANDLE_WEEK_CHANGE('+'))}/>
+                    </HStack>
+                </Flex>
+            </Box>
             <Tabs variant='soft-rounded' colorScheme='blue' isLazy my='4' w='100%'>
-                <TabList my='2' overflowX='scroll'>
+                <TabList my='2'>
                     <Tab>Products</Tab>
                     <Tab>Transactions</Tab>
+                    {/**
+                     * 
                     <Tab>Data</Tab>
+                     */}
                 </TabList>
                 <Divider/>
                 <TabPanels>
@@ -130,6 +181,8 @@ function Page() {
                             <Transaction_Section TRANSACTIONS_DATA={TRANSACTIONS_DATA} USER_DATA={USER_DATA}/>
                         }
                     </TabPanel>
+                    {/**
+                     * 
                     <TabPanel>
                         <Box
                             bg='#FFFFFF'
@@ -149,6 +202,7 @@ function Page() {
                             }
                         </Box>
                     </TabPanel>
+                     */}
                 </TabPanels>
             </Tabs>
         </Box>
@@ -178,9 +232,9 @@ const Transaction_Section = ({TRANSACTIONS_DATA,USER_DATA})=>{
                             <Tr key={transaction?._id} >
                                 <Td>
                                     <HStack>
-                                        <Avatar size={'sm'} src='' name={transaction?.product_ref?.name}/>
+                                        <Avatar size={'sm'} src='' name={transaction?.product_name}/>
                                         <Box>
-                                            <Text fontSize={'12px'}>{transaction?.product_ref?.name}</Text>
+                                            <Text fontSize={'12px'}>{transaction?.product_name}</Text>
                                             <Text fontSize={'10px'} fontWeight={'bold'} color='gray.400' cursor={'pointer'} _hover={{textDecoration:'1px solid underline'}}>{transaction?._id}</Text>
                                         </Box>
                                     </HStack>

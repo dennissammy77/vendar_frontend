@@ -4,8 +4,7 @@ import React, { useContext } from 'react';
 // util
 import moment from 'moment';
 import { UserContext } from '@/components/providers/user.context';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Cookies from 'universal-cookie';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 // component
 import BarChartPlot from '@/components/ui/analytics/bar.dash-analytics.ui';
@@ -15,6 +14,7 @@ import { Badge, Box, Divider, Flex, Grid, GridItem, HStack, Icon, Image, Spinner
 import { PEOPLE_ICON, PRODUCT_ICON, TRANSACTION_ICON } from '@/components/lib/constants/icons';
 // api
 import { FETCH_STORE_DATA } from '@/app/api/shop/route';
+import { FETCH_ACTIVE_STORE_ID } from '@/components/hooks/SELECT_ACTIVE_STORE';
 
 
 
@@ -25,9 +25,7 @@ function Page() {
   const USER_DATA = user?.data?.data;
   const USER_ID = user?.data?.data?._id;
 
-  const cookies = new Cookies();
-
-  const STORE_ID = cookies.get('active_store') || user?.data?.data?.store_ref[0]?._id;
+  const STORE_ID = FETCH_ACTIVE_STORE_ID() || USER_DATA?.store_ref[0]?._id;
 
   const {data, isLoading} = useQuery({
       queryKey: ['store_data', {STORE_ID, USER_ID}],
@@ -79,7 +77,10 @@ function Page() {
               <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>No transactions found <br/>start by<br/>creating new sales.</Text>
             </Flex>
           :
-            <BarChartPlot data={STORE_DATA?.transactions}/>
+            <Flex flexDirection={'column'} justifyContent={'center'} align='center' h='100%' textAlign={'center'}>
+              <Text fontSize={'md'} fontWeight={'bold'} color='gray.300' my='2'>Transactions Data.</Text>
+              {/**<BarChartPlot data={STORE_DATA?.transactions}/>*/}
+          </Flex>
           }
         </GridItem>
         <GridItem

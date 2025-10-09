@@ -9,6 +9,7 @@ import { VscDiscard } from 'react-icons/vsc';
 
 import { useQuery } from '@tanstack/react-query';
 import { FETCH_USER_DATA } from '@/app/api/auth/route';
+import { DISCARD_ICON } from '@/components/lib/constants/icons';
 
 function Page() {
     const {user} = useContext(UserContext);
@@ -26,11 +27,11 @@ function Page() {
             <Text fontWeight='bold' fontSize='32px'>Personal Settings</Text>
             <Breadcrumb spacing='8px' separator={<MdChevronRight color='gray.500' />} mb='4'>
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/home/?uid=${user?.data?.data?._id}`}>Home</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/home?uid=${USER_ID}`}>Home</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
-                    <BreadcrumbLink href={`/dashboard/settings/?uid=${user?.data?.data?._id}`}>settings</BreadcrumbLink>
+                    <BreadcrumbLink href={`/dashboard/settings?uid=${USER_ID}`}>settings</BreadcrumbLink>
                 </BreadcrumbItem>
 
                 <BreadcrumbItem>
@@ -45,7 +46,7 @@ function Page() {
                 :
                 <UPDATE_USER_FORM USER_DATA={data}/>
             }
-            <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<VscDiscard />}>Discard</Button>
+            <Button variant={'ghost'} borderRadius={'md'} mt='2' w='full' onClick={(()=>{router.back()})} leftIcon={<DISCARD_ICON />}>Discard</Button>
         </Box>
     )
 }
